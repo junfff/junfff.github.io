@@ -6,7 +6,7 @@ tags: [Rust]
 ---
 
 # Flavors:
-- url: https://blog.csdn.net/s_lisheng/article/details/80593426
+- from url: https://blog.csdn.net/s_lisheng/article/details/80593426
 
 【Rust】轻量级I/O库mio
 
