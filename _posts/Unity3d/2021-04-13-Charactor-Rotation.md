@@ -6,10 +6,11 @@ tags: [Rust]
 ---
 
 # Flavors:
+Class AAA
 {
         private const float rotateSpeed = 16f;//旋转速度
 
-        private void RotateRotation(Transform transform, float angle)
+        private void RotateCharacter(Transform transform, float angle)
         {
             Quaternion result = Quaternion.Euler(0, 90 - angle, 0);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, result, rotateSpeed * Time.deltaTime * 100);
