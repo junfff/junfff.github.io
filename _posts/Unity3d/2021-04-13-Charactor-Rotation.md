@@ -10,13 +10,13 @@ Class AAA
 {
         private const float rotateSpeed = 16f;//旋转速度
 
-        private void RotateCharacter(Transform transform, float angle)
+        private void RotateRotation(Transform transform, float angle)
         {
             Quaternion result = Quaternion.Euler(0, 90 - angle, 0);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, result, rotateSpeed * Time.deltaTime * 100);
         }
 
-        private void RotateCharacter(Transform transform, Vector3 _direction)
+        private void RotateRotation(Transform transform, Vector3 _direction)
         {
             _direction.y = 0;
             Vector3 targetForward = Vector3.RotateTowards(transform.forward, _direction.normalized, rotateSpeed * Time.deltaTime, .1f);
