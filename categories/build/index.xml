@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>build on junfff blog </title>
+    <link>http://example.org/categories/build/</link>
+    <description>Recent content in build on junfff blog </description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="http://example.org/categories/build/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>HelloWorld</title>
+      <link>http://example.org/posts/2020-12-08-helloworld/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/posts/2020-12-08-helloworld/</guid>
+      <description>Welcome Hello world, this is my first Jekyll blog post.
+I hope you like it!</description>
+    </item>
+    
+  </channel>
+</rss>
