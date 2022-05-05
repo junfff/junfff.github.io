@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Subject assetBundle.Unload true 和false 区别 #  - 当传入的参数为true，则不仅仅内存中的AssetBundle对象包含的资源会被销毁。根据这些资源实例化而来的游戏内的对象也会销毁。 - 当传入的参数为false，则仅仅销毁内存中的AssetBundle对象包含的资源。  Unity GC 机制 #  战场优化 #  模型预加载 动态图集 光效粒子 屏幕内外 自定义UIMesh GPU Instancing, 容器扩容优化，遍历容器，线程安全容器 #  寻路 A* B* #  物理碰撞,静态碰撞。动态碰撞RVO #  动态图集的优化原理是什么 #  所谓动态图集就是没有办法静态生成的，需要在运行时动态生成的图集，那么我们为什么需要动态图集？ #  动态图集是为了解决游戏中动态图片太多的问题，也就是我们没有办法预先放在UI上的。下图案例中可以看到右下角的英雄技能图标、天赋技能图标，以及主动使用的物品图片，均为动态加载。左上角的英雄头像也是动态加载，而且由于技能之类的图片太多（毕竟有几十个英雄），所以没有办法打成一张静态图集。而如果作为独立图片动态加载，就会多十几个DrawCall。即便是打成多张静态图集，也会导致UI渲染的批次被打断。 #  解决方案：用动态打图集的方式。因为我们没有Unity源码，所以图集的分块算法参考了这个开源项目 http://davikingcode.com/blog/unity-generate-spritesheets-at-runtime/，这个算法效率比较不错，建议大家可以研究一下，它的分块算法的思路上本质上类似于BSP。 #  大图集是在游戏Loading时获得动态图片，然后把这些动态图片渲染到RenderTexture上，用GPU的方式来做可以保证加载的效率。在游戏中，英雄头像使用了一张256x256的RenderTexture，而英雄技能、天赋技能和物品图标使用了一张512x512的RenderTexture。这样一来，技能面板动态图标的消耗从12个DrawCall降低到1个DrawCall。而英雄头像部分，从最多9个DrawCall降低到2个DrawCall，这个结果是因为敌我双方英雄头像使用的材质不同。实际操作中，技能面板的动态图片放在同一个层级里，这样就只有1个DrawCall，上面的蒙板、边框零散图片打成静态图集，在不出现穿插的情况下，UGUI也会协助合批。因此通过这种方式大量减少了DrawCall。后面讲到的一些点其实也用到了动态图集。 #  渲染流水线的原理 #  渲染流程，可以分为三个阶段。应用阶段，几何阶段，光栅化阶段 #  ecs 优缺点，和mvc这些相比。 为啥选ecs #  mvc 面向对象,（继承，多态，封装）高度耦合， 一个英雄charactor包含了 属性，状态，控制器 #  ecs 面向数据：（组合模式）推崇组合优于继承理念，函数式编程，system只对他关系的component负责。业务上更加专一。遍历内存上更加高效（保证内存的连续性）,业务拆分的越细 代码复用率越高 #  帧同步 #  浮点类型，多线程，随机种子，静态变量，全局变量，容器顺序需要确定性 #  内存和虚拟内存的区别 #  指的是把硬盘中的一部分空间用来当做内存使用,虚拟内存的作用：是为了解决计算机在运行较大的程序时内存不足的情况,虚拟内存是在硬盘上的，它的速度要比内存慢的多，虚拟内存其实就是为了运行很大的程序的一种妥协的办法，妥协了软件的运行速度。 #  子类为什么可以赋值给基类对象 #  基类的指针可以指向派生类对象，但是反过来则不行，派生类的指针不可以指向基类的指针。这是为什么呢？这是因为派生类的对象所占的存储空间通常要比基类的对象大，原因就是派生类除了继承基类的成员之外，还拥有自己的成员，所以基类的指针操作派生类的对象时，由于基类指针会向操作基类对象那样操作派生类对象，而基类对象所占用的内存空间通常小于派生类对象，所以基类指针不会超出派生类对象去操作数据。 #  同样的道理，基类的引用可以作为派生类对象的别名，但是反过来则不行，派生类的引用不可以作为基类对象的别名。 #  自定义的UI Mesh #  构造出来的Mesh使用一个单独的正交摄像机来绘制， #  在UI Mesh的构造函数中可以看到是创建了一个GameObject，附加MeshFilter和MeshRenderer，然后再做一些初始化的工作。 #  重点在于自行填充Mesh的三个Buffer：位置、UV和索引。另外为了避免在运行时重复申请内存，在初始化的时候要申请足够多的顶点。 #  在实际游戏中用到了多个UI Mesh，总体的顶点数大概在3000左右。 #  初始化Mesh之后，还要去维护顶点Buffer。一个小兵的血条包含背景底框和前景血条，2个矩形8个顶点，在游戏中去动态地改变这8个顶点的位置。如果某个Actor不在视野中，那么把它所有顶点坍缩到一个点就不显示了。另外，Actor死亡的时候，并不删除它的数据，而是先设置为不显示，然后缓存起来准备复用。也就是说无论整场战斗创建了多少个角色，实际上血条都是在这个Mesh的Buffer里不断复用。 #  ================================================================================================================================ #  (.">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="Interview::unity" />
+<meta property="og:description" content="Subject assetBundle.Unload true 和false 区别 #  - 当传入的参数为true，则不仅仅内存中的AssetBundle对象包含的资源会被销毁。根据这些资源实例化而来的游戏内的对象也会销毁。 - 当传入的参数为false，则仅仅销毁内存中的AssetBundle对象包含的资源。  Unity GC 机制 #  战场优化 #  模型预加载 动态图集 光效粒子 屏幕内外 自定义UIMesh GPU Instancing, 容器扩容优化，遍历容器，线程安全容器 #  寻路 A* B* #  物理碰撞,静态碰撞。动态碰撞RVO #  动态图集的优化原理是什么 #  所谓动态图集就是没有办法静态生成的，需要在运行时动态生成的图集，那么我们为什么需要动态图集？ #  动态图集是为了解决游戏中动态图片太多的问题，也就是我们没有办法预先放在UI上的。下图案例中可以看到右下角的英雄技能图标、天赋技能图标，以及主动使用的物品图片，均为动态加载。左上角的英雄头像也是动态加载，而且由于技能之类的图片太多（毕竟有几十个英雄），所以没有办法打成一张静态图集。而如果作为独立图片动态加载，就会多十几个DrawCall。即便是打成多张静态图集，也会导致UI渲染的批次被打断。 #  解决方案：用动态打图集的方式。因为我们没有Unity源码，所以图集的分块算法参考了这个开源项目 http://davikingcode.com/blog/unity-generate-spritesheets-at-runtime/，这个算法效率比较不错，建议大家可以研究一下，它的分块算法的思路上本质上类似于BSP。 #  大图集是在游戏Loading时获得动态图片，然后把这些动态图片渲染到RenderTexture上，用GPU的方式来做可以保证加载的效率。在游戏中，英雄头像使用了一张256x256的RenderTexture，而英雄技能、天赋技能和物品图标使用了一张512x512的RenderTexture。这样一来，技能面板动态图标的消耗从12个DrawCall降低到1个DrawCall。而英雄头像部分，从最多9个DrawCall降低到2个DrawCall，这个结果是因为敌我双方英雄头像使用的材质不同。实际操作中，技能面板的动态图片放在同一个层级里，这样就只有1个DrawCall，上面的蒙板、边框零散图片打成静态图集，在不出现穿插的情况下，UGUI也会协助合批。因此通过这种方式大量减少了DrawCall。后面讲到的一些点其实也用到了动态图集。 #  渲染流水线的原理 #  渲染流程，可以分为三个阶段。应用阶段，几何阶段，光栅化阶段 #  ecs 优缺点，和mvc这些相比。 为啥选ecs #  mvc 面向对象,（继承，多态，封装）高度耦合， 一个英雄charactor包含了 属性，状态，控制器 #  ecs 面向数据：（组合模式）推崇组合优于继承理念，函数式编程，system只对他关系的component负责。业务上更加专一。遍历内存上更加高效（保证内存的连续性）,业务拆分的越细 代码复用率越高 #  帧同步 #  浮点类型，多线程，随机种子，静态变量，全局变量，容器顺序需要确定性 #  内存和虚拟内存的区别 #  指的是把硬盘中的一部分空间用来当做内存使用,虚拟内存的作用：是为了解决计算机在运行较大的程序时内存不足的情况,虚拟内存是在硬盘上的，它的速度要比内存慢的多，虚拟内存其实就是为了运行很大的程序的一种妥协的办法，妥协了软件的运行速度。 #  子类为什么可以赋值给基类对象 #  基类的指针可以指向派生类对象，但是反过来则不行，派生类的指针不可以指向基类的指针。这是为什么呢？这是因为派生类的对象所占的存储空间通常要比基类的对象大，原因就是派生类除了继承基类的成员之外，还拥有自己的成员，所以基类的指针操作派生类的对象时，由于基类指针会向操作基类对象那样操作派生类对象，而基类对象所占用的内存空间通常小于派生类对象，所以基类指针不会超出派生类对象去操作数据。 #  同样的道理，基类的引用可以作为派生类对象的别名，但是反过来则不行，派生类的引用不可以作为基类对象的别名。 #  自定义的UI Mesh #  构造出来的Mesh使用一个单独的正交摄像机来绘制， #  在UI Mesh的构造函数中可以看到是创建了一个GameObject，附加MeshFilter和MeshRenderer，然后再做一些初始化的工作。 #  重点在于自行填充Mesh的三个Buffer：位置、UV和索引。另外为了避免在运行时重复申请内存，在初始化的时候要申请足够多的顶点。 #  在实际游戏中用到了多个UI Mesh，总体的顶点数大概在3000左右。 #  初始化Mesh之后，还要去维护顶点Buffer。一个小兵的血条包含背景底框和前景血条，2个矩形8个顶点，在游戏中去动态地改变这8个顶点的位置。如果某个Actor不在视野中，那么把它所有顶点坍缩到一个点就不显示了。另外，Actor死亡的时候，并不删除它的数据，而是先设置为不显示，然后缓存起来准备复用。也就是说无论整场战斗创建了多少个角色，实际上血条都是在这个Mesh的Buffer里不断复用。 #  ================================================================================================================================ #  (." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/posts/interview/2021-06-29-unity/" /><meta property="article:section" content="posts" />
+
+
+
+<title>Interview::unity | junfff blog </title>
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/book.min.82c5dbd23447cee0b4c2aa3ed08ce0961faa40e1fa370eee4f8c9f02e0d46b5f.css" integrity="sha256-gsXb0jRHzuC0wqo&#43;0Izglh&#43;qQOH6Nw7uT4yfAuDUa18=" crossorigin="anonymous">
+  <script defer src="/flexsearch.min.js"></script>
+  <script defer src="/en.search.min.f016c1f7cd1cd468f90836d5b3db574eac0183406b8f25ab568e6873e6581204.js" integrity="sha256-8BbB980c1Gj5CDbVs9tXTqwBg0BrjyWrVo5oc&#43;ZYEgQ=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/"><span>junfff blog </span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Interview::unity</strong>
+
+  <label for="toc-control">
+    
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#模型预加载-动态图集-光效粒子-屏幕内外-自定义uimesh-gpu-instancing-容器扩容优化遍历容器线程安全容器">模型预加载 动态图集 光效粒子 屏幕内外 自定义UIMesh GPU Instancing, 容器扩容优化，遍历容器，线程安全容器</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#动态图集是为了解决游戏中动态图片太多的问题也就是我们没有办法预先放在ui上的下图案例中可以看到右下角的英雄技能图标天赋技能图标以及主动使用的物品图片均为动态加载左上角的英雄头像也是动态加载而且由于技能之类的图片太多毕竟有几十个英雄所以没有办法打成一张静态图集而如果作为独立图片动态加载就会多十几个drawcall即便是打成多张静态图集也会导致ui渲染的批次被打断">动态图集是为了解决游戏中动态图片太多的问题，也就是我们没有办法预先放在UI上的。下图案例中可以看到右下角的英雄技能图标、天赋技能图标，以及主动使用的物品图片，均为动态加载。左上角的英雄头像也是动态加载，而且由于技能之类的图片太多（毕竟有几十个英雄），所以没有办法打成一张静态图集。而如果作为独立图片动态加载，就会多十几个DrawCall。即便是打成多张静态图集，也会导致UI渲染的批次被打断。</a></li>
+    <li><a href="#解决方案用动态打图集的方式因为我们没有unity源码所以图集的分块算法参考了这个开源项目-httpdavikingcodecomblogunity-generate-spritesheets-at-runtime这个算法效率比较不错建议大家可以研究一下它的分块算法的思路上本质上类似于bsp">解决方案：用动态打图集的方式。因为我们没有Unity源码，所以图集的分块算法参考了这个开源项目 <a href="http://davikingcode.com/blog/unity-generate-spritesheets-at-runtime/">http://davikingcode.com/blog/unity-generate-spritesheets-at-runtime/</a>，这个算法效率比较不错，建议大家可以研究一下，它的分块算法的思路上本质上类似于BSP。</a></li>
+    <li><a href="#大图集是在游戏loading时获得动态图片然后把这些动态图片渲染到rendertexture上用gpu的方式来做可以保证加载的效率在游戏中英雄头像使用了一张256x256的rendertexture而英雄技能天赋技能和物品图标使用了一张512x512的rendertexture这样一来技能面板动态图标的消耗从12个drawcall降低到1个drawcall而英雄头像部分从最多9个drawcall降低到2个drawcall这个结果是因为敌我双方英雄头像使用的材质不同实际操作中技能面板的动态图片放在同一个层级里这样就只有1个drawcall上面的蒙板边框零散图片打成静态图集在不出现穿插的情况下ugui也会协助合批因此通过这种方式大量减少了drawcall后面讲到的一些点其实也用到了动态图集">大图集是在游戏Loading时获得动态图片，然后把这些动态图片渲染到RenderTexture上，用GPU的方式来做可以保证加载的效率。在游戏中，英雄头像使用了一张256x256的RenderTexture，而英雄技能、天赋技能和物品图标使用了一张512x512的RenderTexture。这样一来，技能面板动态图标的消耗从12个DrawCall降低到1个DrawCall。而英雄头像部分，从最多9个DrawCall降低到2个DrawCall，这个结果是因为敌我双方英雄头像使用的材质不同。实际操作中，技能面板的动态图片放在同一个层级里，这样就只有1个DrawCall，上面的蒙板、边框零散图片打成静态图集，在不出现穿插的情况下，UGUI也会协助合批。因此通过这种方式大量减少了DrawCall。后面讲到的一些点其实也用到了动态图集。</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#渲染流程可以分为三个阶段应用阶段几何阶段光栅化阶段">渲染流程，可以分为三个阶段。应用阶段，几何阶段，光栅化阶段</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#mvc-面向对象继承多态封装高度耦合-一个英雄charactor包含了-属性状态控制器">mvc 面向对象,（继承，多态，封装）高度耦合， 一个英雄charactor包含了 属性，状态，控制器</a></li>
+    <li><a href="#ecs-面向数据组合模式推崇组合优于继承理念函数式编程system只对他关系的component负责业务上更加专一遍历内存上更加高效保证内存的连续性业务拆分的越细-代码复用率越高">ecs 面向数据：（组合模式）推崇组合优于继承理念，函数式编程，system只对他关系的component负责。业务上更加专一。遍历内存上更加高效（保证内存的连续性）,业务拆分的越细 代码复用率越高</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#浮点类型多线程随机种子静态变量全局变量容器顺序需要确定性">浮点类型，多线程，随机种子，静态变量，全局变量，容器顺序需要确定性</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#指的是把硬盘中的一部分空间用来当做内存使用虚拟内存的作用是为了解决计算机在运行较大的程序时内存不足的情况虚拟内存是在硬盘上的它的速度要比内存慢的多虚拟内存其实就是为了运行很大的程序的一种妥协的办法妥协了软件的运行速度">指的是把硬盘中的一部分空间用来当做内存使用,虚拟内存的作用：是为了解决计算机在运行较大的程序时内存不足的情况,虚拟内存是在硬盘上的，它的速度要比内存慢的多，虚拟内存其实就是为了运行很大的程序的一种妥协的办法，妥协了软件的运行速度。</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#基类的指针可以指向派生类对象但是反过来则不行派生类的指针不可以指向基类的指针这是为什么呢这是因为派生类的对象所占的存储空间通常要比基类的对象大原因就是派生类除了继承基类的成员之外还拥有自己的成员所以基类的指针操作派生类的对象时由于基类指针会向操作基类对象那样操作派生类对象而基类对象所占用的内存空间通常小于派生类对象所以基类指针不会超出派生类对象去操作数据">基类的指针可以指向派生类对象，但是反过来则不行，派生类的指针不可以指向基类的指针。这是为什么呢？这是因为派生类的对象所占的存储空间通常要比基类的对象大，原因就是派生类除了继承基类的成员之外，还拥有自己的成员，所以基类的指针操作派生类的对象时，由于基类指针会向操作基类对象那样操作派生类对象，而基类对象所占用的内存空间通常小于派生类对象，所以基类指针不会超出派生类对象去操作数据。</a></li>
+    <li><a href="#同样的道理基类的引用可以作为派生类对象的别名但是反过来则不行派生类的引用不可以作为基类对象的别名">同样的道理，基类的引用可以作为派生类对象的别名，但是反过来则不行，派生类的引用不可以作为基类对象的别名。</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#构造出来的mesh使用一个单独的正交摄像机来绘制">构造出来的Mesh使用一个单独的正交摄像机来绘制，</a></li>
+    <li><a href="#在ui-mesh的构造函数中可以看到是创建了一个gameobject附加meshfilter和meshrenderer然后再做一些初始化的工作">在UI Mesh的构造函数中可以看到是创建了一个GameObject，附加MeshFilter和MeshRenderer，然后再做一些初始化的工作。</a></li>
+    <li><a href="#重点在于自行填充mesh的三个buffer位置uv和索引另外为了避免在运行时重复申请内存在初始化的时候要申请足够多的顶点">重点在于自行填充Mesh的三个Buffer：位置、UV和索引。另外为了避免在运行时重复申请内存，在初始化的时候要申请足够多的顶点。</a></li>
+    <li><a href="#在实际游戏中用到了多个ui-mesh总体的顶点数大概在3000左右">在实际游戏中用到了多个UI Mesh，总体的顶点数大概在3000左右。</a></li>
+    <li><a href="#初始化mesh之后还要去维护顶点buffer一个小兵的血条包含背景底框和前景血条2个矩形8个顶点在游戏中去动态地改变这8个顶点的位置如果某个actor不在视野中那么把它所有顶点坍缩到一个点就不显示了另外actor死亡的时候并不删除它的数据而是先设置为不显示然后缓存起来准备复用也就是说无论整场战斗创建了多少个角色实际上血条都是在这个mesh的buffer里不断复用">初始化Mesh之后，还要去维护顶点Buffer。一个小兵的血条包含背景底框和前景血条，2个矩形8个顶点，在游戏中去动态地改变这8个顶点的位置。如果某个Actor不在视野中，那么把它所有顶点坍缩到一个点就不显示了。另外，Actor死亡的时候，并不删除它的数据，而是先设置为不显示，然后缓存起来准备复用。也就是说无论整场战斗创建了多少个角色，实际上血条都是在这个Mesh的Buffer里不断复用。</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#heading-1"></a></li>
+    <li><a href="#装箱是将值类型转换为-object-类型或由此值类型实现的任何接口类型的过程-clr-对值类型进行装箱时会将值包装在-systemobject-实例中并将其存储在托管堆中">装箱是将值类型转换为 object 类型或由此值类型实现的任何接口类型的过程. CLR 对值类型进行装箱时，会将值包装在 System.Object 实例中并将其存储在托管堆中。</a></li>
+    <li><a href="#拆箱取消装箱将从对象中提取值类型-装箱是隐式的取消装箱是显式的">拆箱(取消装箱)将从对象中提取值类型。 装箱是隐式的；取消装箱是显式的。</a></li>
+    <li><a href="#int-i-1">int i =1;</a></li>
+    <li><a href="#object-o--i-装箱">object o = i; //装箱</a></li>
+    <li><a href="#i--into--拆箱">i = (int)o;  //拆箱</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#图形学用4元数表示旋转">图形学用4元数表示旋转.</a></li>
+    <li><a href="#1-解决万向节死锁问题-2-四元数方便插值-求逆运算">1) 解决万向节死锁问题; 2) 四元数方便插值, 求逆运算</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#深度缓冲区或-z-缓冲区存储深度信息以控制渲染哪些多边形区域用于决定不透明物体是否被绘制">深度缓冲区（或 z 缓冲区）存储深度信息，以控制渲染哪些多边形区域。用于决定不透明物体是否被绘制.</a></li>
+    <li><a href="#模具缓冲区用于遮罩图像中的像素以产生特殊效果-掩码控制是否绘制像素-特殊效果包括合成贴纸溶解淡化滑动轮廓描绘和剪影-模板缓冲区逐个像素地启用或禁用渲染目标图面绘制-究其本质它使应用程序遮罩部分渲染图像因此这些部分不会显示-应用程序常常使用模板缓冲区实现特殊效果例如溶解贴纸和轮廓描绘">模具缓冲区用于遮罩图像中的像素，以产生特殊效果。 掩码控制是否绘制像素。 特殊效果包括合成、贴纸、溶解、淡化、滑动、轮廓描绘和剪影, 模板缓冲区逐个像素地启用或禁用渲染目标图面绘制。 究其本质，它使应用程序遮罩部分渲染图像，因此这些部分不会显示。 应用程序常常使用模板缓冲区实现特殊效果，例如溶解、贴纸和轮廓描绘。</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#纹理是为图形对象mesh提供纹理外观的像素颜色的位图-位图资源jpeg-png-加载到引擎后变为纹理资源-纹理资源是存储纹素的数据结构--纹素是可以读取或者写入纹理的最小单位-在着色器读取纹理时-可以通过采样器对纹理进行筛选和读取-纹理有1d纹理-2d纹理和3d纹理-纹理经常包括若干层级的mipmap">纹理是为图形对象(mesh)提供纹理外观的像素颜色的位图. 位图资源(jpeg, png) 加载到引擎后变为纹理资源, 纹理资源是存储纹素的数据结构,  纹素是可以读取或者写入纹理的最小单位. 在着色器读取纹理时, 可以通过采样器对纹理进行筛选和读取. 纹理有1d纹理, 2d纹理和3d纹理. 纹理经常包括若干层级的mipmap.</a></li>
+    <li><a href="#类型有-default-sprite2d-andui-normalmap-editorgui-ligthmap-cookie">类型有 Default, Sprite(2D andUI), NormalMap, EditorGUI, Ligthmap, Cookie</a></li>
+    <li><a href="#windows下有-dxt5">windows下有 DXT5</a></li>
+    <li><a href="#android系统下常用-etc1-etc2">Android系统下常用 ETC1, ETC2,</a></li>
+    <li><a href="#ios-常用-pvrtc">iOS 常用 PVRTC</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#todo-待完善">//todo: 待完善.</a></li>
+    <li><a href="#uv坐标是归一化后normalized的纹素坐标">uv坐标是归一化后(Normalized)的纹素坐标.</a></li>
+    <li><a href="#heading-2">??</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#mipmapping在三维计算机图形的贴图渲染中有常用的技术为加快渲染进度和减少图像锯齿贴图被处理成由一系列被预先计算和优化过的图片组成的文件这样的贴图被称为mipmap">MipMapping：在三维计算机图形的贴图渲染中有常用的技术，为加快渲染进度和减少图像锯齿，贴图被处理成由一系列被预先计算和优化过的图片组成的文件，这样的贴图被称为MipMap。</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#先说定义-协变和逆变能够实现数组类型委托类型和泛型类型参数的隐式引用转换">先说定义, 协变和逆变能够实现数组类型、委托类型和泛型类型参数的隐式引用转换。</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#首先必须是数组类型泛型委托或者泛型接口">首先必须是数组类型,泛型委托或者泛型接口.</a></li>
+    <li><a href="#泛型参数必须用-in-关键字修饰--也就是说这个泛型参数只能作为方法的形参类型-而不能是返回值">泛型参数必须用 in 关键字修饰.  也就是说这个泛型参数只能作为方法的形参类型, 而不能是返回值.</a></li>
+    <li><a href="#net-framework4-之后支持变体泛型接口">.net framework4 之后支持变体泛型接口.</a></li>
+    <li><a href="#委托的逆变的好处可以使用一个事件处理程序-而不是多个单独的处理程序-下面代码演示了委托的逆变">委托的逆变的好处可以使用一个事件处理程序, 而不是多个单独的处理程序, 下面代码演示了委托的逆变.</a></li>
+    <li><a href="#heading-3">??</a></li>
+    <li><a href="#泛型接口的逆变的设计还有待发掘-欢迎补充演示代码">泛型接口的逆变的设计还有待发掘, 欢迎补充演示代码.</a></li>
+    <li><a href="#下面的代码演示了分配兼容性-协变和逆变的差异">下面的代码演示了分配兼容性, 协变和逆变的差异</a></li>
+    <li><a href="#-分配兼容性">// 分配兼容性</a></li>
+    <li><a href="#string-str--test">string str = &ldquo;test&rdquo;;</a></li>
+    <li><a href="#-子类实例可以赋值给父类">// 子类实例可以赋值给父类</a></li>
+    <li><a href="#object-obj--str">object obj = str;</a></li>
+    <li><a href="#-协变接口-用out关键字参数定义">// 协变接口, 用out关键字参数定义</a></li>
+    <li><a href="#public-interface-ienumerableout-t--systemcollectionsienumerable">public interface IEnumerable<!-- raw HTML omitted --> : System.Collections.IEnumerable</a></li>
+    <li><a href="#ienumerablestring-strings--new-liststring">IEnumerable<!-- raw HTML omitted --> strings = new List<!-- raw HTML omitted -->();</a></li>
+    <li><a href="#-ienumableobject-的泛型参数类型是-object-ienumrablestring-泛型参数类型是string--下面这样的赋值-协变符合分配兼容性">// IEnumable<!-- raw HTML omitted --> 的泛型参数类型是 object, IEnumrable<!-- raw HTML omitted --> 泛型参数类型是string,  下面这样的赋值 协变符合分配兼容性</a></li>
+    <li><a href="#ienumerableobject-objects--strings">IEnumerable<!-- raw HTML omitted --> objects = strings;</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#-假设有一个这样的类函数">// 假设有一个这样的类函数</a></li>
+    <li><a href="#static-void-setobjectobject-o--">static void SetObject(object o) { }</a></li>
+    <li><a href="#public-delegate-void-actionin-t--逆变的t-支持父类实例赋值给子类类型">public delegate void Action<!-- raw HTML omitted -->  //逆变的T, 支持父类实例赋值给子类类型</a></li>
+    <li><a href="#actionobject-actobject--setobject--给具有逆变的委托赋值一个方法实例">Action<!-- raw HTML omitted --> actObject = SetObject;  给具有逆变的委托赋值一个方法实例</a></li>
+    <li><a href="#-下面的操作是逆变-父类参数object实例赋值给子类类型string">// 下面的操作是逆变, 父类参数object实例赋值给子类类型string</a></li>
+    <li><a href="#-逆变违反了分配兼容">// 逆变违反了分配兼容</a></li>
+    <li><a href="#actionstring-actstring--actobject">Action<!-- raw HTML omitted --> actString = actObject;</a></li>
+    <li><a href="#当泛型参数用-out-关键字修饰-意味着其为协变泛型接口-这时接口的方法只能把-t-作为函数的返回值类型-而不能作为函数的形参类型-如">当泛型参数用 out 关键字修饰, 意味着其为协变泛型接口, 这时接口的方法只能把 T 作为函数的返回值类型, 而不能作为函数的形参类型 如:</a></li>
+    <li><a href="#协变接口">//协变接口</a></li>
+    <li><a href="#public-interface-ienumerableout-t--systemcollectionsienumerable-1">public interface IEnumerable<!-- raw HTML omitted --> : System.Collections.IEnumerable</a></li>
+    <li><a href="#heading-4">{</a></li>
+    <li><a href="#t-myfunciton---正确-t是协变">T MyFunciton();  // 正确, T是协变</a></li>
+    <li><a href="#-编译错误-error-cs1961-变型无效-类型参数t必须是在">// 编译错误 error CS1961: 变型无效: 类型参数“T”必须是在</a></li>
+    <li><a href="#-interface1tfunction2t上有效的-逆变式t为-协变">// “interface1<!-- raw HTML omitted -->.function2(T)”上有效的 逆变式。“T”为 协变。</a></li>
+    <li><a href="#void-myfunciton2t-t">void MyFunciton2(T t);</a></li>
+    <li><a href="#heading-5">}</a></li>
+    <li><a href="#当泛型参数用-in-关键字修饰-意味着逆变--t只能作为方法的形参类型-不能作为函数的返回值类型">当泛型参数用 in 关键字修饰, 意味着逆变 , T只能作为方法的形参类型, 不能作为函数的返回值类型</a></li>
+    <li><a href="#public-interface-iequalitycomparerin-t">public interface IEqualityComparer<!-- raw HTML omitted --></a></li>
+    <li><a href="#heading-6">{</a></li>
+    <li><a href="#void-myfunctiont-t-正确">void MyFunction(T t); //正确,</a></li>
+    <li><a href="#t-myfunction2--编译错误--error-cs1961-变型无效-类型参数t必须是在interface2tfunction2上有效的-协变式t为-逆变">T MyFunction2();  //编译错误  error CS1961: 变型无效: 类型参数“T”必须是在“interface2<!-- raw HTML omitted -->.function2()”上有效的 协变式。“T”为 逆变。</a></li>
+    <li><a href="#heading-7">}</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#c中的逆变和协变httpsdocsmicrosoftcomzh-cndotnetcsharpprogramming-guideconceptscovariance-contravariance"><a href="https://docs.microsoft.com/zh-cn/dotnet/csharp/programming-guide/concepts/covariance-contravariance/">c#中的逆变和协变</a></a></li>
+    <li><a href="#委托中变体httpsdocsmicrosoftcomzh-cndotnetcsharpprogramming-guideconceptscovariance-contravarianceusing-variance-in-delegates"><a href="https://docs.microsoft.com/zh-cn/dotnet/csharp/programming-guide/concepts/covariance-contravariance/using-variance-in-delegates">委托中变体</a></a></li>
+    <li><a href="#泛型接口中的变体httpsdocsmicrosoftcomzh-cndotnetcsharpprogramming-guideconceptscovariance-contravariancevariance-in-generic-interfaces"><a href="https://docs.microsoft.com/zh-cn/dotnet/csharp/programming-guide/concepts/covariance-contravariance/variance-in-generic-interfaces">泛型接口中的变体</a></a></li>
+    <li><a href="#在泛型集合的接口中使用变体httpsdocsmicrosoftcomzh-cndotnetcsharpprogramming-guideconceptscovariance-contravarianceusing-variance-in-interfaces-for-generic-collections"><a href="https://docs.microsoft.com/zh-cn/dotnet/csharp/programming-guide/concepts/covariance-contravariance/using-variance-in-interfaces-for-generic-collections">在泛型集合的接口中使用变体</a></a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#1resourcesload">1.Resources.Load();</a></li>
+    <li><a href="#2assetbundle">2.AssetBundle</a></li>
+    <li><a href="#heading-8">??</a></li>
+    <li><a href="#assetbundle相关">AssetBundle相关</a></li>
+    <li><a href="#在通过assetbundleunloadfalse卸载assetbundle对象后如果重新创建该对象并加载之前加载过的资源到内存时会出现冗余即两份相同的资源">在通过AssetBundle.Unload(false)卸载AssetBundle对象后，如果重新创建该对象并加载之前加载过的资源到内存时，会出现冗余，即两份相同的资源。</a></li>
+    <li><a href="#被脚本的静态变量引用的资源在调用resourcesunloadunusedassets时并不会被卸载在profiler中能够看到其引用情况">被脚本的静态变量引用的资源，在调用Resources.UnloadUnusedAssets时，并不会被卸载，在Profiler中能够看到其引用情况。</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#答awake------start-----update-----fixedupdate----lateupdate----ongui---reset----ondisable---ondestory">答：Awake &mdash;&gt;  Start &mdash;&gt; Update  &ndash;&gt; FixedUpdate &ndash;&gt; LateUpdate &mdash;&gt;OnGUI &ndash;&gt;Reset &ndash;&gt; OnDisable &ndash;&gt;OnDestory;</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#在主线程运行的同时开启另一段逻辑处理来协助当前程序的执行协程很像多线程但是不是多线程unity的协程是在每帧结束之后去检测yield的条件是否满足">在主线程运行的同时开启另一段逻辑处理，来协助当前程序的执行，协程很像多线程，但是不是多线程，Unity的协程是在每帧结束之后去检测yield的条件是否满足。</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#lodlevel-of-detail多层次细节是最常用的游戏优化技术它按照模型的位置和重要程度决定物体渲染的资源分配降低非重要物体的面数和细节度从而获得高效率的渲染运算缺点是增加了内存">LOD(Level of detail)多层次细节，是最常用的游戏优化技术。它按照模型的位置和重要程度决定物体渲染的资源分配，降低非重要物体的面数和细节度，从而获得高效率的渲染运算。缺点是增加了内存。</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#如果动态物体共用着相同的材质那么unity会自动对这些物体进行批处理动态批处理操作是自动完成的并不需要你进行额外的操作">如果动态物体共用着相同的材质，那么Unity会自动对这些物体进行批处理。动态批处理操作是自动完成的，并不需要你进行额外的操作。</a></li>
+    <li><a href="#区别动态批处理一切都是自动的不需要做任何操作而且物体是可以移动的但是限制很多">区别：动态批处理一切都是自动的，不需要做任何操作，而且物体是可以移动的，但是限制很多。</a></li>
+    <li><a href="#静态批处理自由度很高限制很少缺点可能会占用更多的内存而且经过静态批处理后的所有物体都不可以再移动了">静态批处理：自由度很高，限制很少，缺点可能会占用更多的内存，而且经过静态批处理后的所有物体都不可以再移动了</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#1开闭原则">1.开闭原则</a></li>
+    <li><a href="#2单一职责原则">2.单一职责原则</a></li>
+    <li><a href="#3依赖倒置原则">3.依赖倒置原则</a></li>
+    <li><a href="#4接口隔离原则">4.接口隔离原则</a></li>
+    <li><a href="#5迪米特法则">5.迪米特法则</a></li>
+    <li><a href="#6里氏替换原则">6.里氏替换原则</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#里氏替换原则liskov-substitution-principle-lsp面向对象设计的基本原则之一通俗点就是子类对象可以赋值给基类对象基类对象不能赋值给子类对象">里氏替换原则(Liskov Substitution Principle LSP)面向对象设计的基本原则之一。通俗点：就是子类对象可以赋值给基类对象，基类对象不能赋值给子类对象</a></li>
+    <li><a href="#你能说出几种创建型模式">你能说出几种创建型模式</a></li>
+    <li><a href="#抽象工厂">抽象工厂</a></li>
+    <li><a href="#建造者">建造者</a></li>
+    <li><a href="#工厂">工厂</a></li>
+    <li><a href="#原型模式克隆模式">原型模式/克隆模式</a></li>
+    <li><a href="#单例模式">单例模式</a></li>
+    <li><a href="#简述mvcmvpmvvm三种模式">简述MVC、MVP、MVVM三种模式</a></li>
+    <li><a href="#你有了解过多少种软件的分层结构">你有了解过多少种软件的分层结构</a></li>
+    <li><a href="#三层架构六边形洋葱架构整洁架构">三层架构、六边形、洋葱架构、整洁架构</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#设置游戏对象为static时这些部分被静态物体挡住而不可见时将会剔除或禁用网格对象因此在你的场景中的所有不会动的物体都应该标记为static">设置游戏对象为Static时，这些部分被静态物体挡住而不可见时，将会剔除（或禁用）网格对象。因此，在你的场景中的所有不会动的物体都应该标记为Static。</a></li>
+    <li><a href="#如果你在游戏中编写一个类不想让其他同事继承这个类你会怎么办">如果你在游戏中编写一个类，不想让其他同事继承这个类，你会怎么办？</a></li>
+    <li><a href="#在类声明时与函数声明时的作用sealed修饰的类为密封类类声明时可防止其他类继承此类在方法中声明则可防止派生类重写此方法">在类声明时与函数声明时的作用sealed修饰的类为密封类，类声明时可防止其他类继承此类，在方法中声明则可防止派生类重写此方法。</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#委托类似于-c-函数指针但它是类型安全的委托允许将方法作为参数进行传递委托可用于定义回调方法委托可以链接在一起例如可以对一个事件调用多个方法方法不需要与委托签名精确匹配">委托类似于 C++ 函数指针，但它是类型安全的。委托允许将方法作为参数进行传递。委托可用于定义回调方法。委托可以链接在一起；例如，可以对一个事件调用多个方法。方法不需要与委托签名精确匹配。</a></li>
+    <li><a href="#gc是什么-为什么要有gc">GC是什么? 为什么要有GC？</a></li>
+    <li><a href="#gc是垃圾收集器程序员不用担心内存管理因为垃圾收集器会自动进行管理要请求垃圾收集可以调用下面的方法之一-systemgc-runtimegetruntimegc">GC是垃圾收集器。程序员不用担心内存管理，因为垃圾收集器会自动进行管理。要请求垃圾收集，可以调用下面的方法之一： System.gc() Runtime.getRuntime().gc()</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#系统的资源不足进程的推进的顺序不合适资源分配不当一个资源每次只能被一个进程使用一个资源请求资源时而此时这个资源已阻塞对已获得资源不放进程获得资源时未使用完前不能强行剥夺">系统的资源不足，进程的推进的顺序不合适，资源分配不当，一个资源每次只能被一个进程使用，一个资源请求资源时，而此时这个资源已阻塞，对已获得资源不放，进程获得资源时，未使用完前，不能强行剥夺。</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#c是可以对内存进行直接操作的虽然很少用到指针但是c是可以使用指针的在用的时候需要在前边加unsafe在net中使用了垃圾回收机制gc功能它替代了程序员不过在c中不可以直接使用finalize方法而是在析构函数中调用基类的finalize方法">C#是可以对内存进行直接操作的，虽然很少用到指针，但是C#是可以使用指针的，在用的时候需要在前边加unsafe,，在.net中使用了垃圾回收机制（GC）功能，它替代了程序员，不过在C#中不可以直接使用finalize方法，而是在析构函数中调用基类的finalize()方法。</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#都是属于传输层的网络协议传输层提供了应用程序之间的通信">都是属于传输层的网络协议。传输层提供了应用程序之间的通信。</a></li>
+    <li><a href="#如何实现可靠udp">如何实现可靠UDP？</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#1动静分离将程序会动态设置的组件跟静态组件分离">1.动静分离，将程序会动态设置的组件跟静态组件分离</a></li>
+    <li><a href="#2文本与图片穿插编排会打断drawcall">2.文本与图片穿插编排会打断DrawCall</a></li>
+    <li><a href="#3静态合并图集降低drawcall">3.静态合并图集，降低DrawCall</a></li>
+    <li><a href="#4对于复杂的场景可以考虑动态合并图集降低drawcall">4.对于复杂的场景，可以考虑动态合并图集，降低DrawCall</a></li>
+    <li><a href="#5使用多个canvasrender例如一个界面一个canvasrender">5.使用多个CanvasRender，例如一个界面一个CanvasRender</a></li>
+    <li><a href="#6降低mesh重建次数">6.降低Mesh重建次数</a></li>
+    <li><a href="#7隐藏物件可以使用scale0-移动到非渲染层级移动位置到相机外关闭canvasrender">7.隐藏物件可以使用Scale=0, 移动到非渲染层级，移动位置到相机外，关闭CanvasRender</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#代码热更新的具体方案--lua-ilrt">代码热更新的具体方案:  lua, ILRT</a></li>
+    <li><a href="#资源热更新的具体方案-ab">资源热更新的具体方案: AB</a></li>
+    <li><a href="#资源分发方案">资源分发方案</a></li>
+    <li><a href="#外部玩家存在不同的版本如何同步升级这些版本-打包差异升级包-版本号">外部玩家存在不同的版本，如何同步升级这些版本: 打包差异升级包, 版本号</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#渠道如何打包">渠道如何打包</a></li>
+    <li><a href="#渠道sdk如何接入">渠道SDK如何接入</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#从逻辑结构上来看数组必须实现定于固定的长度不能适应数据动态增减的情况即数组的大小一旦定义就不能改变当数据增加是可能超过原先定义的元素的个数当数据减少时造成内存浪费">从逻辑结构上来看，数组必须实现定于固定的长度，不能适应数据动态增减的情况，即数组的大小一旦定义就不能改变。当数据增加是，可能超过原先定义的元素的个数；当数据减少时，造成内存浪费；</a></li>
+    <li><a href="#链表动态进行存储分配可以适应数据动态地增减的情况且可以方便地插入删除数据项">链表动态进行存储分配，可以适应数据动态地增减的情况，且可以方便地插入、删除数据项。</a></li>
+    <li><a href="#从内存存储的角度看数组从栈中分配空间用new则在堆上创建对程序员方便快速但是自由度小链表从堆中分配空间自由度大但是申请管理比较麻烦">从内存存储的角度看；数组从栈中分配空间（用new则在堆上创建），对程序员方便快速，但是自由度小；链表从堆中分配空间，自由度大但是申请管理比较麻烦。</a></li>
+    <li><a href="#从访问方式类看数组在内存中是连续的存储因此可以利用下标索引进行访问链表是链式存储结构在访问元素时候只能够通过线性方式由前到后顺序的访问所以访问效率比数组要低">从访问方式类看，数组在内存中是连续的存储，因此可以利用下标索引进行访问；链表是链式存储结构，在访问元素时候只能够通过线性方式由前到后顺序的访问，所以访问效率比数组要低。</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#抗压能力组织协调能力学习能力解决问题能力主动反馈执行力">抗压能力、组织协调能力、学习能力、解决问题能力、主动反馈、执行力</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#完整的上线项目经历架构业务设计能力工程管理规范文档代码审核">完整的上线项目经历、架构/业务设计能力、工程管理（规范、文档、代码审核）</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+<article class="markdown">
+  <h1>
+    <a href="/posts/interview/2021-06-29-unity/">Interview::unity</a>
+  </h1>
+  
+
+
+  
+  <div>
+    
+      <a href="/categories/interview/">Interview</a>
+  </div>
+  
+
+  
+  <div>
+    
+      <a href="/tags/interview/">Interview</a>
+  </div>
+  
+
+
+
+<h1 id="subject--assetbundleunload-true-和false-区别">
+  Subject  assetBundle.Unload true 和false 区别
+  <a class="anchor" href="#subject--assetbundleunload-true-%e5%92%8cfalse-%e5%8c%ba%e5%88%ab">#</a>
+</h1>
+<pre><code>- 当传入的参数为true，则不仅仅内存中的AssetBundle对象包含的资源会被销毁。根据这些资源实例化而来的游戏内的对象也会销毁。
+
+- 当传入的参数为false，则仅仅销毁内存中的AssetBundle对象包含的资源。
+</code></pre>
+<h1 id="unity-gc-机制">
+  Unity GC 机制
+  <a class="anchor" href="#unity-gc-%e6%9c%ba%e5%88%b6">#</a>
+</h1>
+<h1 id="战场优化">
+  战场优化
+  <a class="anchor" href="#%e6%88%98%e5%9c%ba%e4%bc%98%e5%8c%96">#</a>
+</h1>
+<h2 id="模型预加载-动态图集-光效粒子-屏幕内外-自定义uimesh-gpu-instancing-容器扩容优化遍历容器线程安全容器">
+  模型预加载 动态图集 光效粒子 屏幕内外 自定义UIMesh GPU Instancing, 容器扩容优化，遍历容器，线程安全容器
+  <a class="anchor" href="#%e6%a8%a1%e5%9e%8b%e9%a2%84%e5%8a%a0%e8%bd%bd-%e5%8a%a8%e6%80%81%e5%9b%be%e9%9b%86-%e5%85%89%e6%95%88%e7%b2%92%e5%ad%90-%e5%b1%8f%e5%b9%95%e5%86%85%e5%a4%96-%e8%87%aa%e5%ae%9a%e4%b9%89uimesh-gpu-instancing-%e5%ae%b9%e5%99%a8%e6%89%a9%e5%ae%b9%e4%bc%98%e5%8c%96%e9%81%8d%e5%8e%86%e5%ae%b9%e5%99%a8%e7%ba%bf%e7%a8%8b%e5%ae%89%e5%85%a8%e5%ae%b9%e5%99%a8">#</a>
+</h2>
+<h1 id="寻路--a--b">
+  寻路  A*  B*
+  <a class="anchor" href="#%e5%af%bb%e8%b7%af--a--b">#</a>
+</h1>
+<h1 id="物理碰撞静态碰撞动态碰撞rvo">
+  物理碰撞,静态碰撞。动态碰撞RVO
+  <a class="anchor" href="#%e7%89%a9%e7%90%86%e7%a2%b0%e6%92%9e%e9%9d%99%e6%80%81%e7%a2%b0%e6%92%9e%e5%8a%a8%e6%80%81%e7%a2%b0%e6%92%9ervo">#</a>
+</h1>
+<h1 id="动态图集的优化原理是什么">
+  动态图集的优化原理是什么
+  <a class="anchor" href="#%e5%8a%a8%e6%80%81%e5%9b%be%e9%9b%86%e7%9a%84%e4%bc%98%e5%8c%96%e5%8e%9f%e7%90%86%e6%98%af%e4%bb%80%e4%b9%88">#</a>
+</h1>
+<h1 id="所谓动态图集就是没有办法静态生成的需要在运行时动态生成的图集那么我们为什么需要动态图集">
+  所谓动态图集就是没有办法静态生成的，需要在运行时动态生成的图集，那么我们为什么需要动态图集？
+  <a class="anchor" href="#%e6%89%80%e8%b0%93%e5%8a%a8%e6%80%81%e5%9b%be%e9%9b%86%e5%b0%b1%e6%98%af%e6%b2%a1%e6%9c%89%e5%8a%9e%e6%b3%95%e9%9d%99%e6%80%81%e7%94%9f%e6%88%90%e7%9a%84%e9%9c%80%e8%a6%81%e5%9c%a8%e8%bf%90%e8%a1%8c%e6%97%b6%e5%8a%a8%e6%80%81%e7%94%9f%e6%88%90%e7%9a%84%e5%9b%be%e9%9b%86%e9%82%a3%e4%b9%88%e6%88%91%e4%bb%ac%e4%b8%ba%e4%bb%80%e4%b9%88%e9%9c%80%e8%a6%81%e5%8a%a8%e6%80%81%e5%9b%be%e9%9b%86">#</a>
+</h1>
+<h2 id="动态图集是为了解决游戏中动态图片太多的问题也就是我们没有办法预先放在ui上的下图案例中可以看到右下角的英雄技能图标天赋技能图标以及主动使用的物品图片均为动态加载左上角的英雄头像也是动态加载而且由于技能之类的图片太多毕竟有几十个英雄所以没有办法打成一张静态图集而如果作为独立图片动态加载就会多十几个drawcall即便是打成多张静态图集也会导致ui渲染的批次被打断">
+  动态图集是为了解决游戏中动态图片太多的问题，也就是我们没有办法预先放在UI上的。下图案例中可以看到右下角的英雄技能图标、天赋技能图标，以及主动使用的物品图片，均为动态加载。左上角的英雄头像也是动态加载，而且由于技能之类的图片太多（毕竟有几十个英雄），所以没有办法打成一张静态图集。而如果作为独立图片动态加载，就会多十几个DrawCall。即便是打成多张静态图集，也会导致UI渲染的批次被打断。
+  <a class="anchor" href="#%e5%8a%a8%e6%80%81%e5%9b%be%e9%9b%86%e6%98%af%e4%b8%ba%e4%ba%86%e8%a7%a3%e5%86%b3%e6%b8%b8%e6%88%8f%e4%b8%ad%e5%8a%a8%e6%80%81%e5%9b%be%e7%89%87%e5%a4%aa%e5%a4%9a%e7%9a%84%e9%97%ae%e9%a2%98%e4%b9%9f%e5%b0%b1%e6%98%af%e6%88%91%e4%bb%ac%e6%b2%a1%e6%9c%89%e5%8a%9e%e6%b3%95%e9%a2%84%e5%85%88%e6%94%be%e5%9c%a8ui%e4%b8%8a%e7%9a%84%e4%b8%8b%e5%9b%be%e6%a1%88%e4%be%8b%e4%b8%ad%e5%8f%af%e4%bb%a5%e7%9c%8b%e5%88%b0%e5%8f%b3%e4%b8%8b%e8%a7%92%e7%9a%84%e8%8b%b1%e9%9b%84%e6%8a%80%e8%83%bd%e5%9b%be%e6%a0%87%e5%a4%a9%e8%b5%8b%e6%8a%80%e8%83%bd%e5%9b%be%e6%a0%87%e4%bb%a5%e5%8f%8a%e4%b8%bb%e5%8a%a8%e4%bd%bf%e7%94%a8%e7%9a%84%e7%89%a9%e5%93%81%e5%9b%be%e7%89%87%e5%9d%87%e4%b8%ba%e5%8a%a8%e6%80%81%e5%8a%a0%e8%bd%bd%e5%b7%a6%e4%b8%8a%e8%a7%92%e7%9a%84%e8%8b%b1%e9%9b%84%e5%a4%b4%e5%83%8f%e4%b9%9f%e6%98%af%e5%8a%a8%e6%80%81%e5%8a%a0%e8%bd%bd%e8%80%8c%e4%b8%94%e7%94%b1%e4%ba%8e%e6%8a%80%e8%83%bd%e4%b9%8b%e7%b1%bb%e7%9a%84%e5%9b%be%e7%89%87%e5%a4%aa%e5%a4%9a%e6%af%95%e7%ab%9f%e6%9c%89%e5%87%a0%e5%8d%81%e4%b8%aa%e8%8b%b1%e9%9b%84%e6%89%80%e4%bb%a5%e6%b2%a1%e6%9c%89%e5%8a%9e%e6%b3%95%e6%89%93%e6%88%90%e4%b8%80%e5%bc%a0%e9%9d%99%e6%80%81%e5%9b%be%e9%9b%86%e8%80%8c%e5%a6%82%e6%9e%9c%e4%bd%9c%e4%b8%ba%e7%8b%ac%e7%ab%8b%e5%9b%be%e7%89%87%e5%8a%a8%e6%80%81%e5%8a%a0%e8%bd%bd%e5%b0%b1%e4%bc%9a%e5%a4%9a%e5%8d%81%e5%87%a0%e4%b8%aadrawcall%e5%8d%b3%e4%be%bf%e6%98%af%e6%89%93%e6%88%90%e5%a4%9a%e5%bc%a0%e9%9d%99%e6%80%81%e5%9b%be%e9%9b%86%e4%b9%9f%e4%bc%9a%e5%af%bc%e8%87%b4ui%e6%b8%b2%e6%9f%93%e7%9a%84%e6%89%b9%e6%ac%a1%e8%a2%ab%e6%89%93%e6%96%ad">#</a>
+</h2>
+<h2 id="解决方案用动态打图集的方式因为我们没有unity源码所以图集的分块算法参考了这个开源项目-httpdavikingcodecomblogunity-generate-spritesheets-at-runtime这个算法效率比较不错建议大家可以研究一下它的分块算法的思路上本质上类似于bsp">
+  解决方案：用动态打图集的方式。因为我们没有Unity源码，所以图集的分块算法参考了这个开源项目 <a href="http://davikingcode.com/blog/unity-generate-spritesheets-at-runtime/">http://davikingcode.com/blog/unity-generate-spritesheets-at-runtime/</a>，这个算法效率比较不错，建议大家可以研究一下，它的分块算法的思路上本质上类似于BSP。
+  <a class="anchor" href="#%e8%a7%a3%e5%86%b3%e6%96%b9%e6%a1%88%e7%94%a8%e5%8a%a8%e6%80%81%e6%89%93%e5%9b%be%e9%9b%86%e7%9a%84%e6%96%b9%e5%bc%8f%e5%9b%a0%e4%b8%ba%e6%88%91%e4%bb%ac%e6%b2%a1%e6%9c%89unity%e6%ba%90%e7%a0%81%e6%89%80%e4%bb%a5%e5%9b%be%e9%9b%86%e7%9a%84%e5%88%86%e5%9d%97%e7%ae%97%e6%b3%95%e5%8f%82%e8%80%83%e4%ba%86%e8%bf%99%e4%b8%aa%e5%bc%80%e6%ba%90%e9%a1%b9%e7%9b%ae-httpdavikingcodecomblogunity-generate-spritesheets-at-runtime%e8%bf%99%e4%b8%aa%e7%ae%97%e6%b3%95%e6%95%88%e7%8e%87%e6%af%94%e8%be%83%e4%b8%8d%e9%94%99%e5%bb%ba%e8%ae%ae%e5%a4%a7%e5%ae%b6%e5%8f%af%e4%bb%a5%e7%a0%94%e7%a9%b6%e4%b8%80%e4%b8%8b%e5%ae%83%e7%9a%84%e5%88%86%e5%9d%97%e7%ae%97%e6%b3%95%e7%9a%84%e6%80%9d%e8%b7%af%e4%b8%8a%e6%9c%ac%e8%b4%a8%e4%b8%8a%e7%b1%bb%e4%bc%bc%e4%ba%8ebsp">#</a>
+</h2>
+<h2 id="大图集是在游戏loading时获得动态图片然后把这些动态图片渲染到rendertexture上用gpu的方式来做可以保证加载的效率在游戏中英雄头像使用了一张256x256的rendertexture而英雄技能天赋技能和物品图标使用了一张512x512的rendertexture这样一来技能面板动态图标的消耗从12个drawcall降低到1个drawcall而英雄头像部分从最多9个drawcall降低到2个drawcall这个结果是因为敌我双方英雄头像使用的材质不同实际操作中技能面板的动态图片放在同一个层级里这样就只有1个drawcall上面的蒙板边框零散图片打成静态图集在不出现穿插的情况下ugui也会协助合批因此通过这种方式大量减少了drawcall后面讲到的一些点其实也用到了动态图集">
+  大图集是在游戏Loading时获得动态图片，然后把这些动态图片渲染到RenderTexture上，用GPU的方式来做可以保证加载的效率。在游戏中，英雄头像使用了一张256x256的RenderTexture，而英雄技能、天赋技能和物品图标使用了一张512x512的RenderTexture。这样一来，技能面板动态图标的消耗从12个DrawCall降低到1个DrawCall。而英雄头像部分，从最多9个DrawCall降低到2个DrawCall，这个结果是因为敌我双方英雄头像使用的材质不同。实际操作中，技能面板的动态图片放在同一个层级里，这样就只有1个DrawCall，上面的蒙板、边框零散图片打成静态图集，在不出现穿插的情况下，UGUI也会协助合批。因此通过这种方式大量减少了DrawCall。后面讲到的一些点其实也用到了动态图集。
+  <a class="anchor" href="#%e5%a4%a7%e5%9b%be%e9%9b%86%e6%98%af%e5%9c%a8%e6%b8%b8%e6%88%8floading%e6%97%b6%e8%8e%b7%e5%be%97%e5%8a%a8%e6%80%81%e5%9b%be%e7%89%87%e7%84%b6%e5%90%8e%e6%8a%8a%e8%bf%99%e4%ba%9b%e5%8a%a8%e6%80%81%e5%9b%be%e7%89%87%e6%b8%b2%e6%9f%93%e5%88%b0rendertexture%e4%b8%8a%e7%94%a8gpu%e7%9a%84%e6%96%b9%e5%bc%8f%e6%9d%a5%e5%81%9a%e5%8f%af%e4%bb%a5%e4%bf%9d%e8%af%81%e5%8a%a0%e8%bd%bd%e7%9a%84%e6%95%88%e7%8e%87%e5%9c%a8%e6%b8%b8%e6%88%8f%e4%b8%ad%e8%8b%b1%e9%9b%84%e5%a4%b4%e5%83%8f%e4%bd%bf%e7%94%a8%e4%ba%86%e4%b8%80%e5%bc%a0256x256%e7%9a%84rendertexture%e8%80%8c%e8%8b%b1%e9%9b%84%e6%8a%80%e8%83%bd%e5%a4%a9%e8%b5%8b%e6%8a%80%e8%83%bd%e5%92%8c%e7%89%a9%e5%93%81%e5%9b%be%e6%a0%87%e4%bd%bf%e7%94%a8%e4%ba%86%e4%b8%80%e5%bc%a0512x512%e7%9a%84rendertexture%e8%bf%99%e6%a0%b7%e4%b8%80%e6%9d%a5%e6%8a%80%e8%83%bd%e9%9d%a2%e6%9d%bf%e5%8a%a8%e6%80%81%e5%9b%be%e6%a0%87%e7%9a%84%e6%b6%88%e8%80%97%e4%bb%8e12%e4%b8%aadrawcall%e9%99%8d%e4%bd%8e%e5%88%b01%e4%b8%aadrawcall%e8%80%8c%e8%8b%b1%e9%9b%84%e5%a4%b4%e5%83%8f%e9%83%a8%e5%88%86%e4%bb%8e%e6%9c%80%e5%a4%9a9%e4%b8%aadrawcall%e9%99%8d%e4%bd%8e%e5%88%b02%e4%b8%aadrawcall%e8%bf%99%e4%b8%aa%e7%bb%93%e6%9e%9c%e6%98%af%e5%9b%a0%e4%b8%ba%e6%95%8c%e6%88%91%e5%8f%8c%e6%96%b9%e8%8b%b1%e9%9b%84%e5%a4%b4%e5%83%8f%e4%bd%bf%e7%94%a8%e7%9a%84%e6%9d%90%e8%b4%a8%e4%b8%8d%e5%90%8c%e5%ae%9e%e9%99%85%e6%93%8d%e4%bd%9c%e4%b8%ad%e6%8a%80%e8%83%bd%e9%9d%a2%e6%9d%bf%e7%9a%84%e5%8a%a8%e6%80%81%e5%9b%be%e7%89%87%e6%94%be%e5%9c%a8%e5%90%8c%e4%b8%80%e4%b8%aa%e5%b1%82%e7%ba%a7%e9%87%8c%e8%bf%99%e6%a0%b7%e5%b0%b1%e5%8f%aa%e6%9c%891%e4%b8%aadrawcall%e4%b8%8a%e9%9d%a2%e7%9a%84%e8%92%99%e6%9d%bf%e8%be%b9%e6%a1%86%e9%9b%b6%e6%95%a3%e5%9b%be%e7%89%87%e6%89%93%e6%88%90%e9%9d%99%e6%80%81%e5%9b%be%e9%9b%86%e5%9c%a8%e4%b8%8d%e5%87%ba%e7%8e%b0%e7%a9%bf%e6%8f%92%e7%9a%84%e6%83%85%e5%86%b5%e4%b8%8bugui%e4%b9%9f%e4%bc%9a%e5%8d%8f%e5%8a%a9%e5%90%88%e6%89%b9%e5%9b%a0%e6%ad%a4%e9%80%9a%e8%bf%87%e8%bf%99%e7%a7%8d%e6%96%b9%e5%bc%8f%e5%a4%a7%e9%87%8f%e5%87%8f%e5%b0%91%e4%ba%86drawcall%e5%90%8e%e9%9d%a2%e8%ae%b2%e5%88%b0%e7%9a%84%e4%b8%80%e4%ba%9b%e7%82%b9%e5%85%b6%e5%ae%9e%e4%b9%9f%e7%94%a8%e5%88%b0%e4%ba%86%e5%8a%a8%e6%80%81%e5%9b%be%e9%9b%86">#</a>
+</h2>
+<h1 id="渲染流水线的原理">
+  渲染流水线的原理
+  <a class="anchor" href="#%e6%b8%b2%e6%9f%93%e6%b5%81%e6%b0%b4%e7%ba%bf%e7%9a%84%e5%8e%9f%e7%90%86">#</a>
+</h1>
+<h2 id="渲染流程可以分为三个阶段应用阶段几何阶段光栅化阶段">
+  渲染流程，可以分为三个阶段。应用阶段，几何阶段，光栅化阶段
+  <a class="anchor" href="#%e6%b8%b2%e6%9f%93%e6%b5%81%e7%a8%8b%e5%8f%af%e4%bb%a5%e5%88%86%e4%b8%ba%e4%b8%89%e4%b8%aa%e9%98%b6%e6%ae%b5%e5%ba%94%e7%94%a8%e9%98%b6%e6%ae%b5%e5%87%a0%e4%bd%95%e9%98%b6%e6%ae%b5%e5%85%89%e6%a0%85%e5%8c%96%e9%98%b6%e6%ae%b5">#</a>
+</h2>
+<h1 id="ecs-优缺点和mvc这些相比-为啥选ecs">
+  ecs 优缺点，和mvc这些相比。 为啥选ecs
+  <a class="anchor" href="#ecs-%e4%bc%98%e7%bc%ba%e7%82%b9%e5%92%8cmvc%e8%bf%99%e4%ba%9b%e7%9b%b8%e6%af%94-%e4%b8%ba%e5%95%a5%e9%80%89ecs">#</a>
+</h1>
+<h2 id="mvc-面向对象继承多态封装高度耦合-一个英雄charactor包含了-属性状态控制器">
+  mvc 面向对象,（继承，多态，封装）高度耦合， 一个英雄charactor包含了 属性，状态，控制器
+  <a class="anchor" href="#mvc-%e9%9d%a2%e5%90%91%e5%af%b9%e8%b1%a1%e7%bb%a7%e6%89%bf%e5%a4%9a%e6%80%81%e5%b0%81%e8%a3%85%e9%ab%98%e5%ba%a6%e8%80%a6%e5%90%88-%e4%b8%80%e4%b8%aa%e8%8b%b1%e9%9b%84charactor%e5%8c%85%e5%90%ab%e4%ba%86-%e5%b1%9e%e6%80%a7%e7%8a%b6%e6%80%81%e6%8e%a7%e5%88%b6%e5%99%a8">#</a>
+</h2>
+<h2 id="ecs-面向数据组合模式推崇组合优于继承理念函数式编程system只对他关系的component负责业务上更加专一遍历内存上更加高效保证内存的连续性业务拆分的越细-代码复用率越高">
+  ecs 面向数据：（组合模式）推崇组合优于继承理念，函数式编程，system只对他关系的component负责。业务上更加专一。遍历内存上更加高效（保证内存的连续性）,业务拆分的越细 代码复用率越高
+  <a class="anchor" href="#ecs-%e9%9d%a2%e5%90%91%e6%95%b0%e6%8d%ae%e7%bb%84%e5%90%88%e6%a8%a1%e5%bc%8f%e6%8e%a8%e5%b4%87%e7%bb%84%e5%90%88%e4%bc%98%e4%ba%8e%e7%bb%a7%e6%89%bf%e7%90%86%e5%bf%b5%e5%87%bd%e6%95%b0%e5%bc%8f%e7%bc%96%e7%a8%8bsystem%e5%8f%aa%e5%af%b9%e4%bb%96%e5%85%b3%e7%b3%bb%e7%9a%84component%e8%b4%9f%e8%b4%a3%e4%b8%9a%e5%8a%a1%e4%b8%8a%e6%9b%b4%e5%8a%a0%e4%b8%93%e4%b8%80%e9%81%8d%e5%8e%86%e5%86%85%e5%ad%98%e4%b8%8a%e6%9b%b4%e5%8a%a0%e9%ab%98%e6%95%88%e4%bf%9d%e8%af%81%e5%86%85%e5%ad%98%e7%9a%84%e8%bf%9e%e7%bb%ad%e6%80%a7%e4%b8%9a%e5%8a%a1%e6%8b%86%e5%88%86%e7%9a%84%e8%b6%8a%e7%bb%86-%e4%bb%a3%e7%a0%81%e5%a4%8d%e7%94%a8%e7%8e%87%e8%b6%8a%e9%ab%98">#</a>
+</h2>
+<h1 id="帧同步">
+  帧同步
+  <a class="anchor" href="#%e5%b8%a7%e5%90%8c%e6%ad%a5">#</a>
+</h1>
+<h2 id="浮点类型多线程随机种子静态变量全局变量容器顺序需要确定性">
+  浮点类型，多线程，随机种子，静态变量，全局变量，容器顺序需要确定性
+  <a class="anchor" href="#%e6%b5%ae%e7%82%b9%e7%b1%bb%e5%9e%8b%e5%a4%9a%e7%ba%bf%e7%a8%8b%e9%9a%8f%e6%9c%ba%e7%a7%8d%e5%ad%90%e9%9d%99%e6%80%81%e5%8f%98%e9%87%8f%e5%85%a8%e5%b1%80%e5%8f%98%e9%87%8f%e5%ae%b9%e5%99%a8%e9%a1%ba%e5%ba%8f%e9%9c%80%e8%a6%81%e7%a1%ae%e5%ae%9a%e6%80%a7">#</a>
+</h2>
+<h1 id="内存和虚拟内存的区别">
+  内存和虚拟内存的区别
+  <a class="anchor" href="#%e5%86%85%e5%ad%98%e5%92%8c%e8%99%9a%e6%8b%9f%e5%86%85%e5%ad%98%e7%9a%84%e5%8c%ba%e5%88%ab">#</a>
+</h1>
+<h2 id="指的是把硬盘中的一部分空间用来当做内存使用虚拟内存的作用是为了解决计算机在运行较大的程序时内存不足的情况虚拟内存是在硬盘上的它的速度要比内存慢的多虚拟内存其实就是为了运行很大的程序的一种妥协的办法妥协了软件的运行速度">
+  指的是把硬盘中的一部分空间用来当做内存使用,虚拟内存的作用：是为了解决计算机在运行较大的程序时内存不足的情况,虚拟内存是在硬盘上的，它的速度要比内存慢的多，虚拟内存其实就是为了运行很大的程序的一种妥协的办法，妥协了软件的运行速度。
+  <a class="anchor" href="#%e6%8c%87%e7%9a%84%e6%98%af%e6%8a%8a%e7%a1%ac%e7%9b%98%e4%b8%ad%e7%9a%84%e4%b8%80%e9%83%a8%e5%88%86%e7%a9%ba%e9%97%b4%e7%94%a8%e6%9d%a5%e5%bd%93%e5%81%9a%e5%86%85%e5%ad%98%e4%bd%bf%e7%94%a8%e8%99%9a%e6%8b%9f%e5%86%85%e5%ad%98%e7%9a%84%e4%bd%9c%e7%94%a8%e6%98%af%e4%b8%ba%e4%ba%86%e8%a7%a3%e5%86%b3%e8%ae%a1%e7%ae%97%e6%9c%ba%e5%9c%a8%e8%bf%90%e8%a1%8c%e8%be%83%e5%a4%a7%e7%9a%84%e7%a8%8b%e5%ba%8f%e6%97%b6%e5%86%85%e5%ad%98%e4%b8%8d%e8%b6%b3%e7%9a%84%e6%83%85%e5%86%b5%e8%99%9a%e6%8b%9f%e5%86%85%e5%ad%98%e6%98%af%e5%9c%a8%e7%a1%ac%e7%9b%98%e4%b8%8a%e7%9a%84%e5%ae%83%e7%9a%84%e9%80%9f%e5%ba%a6%e8%a6%81%e6%af%94%e5%86%85%e5%ad%98%e6%85%a2%e7%9a%84%e5%a4%9a%e8%99%9a%e6%8b%9f%e5%86%85%e5%ad%98%e5%85%b6%e5%ae%9e%e5%b0%b1%e6%98%af%e4%b8%ba%e4%ba%86%e8%bf%90%e8%a1%8c%e5%be%88%e5%a4%a7%e7%9a%84%e7%a8%8b%e5%ba%8f%e7%9a%84%e4%b8%80%e7%a7%8d%e5%a6%a5%e5%8d%8f%e7%9a%84%e5%8a%9e%e6%b3%95%e5%a6%a5%e5%8d%8f%e4%ba%86%e8%bd%af%e4%bb%b6%e7%9a%84%e8%bf%90%e8%a1%8c%e9%80%9f%e5%ba%a6">#</a>
+</h2>
+<h1 id="子类为什么可以赋值给基类对象">
+  子类为什么可以赋值给基类对象
+  <a class="anchor" href="#%e5%ad%90%e7%b1%bb%e4%b8%ba%e4%bb%80%e4%b9%88%e5%8f%af%e4%bb%a5%e8%b5%8b%e5%80%bc%e7%bb%99%e5%9f%ba%e7%b1%bb%e5%af%b9%e8%b1%a1">#</a>
+</h1>
+<h2 id="基类的指针可以指向派生类对象但是反过来则不行派生类的指针不可以指向基类的指针这是为什么呢这是因为派生类的对象所占的存储空间通常要比基类的对象大原因就是派生类除了继承基类的成员之外还拥有自己的成员所以基类的指针操作派生类的对象时由于基类指针会向操作基类对象那样操作派生类对象而基类对象所占用的内存空间通常小于派生类对象所以基类指针不会超出派生类对象去操作数据">
+  基类的指针可以指向派生类对象，但是反过来则不行，派生类的指针不可以指向基类的指针。这是为什么呢？这是因为派生类的对象所占的存储空间通常要比基类的对象大，原因就是派生类除了继承基类的成员之外，还拥有自己的成员，所以基类的指针操作派生类的对象时，由于基类指针会向操作基类对象那样操作派生类对象，而基类对象所占用的内存空间通常小于派生类对象，所以基类指针不会超出派生类对象去操作数据。
+  <a class="anchor" href="#%e5%9f%ba%e7%b1%bb%e7%9a%84%e6%8c%87%e9%92%88%e5%8f%af%e4%bb%a5%e6%8c%87%e5%90%91%e6%b4%be%e7%94%9f%e7%b1%bb%e5%af%b9%e8%b1%a1%e4%bd%86%e6%98%af%e5%8f%8d%e8%bf%87%e6%9d%a5%e5%88%99%e4%b8%8d%e8%a1%8c%e6%b4%be%e7%94%9f%e7%b1%bb%e7%9a%84%e6%8c%87%e9%92%88%e4%b8%8d%e5%8f%af%e4%bb%a5%e6%8c%87%e5%90%91%e5%9f%ba%e7%b1%bb%e7%9a%84%e6%8c%87%e9%92%88%e8%bf%99%e6%98%af%e4%b8%ba%e4%bb%80%e4%b9%88%e5%91%a2%e8%bf%99%e6%98%af%e5%9b%a0%e4%b8%ba%e6%b4%be%e7%94%9f%e7%b1%bb%e7%9a%84%e5%af%b9%e8%b1%a1%e6%89%80%e5%8d%a0%e7%9a%84%e5%ad%98%e5%82%a8%e7%a9%ba%e9%97%b4%e9%80%9a%e5%b8%b8%e8%a6%81%e6%af%94%e5%9f%ba%e7%b1%bb%e7%9a%84%e5%af%b9%e8%b1%a1%e5%a4%a7%e5%8e%9f%e5%9b%a0%e5%b0%b1%e6%98%af%e6%b4%be%e7%94%9f%e7%b1%bb%e9%99%a4%e4%ba%86%e7%bb%a7%e6%89%bf%e5%9f%ba%e7%b1%bb%e7%9a%84%e6%88%90%e5%91%98%e4%b9%8b%e5%a4%96%e8%bf%98%e6%8b%a5%e6%9c%89%e8%87%aa%e5%b7%b1%e7%9a%84%e6%88%90%e5%91%98%e6%89%80%e4%bb%a5%e5%9f%ba%e7%b1%bb%e7%9a%84%e6%8c%87%e9%92%88%e6%93%8d%e4%bd%9c%e6%b4%be%e7%94%9f%e7%b1%bb%e7%9a%84%e5%af%b9%e8%b1%a1%e6%97%b6%e7%94%b1%e4%ba%8e%e5%9f%ba%e7%b1%bb%e6%8c%87%e9%92%88%e4%bc%9a%e5%90%91%e6%93%8d%e4%bd%9c%e5%9f%ba%e7%b1%bb%e5%af%b9%e8%b1%a1%e9%82%a3%e6%a0%b7%e6%93%8d%e4%bd%9c%e6%b4%be%e7%94%9f%e7%b1%bb%e5%af%b9%e8%b1%a1%e8%80%8c%e5%9f%ba%e7%b1%bb%e5%af%b9%e8%b1%a1%e6%89%80%e5%8d%a0%e7%94%a8%e7%9a%84%e5%86%85%e5%ad%98%e7%a9%ba%e9%97%b4%e9%80%9a%e5%b8%b8%e5%b0%8f%e4%ba%8e%e6%b4%be%e7%94%9f%e7%b1%bb%e5%af%b9%e8%b1%a1%e6%89%80%e4%bb%a5%e5%9f%ba%e7%b1%bb%e6%8c%87%e9%92%88%e4%b8%8d%e4%bc%9a%e8%b6%85%e5%87%ba%e6%b4%be%e7%94%9f%e7%b1%bb%e5%af%b9%e8%b1%a1%e5%8e%bb%e6%93%8d%e4%bd%9c%e6%95%b0%e6%8d%ae">#</a>
+</h2>
+<h2 id="同样的道理基类的引用可以作为派生类对象的别名但是反过来则不行派生类的引用不可以作为基类对象的别名">
+  同样的道理，基类的引用可以作为派生类对象的别名，但是反过来则不行，派生类的引用不可以作为基类对象的别名。
+  <a class="anchor" href="#%e5%90%8c%e6%a0%b7%e7%9a%84%e9%81%93%e7%90%86%e5%9f%ba%e7%b1%bb%e7%9a%84%e5%bc%95%e7%94%a8%e5%8f%af%e4%bb%a5%e4%bd%9c%e4%b8%ba%e6%b4%be%e7%94%9f%e7%b1%bb%e5%af%b9%e8%b1%a1%e7%9a%84%e5%88%ab%e5%90%8d%e4%bd%86%e6%98%af%e5%8f%8d%e8%bf%87%e6%9d%a5%e5%88%99%e4%b8%8d%e8%a1%8c%e6%b4%be%e7%94%9f%e7%b1%bb%e7%9a%84%e5%bc%95%e7%94%a8%e4%b8%8d%e5%8f%af%e4%bb%a5%e4%bd%9c%e4%b8%ba%e5%9f%ba%e7%b1%bb%e5%af%b9%e8%b1%a1%e7%9a%84%e5%88%ab%e5%90%8d">#</a>
+</h2>
+<h1 id="自定义的ui-mesh">
+  自定义的UI Mesh
+  <a class="anchor" href="#%e8%87%aa%e5%ae%9a%e4%b9%89%e7%9a%84ui-mesh">#</a>
+</h1>
+<h2 id="构造出来的mesh使用一个单独的正交摄像机来绘制">
+  构造出来的Mesh使用一个单独的正交摄像机来绘制，
+  <a class="anchor" href="#%e6%9e%84%e9%80%a0%e5%87%ba%e6%9d%a5%e7%9a%84mesh%e4%bd%bf%e7%94%a8%e4%b8%80%e4%b8%aa%e5%8d%95%e7%8b%ac%e7%9a%84%e6%ad%a3%e4%ba%a4%e6%91%84%e5%83%8f%e6%9c%ba%e6%9d%a5%e7%bb%98%e5%88%b6">#</a>
+</h2>
+<h2 id="在ui-mesh的构造函数中可以看到是创建了一个gameobject附加meshfilter和meshrenderer然后再做一些初始化的工作">
+  在UI Mesh的构造函数中可以看到是创建了一个GameObject，附加MeshFilter和MeshRenderer，然后再做一些初始化的工作。
+  <a class="anchor" href="#%e5%9c%a8ui-mesh%e7%9a%84%e6%9e%84%e9%80%a0%e5%87%bd%e6%95%b0%e4%b8%ad%e5%8f%af%e4%bb%a5%e7%9c%8b%e5%88%b0%e6%98%af%e5%88%9b%e5%bb%ba%e4%ba%86%e4%b8%80%e4%b8%aagameobject%e9%99%84%e5%8a%a0meshfilter%e5%92%8cmeshrenderer%e7%84%b6%e5%90%8e%e5%86%8d%e5%81%9a%e4%b8%80%e4%ba%9b%e5%88%9d%e5%a7%8b%e5%8c%96%e7%9a%84%e5%b7%a5%e4%bd%9c">#</a>
+</h2>
+<h2 id="重点在于自行填充mesh的三个buffer位置uv和索引另外为了避免在运行时重复申请内存在初始化的时候要申请足够多的顶点">
+  重点在于自行填充Mesh的三个Buffer：位置、UV和索引。另外为了避免在运行时重复申请内存，在初始化的时候要申请足够多的顶点。
+  <a class="anchor" href="#%e9%87%8d%e7%82%b9%e5%9c%a8%e4%ba%8e%e8%87%aa%e8%a1%8c%e5%a1%ab%e5%85%85mesh%e7%9a%84%e4%b8%89%e4%b8%aabuffer%e4%bd%8d%e7%bd%aeuv%e5%92%8c%e7%b4%a2%e5%bc%95%e5%8f%a6%e5%a4%96%e4%b8%ba%e4%ba%86%e9%81%bf%e5%85%8d%e5%9c%a8%e8%bf%90%e8%a1%8c%e6%97%b6%e9%87%8d%e5%a4%8d%e7%94%b3%e8%af%b7%e5%86%85%e5%ad%98%e5%9c%a8%e5%88%9d%e5%a7%8b%e5%8c%96%e7%9a%84%e6%97%b6%e5%80%99%e8%a6%81%e7%94%b3%e8%af%b7%e8%b6%b3%e5%a4%9f%e5%a4%9a%e7%9a%84%e9%a1%b6%e7%82%b9">#</a>
+</h2>
+<h2 id="在实际游戏中用到了多个ui-mesh总体的顶点数大概在3000左右">
+  在实际游戏中用到了多个UI Mesh，总体的顶点数大概在3000左右。
+  <a class="anchor" href="#%e5%9c%a8%e5%ae%9e%e9%99%85%e6%b8%b8%e6%88%8f%e4%b8%ad%e7%94%a8%e5%88%b0%e4%ba%86%e5%a4%9a%e4%b8%aaui-mesh%e6%80%bb%e4%bd%93%e7%9a%84%e9%a1%b6%e7%82%b9%e6%95%b0%e5%a4%a7%e6%a6%82%e5%9c%a83000%e5%b7%a6%e5%8f%b3">#</a>
+</h2>
+<h2 id="初始化mesh之后还要去维护顶点buffer一个小兵的血条包含背景底框和前景血条2个矩形8个顶点在游戏中去动态地改变这8个顶点的位置如果某个actor不在视野中那么把它所有顶点坍缩到一个点就不显示了另外actor死亡的时候并不删除它的数据而是先设置为不显示然后缓存起来准备复用也就是说无论整场战斗创建了多少个角色实际上血条都是在这个mesh的buffer里不断复用">
+  初始化Mesh之后，还要去维护顶点Buffer。一个小兵的血条包含背景底框和前景血条，2个矩形8个顶点，在游戏中去动态地改变这8个顶点的位置。如果某个Actor不在视野中，那么把它所有顶点坍缩到一个点就不显示了。另外，Actor死亡的时候，并不删除它的数据，而是先设置为不显示，然后缓存起来准备复用。也就是说无论整场战斗创建了多少个角色，实际上血条都是在这个Mesh的Buffer里不断复用。
+  <a class="anchor" href="#%e5%88%9d%e5%a7%8b%e5%8c%96mesh%e4%b9%8b%e5%90%8e%e8%bf%98%e8%a6%81%e5%8e%bb%e7%bb%b4%e6%8a%a4%e9%a1%b6%e7%82%b9buffer%e4%b8%80%e4%b8%aa%e5%b0%8f%e5%85%b5%e7%9a%84%e8%a1%80%e6%9d%a1%e5%8c%85%e5%90%ab%e8%83%8c%e6%99%af%e5%ba%95%e6%a1%86%e5%92%8c%e5%89%8d%e6%99%af%e8%a1%80%e6%9d%a12%e4%b8%aa%e7%9f%a9%e5%bd%a28%e4%b8%aa%e9%a1%b6%e7%82%b9%e5%9c%a8%e6%b8%b8%e6%88%8f%e4%b8%ad%e5%8e%bb%e5%8a%a8%e6%80%81%e5%9c%b0%e6%94%b9%e5%8f%98%e8%bf%998%e4%b8%aa%e9%a1%b6%e7%82%b9%e7%9a%84%e4%bd%8d%e7%bd%ae%e5%a6%82%e6%9e%9c%e6%9f%90%e4%b8%aaactor%e4%b8%8d%e5%9c%a8%e8%a7%86%e9%87%8e%e4%b8%ad%e9%82%a3%e4%b9%88%e6%8a%8a%e5%ae%83%e6%89%80%e6%9c%89%e9%a1%b6%e7%82%b9%e5%9d%8d%e7%bc%a9%e5%88%b0%e4%b8%80%e4%b8%aa%e7%82%b9%e5%b0%b1%e4%b8%8d%e6%98%be%e7%a4%ba%e4%ba%86%e5%8f%a6%e5%a4%96actor%e6%ad%bb%e4%ba%a1%e7%9a%84%e6%97%b6%e5%80%99%e5%b9%b6%e4%b8%8d%e5%88%a0%e9%99%a4%e5%ae%83%e7%9a%84%e6%95%b0%e6%8d%ae%e8%80%8c%e6%98%af%e5%85%88%e8%ae%be%e7%bd%ae%e4%b8%ba%e4%b8%8d%e6%98%be%e7%a4%ba%e7%84%b6%e5%90%8e%e7%bc%93%e5%ad%98%e8%b5%b7%e6%9d%a5%e5%87%86%e5%a4%87%e5%a4%8d%e7%94%a8%e4%b9%9f%e5%b0%b1%e6%98%af%e8%af%b4%e6%97%a0%e8%ae%ba%e6%95%b4%e5%9c%ba%e6%88%98%e6%96%97%e5%88%9b%e5%bb%ba%e4%ba%86%e5%a4%9a%e5%b0%91%e4%b8%aa%e8%a7%92%e8%89%b2%e5%ae%9e%e9%99%85%e4%b8%8a%e8%a1%80%e6%9d%a1%e9%83%bd%e6%98%af%e5%9c%a8%e8%bf%99%e4%b8%aamesh%e7%9a%84buffer%e9%87%8c%e4%b8%8d%e6%96%ad%e5%a4%8d%e7%94%a8">#</a>
+</h2>
+<h1 id="heading">
+  ================================================================================================================================
+  <a class="anchor" href="#heading">#</a>
+</h1>
+<h1 id="net装箱拆箱的概念">
+  (.net)装箱拆箱的概念
+  <a class="anchor" href="#net%e8%a3%85%e7%ae%b1%e6%8b%86%e7%ae%b1%e7%9a%84%e6%a6%82%e5%bf%b5">#</a>
+</h1>
+<h2 id="heading-1">
+  
+  <a class="anchor" href="#heading-1">#</a>
+</h2>
+<h2 id="装箱是将值类型转换为-object-类型或由此值类型实现的任何接口类型的过程-clr-对值类型进行装箱时会将值包装在-systemobject-实例中并将其存储在托管堆中">
+  装箱是将值类型转换为 object 类型或由此值类型实现的任何接口类型的过程. CLR 对值类型进行装箱时，会将值包装在 System.Object 实例中并将其存储在托管堆中。
+  <a class="anchor" href="#%e8%a3%85%e7%ae%b1%e6%98%af%e5%b0%86%e5%80%bc%e7%b1%bb%e5%9e%8b%e8%bd%ac%e6%8d%a2%e4%b8%ba-object-%e7%b1%bb%e5%9e%8b%e6%88%96%e7%94%b1%e6%ad%a4%e5%80%bc%e7%b1%bb%e5%9e%8b%e5%ae%9e%e7%8e%b0%e7%9a%84%e4%bb%bb%e4%bd%95%e6%8e%a5%e5%8f%a3%e7%b1%bb%e5%9e%8b%e7%9a%84%e8%bf%87%e7%a8%8b-clr-%e5%af%b9%e5%80%bc%e7%b1%bb%e5%9e%8b%e8%bf%9b%e8%a1%8c%e8%a3%85%e7%ae%b1%e6%97%b6%e4%bc%9a%e5%b0%86%e5%80%bc%e5%8c%85%e8%a3%85%e5%9c%a8-systemobject-%e5%ae%9e%e4%be%8b%e4%b8%ad%e5%b9%b6%e5%b0%86%e5%85%b6%e5%ad%98%e5%82%a8%e5%9c%a8%e6%89%98%e7%ae%a1%e5%a0%86%e4%b8%ad">#</a>
+</h2>
+<h2 id="拆箱取消装箱将从对象中提取值类型-装箱是隐式的取消装箱是显式的">
+  拆箱(取消装箱)将从对象中提取值类型。 装箱是隐式的；取消装箱是显式的。
+  <a class="anchor" href="#%e6%8b%86%e7%ae%b1%e5%8f%96%e6%b6%88%e8%a3%85%e7%ae%b1%e5%b0%86%e4%bb%8e%e5%af%b9%e8%b1%a1%e4%b8%ad%e6%8f%90%e5%8f%96%e5%80%bc%e7%b1%bb%e5%9e%8b-%e8%a3%85%e7%ae%b1%e6%98%af%e9%9a%90%e5%bc%8f%e7%9a%84%e5%8f%96%e6%b6%88%e8%a3%85%e7%ae%b1%e6%98%af%e6%98%be%e5%bc%8f%e7%9a%84">#</a>
+</h2>
+<h2 id="int-i-1">
+  int i =1;
+  <a class="anchor" href="#int-i-1">#</a>
+</h2>
+<h2 id="object-o--i-装箱">
+  object o = i; //装箱
+  <a class="anchor" href="#object-o--i-%e8%a3%85%e7%ae%b1">#</a>
+</h2>
+<h2 id="i--into--拆箱">
+  i = (int)o;  //拆箱
+  <a class="anchor" href="#i--into--%e6%8b%86%e7%ae%b1">#</a>
+</h2>
+<h1 id="3d数学4元数的做用是什么-相比欧拉角的优点有哪些">
+  (3D数学)4元数的做用是什么? 相比欧拉角的优点有哪些?
+  <a class="anchor" href="#3d%e6%95%b0%e5%ad%a64%e5%85%83%e6%95%b0%e7%9a%84%e5%81%9a%e7%94%a8%e6%98%af%e4%bb%80%e4%b9%88-%e7%9b%b8%e6%af%94%e6%ac%a7%e6%8b%89%e8%a7%92%e7%9a%84%e4%bc%98%e7%82%b9%e6%9c%89%e5%93%aa%e4%ba%9b">#</a>
+</h1>
+<h2 id="图形学用4元数表示旋转">
+  图形学用4元数表示旋转.
+  <a class="anchor" href="#%e5%9b%be%e5%bd%a2%e5%ad%a6%e7%94%a84%e5%85%83%e6%95%b0%e8%a1%a8%e7%a4%ba%e6%97%8b%e8%bd%ac">#</a>
+</h2>
+<h2 id="1-解决万向节死锁问题-2-四元数方便插值-求逆运算">
+  1) 解决万向节死锁问题; 2) 四元数方便插值, 求逆运算
+  <a class="anchor" href="#1-%e8%a7%a3%e5%86%b3%e4%b8%87%e5%90%91%e8%8a%82%e6%ad%bb%e9%94%81%e9%97%ae%e9%a2%98-2-%e5%9b%9b%e5%85%83%e6%95%b0%e6%96%b9%e4%be%bf%e6%8f%92%e5%80%bc-%e6%b1%82%e9%80%86%e8%bf%90%e7%ae%97">#</a>
+</h2>
+<h1 id="图形学深度缓冲区depth-buffer是什么-有什么作用-模板缓冲stencil-buffer是什么-有什么作用">
+  (图形学)深度缓冲区(Depth Buffer)是什么? 有什么作用? 模板缓冲(stencil buffer)是什么, 有什么作用?
+  <a class="anchor" href="#%e5%9b%be%e5%bd%a2%e5%ad%a6%e6%b7%b1%e5%ba%a6%e7%bc%93%e5%86%b2%e5%8c%badepth-buffer%e6%98%af%e4%bb%80%e4%b9%88-%e6%9c%89%e4%bb%80%e4%b9%88%e4%bd%9c%e7%94%a8-%e6%a8%a1%e6%9d%bf%e7%bc%93%e5%86%b2stencil-buffer%e6%98%af%e4%bb%80%e4%b9%88-%e6%9c%89%e4%bb%80%e4%b9%88%e4%bd%9c%e7%94%a8">#</a>
+</h1>
+<h2 id="深度缓冲区或-z-缓冲区存储深度信息以控制渲染哪些多边形区域用于决定不透明物体是否被绘制">
+  深度缓冲区（或 z 缓冲区）存储深度信息，以控制渲染哪些多边形区域。用于决定不透明物体是否被绘制.
+  <a class="anchor" href="#%e6%b7%b1%e5%ba%a6%e7%bc%93%e5%86%b2%e5%8c%ba%e6%88%96-z-%e7%bc%93%e5%86%b2%e5%8c%ba%e5%ad%98%e5%82%a8%e6%b7%b1%e5%ba%a6%e4%bf%a1%e6%81%af%e4%bb%a5%e6%8e%a7%e5%88%b6%e6%b8%b2%e6%9f%93%e5%93%aa%e4%ba%9b%e5%a4%9a%e8%be%b9%e5%bd%a2%e5%8c%ba%e5%9f%9f%e7%94%a8%e4%ba%8e%e5%86%b3%e5%ae%9a%e4%b8%8d%e9%80%8f%e6%98%8e%e7%89%a9%e4%bd%93%e6%98%af%e5%90%a6%e8%a2%ab%e7%bb%98%e5%88%b6">#</a>
+</h2>
+<h2 id="模具缓冲区用于遮罩图像中的像素以产生特殊效果-掩码控制是否绘制像素-特殊效果包括合成贴纸溶解淡化滑动轮廓描绘和剪影-模板缓冲区逐个像素地启用或禁用渲染目标图面绘制-究其本质它使应用程序遮罩部分渲染图像因此这些部分不会显示-应用程序常常使用模板缓冲区实现特殊效果例如溶解贴纸和轮廓描绘">
+  模具缓冲区用于遮罩图像中的像素，以产生特殊效果。 掩码控制是否绘制像素。 特殊效果包括合成、贴纸、溶解、淡化、滑动、轮廓描绘和剪影, 模板缓冲区逐个像素地启用或禁用渲染目标图面绘制。 究其本质，它使应用程序遮罩部分渲染图像，因此这些部分不会显示。 应用程序常常使用模板缓冲区实现特殊效果，例如溶解、贴纸和轮廓描绘。
+  <a class="anchor" href="#%e6%a8%a1%e5%85%b7%e7%bc%93%e5%86%b2%e5%8c%ba%e7%94%a8%e4%ba%8e%e9%81%ae%e7%bd%a9%e5%9b%be%e5%83%8f%e4%b8%ad%e7%9a%84%e5%83%8f%e7%b4%a0%e4%bb%a5%e4%ba%a7%e7%94%9f%e7%89%b9%e6%ae%8a%e6%95%88%e6%9e%9c-%e6%8e%a9%e7%a0%81%e6%8e%a7%e5%88%b6%e6%98%af%e5%90%a6%e7%bb%98%e5%88%b6%e5%83%8f%e7%b4%a0-%e7%89%b9%e6%ae%8a%e6%95%88%e6%9e%9c%e5%8c%85%e6%8b%ac%e5%90%88%e6%88%90%e8%b4%b4%e7%ba%b8%e6%ba%b6%e8%a7%a3%e6%b7%a1%e5%8c%96%e6%bb%91%e5%8a%a8%e8%bd%ae%e5%bb%93%e6%8f%8f%e7%bb%98%e5%92%8c%e5%89%aa%e5%bd%b1-%e6%a8%a1%e6%9d%bf%e7%bc%93%e5%86%b2%e5%8c%ba%e9%80%90%e4%b8%aa%e5%83%8f%e7%b4%a0%e5%9c%b0%e5%90%af%e7%94%a8%e6%88%96%e7%a6%81%e7%94%a8%e6%b8%b2%e6%9f%93%e7%9b%ae%e6%a0%87%e5%9b%be%e9%9d%a2%e7%bb%98%e5%88%b6-%e7%a9%b6%e5%85%b6%e6%9c%ac%e8%b4%a8%e5%ae%83%e4%bd%bf%e5%ba%94%e7%94%a8%e7%a8%8b%e5%ba%8f%e9%81%ae%e7%bd%a9%e9%83%a8%e5%88%86%e6%b8%b2%e6%9f%93%e5%9b%be%e5%83%8f%e5%9b%a0%e6%ad%a4%e8%bf%99%e4%ba%9b%e9%83%a8%e5%88%86%e4%b8%8d%e4%bc%9a%e6%98%be%e7%a4%ba-%e5%ba%94%e7%94%a8%e7%a8%8b%e5%ba%8f%e5%b8%b8%e5%b8%b8%e4%bd%bf%e7%94%a8%e6%a8%a1%e6%9d%bf%e7%bc%93%e5%86%b2%e5%8c%ba%e5%ae%9e%e7%8e%b0%e7%89%b9%e6%ae%8a%e6%95%88%e6%9e%9c%e4%be%8b%e5%a6%82%e6%ba%b6%e8%a7%a3%e8%b4%b4%e7%ba%b8%e5%92%8c%e8%bd%ae%e5%bb%93%e6%8f%8f%e7%bb%98">#</a>
+</h2>
+<h1 id="图形学纹理是什么-unity常用的纹理类型有哪些--常用的纹理压缩格式有哪些列举3种">
+  (图形学)纹理是什么? Unity常用的纹理类型有哪些?  常用的纹理压缩格式有哪些?(列举3种)
+  <a class="anchor" href="#%e5%9b%be%e5%bd%a2%e5%ad%a6%e7%ba%b9%e7%90%86%e6%98%af%e4%bb%80%e4%b9%88-unity%e5%b8%b8%e7%94%a8%e7%9a%84%e7%ba%b9%e7%90%86%e7%b1%bb%e5%9e%8b%e6%9c%89%e5%93%aa%e4%ba%9b--%e5%b8%b8%e7%94%a8%e7%9a%84%e7%ba%b9%e7%90%86%e5%8e%8b%e7%bc%a9%e6%a0%bc%e5%bc%8f%e6%9c%89%e5%93%aa%e4%ba%9b%e5%88%97%e4%b8%be3%e7%a7%8d">#</a>
+</h1>
+<h2 id="纹理是为图形对象mesh提供纹理外观的像素颜色的位图-位图资源jpeg-png-加载到引擎后变为纹理资源-纹理资源是存储纹素的数据结构--纹素是可以读取或者写入纹理的最小单位-在着色器读取纹理时-可以通过采样器对纹理进行筛选和读取-纹理有1d纹理-2d纹理和3d纹理-纹理经常包括若干层级的mipmap">
+  纹理是为图形对象(mesh)提供纹理外观的像素颜色的位图. 位图资源(jpeg, png) 加载到引擎后变为纹理资源, 纹理资源是存储纹素的数据结构,  纹素是可以读取或者写入纹理的最小单位. 在着色器读取纹理时, 可以通过采样器对纹理进行筛选和读取. 纹理有1d纹理, 2d纹理和3d纹理. 纹理经常包括若干层级的mipmap.
+  <a class="anchor" href="#%e7%ba%b9%e7%90%86%e6%98%af%e4%b8%ba%e5%9b%be%e5%bd%a2%e5%af%b9%e8%b1%a1mesh%e6%8f%90%e4%be%9b%e7%ba%b9%e7%90%86%e5%a4%96%e8%a7%82%e7%9a%84%e5%83%8f%e7%b4%a0%e9%a2%9c%e8%89%b2%e7%9a%84%e4%bd%8d%e5%9b%be-%e4%bd%8d%e5%9b%be%e8%b5%84%e6%ba%90jpeg-png-%e5%8a%a0%e8%bd%bd%e5%88%b0%e5%bc%95%e6%93%8e%e5%90%8e%e5%8f%98%e4%b8%ba%e7%ba%b9%e7%90%86%e8%b5%84%e6%ba%90-%e7%ba%b9%e7%90%86%e8%b5%84%e6%ba%90%e6%98%af%e5%ad%98%e5%82%a8%e7%ba%b9%e7%b4%a0%e7%9a%84%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84--%e7%ba%b9%e7%b4%a0%e6%98%af%e5%8f%af%e4%bb%a5%e8%af%bb%e5%8f%96%e6%88%96%e8%80%85%e5%86%99%e5%85%a5%e7%ba%b9%e7%90%86%e7%9a%84%e6%9c%80%e5%b0%8f%e5%8d%95%e4%bd%8d-%e5%9c%a8%e7%9d%80%e8%89%b2%e5%99%a8%e8%af%bb%e5%8f%96%e7%ba%b9%e7%90%86%e6%97%b6-%e5%8f%af%e4%bb%a5%e9%80%9a%e8%bf%87%e9%87%87%e6%a0%b7%e5%99%a8%e5%af%b9%e7%ba%b9%e7%90%86%e8%bf%9b%e8%a1%8c%e7%ad%9b%e9%80%89%e5%92%8c%e8%af%bb%e5%8f%96-%e7%ba%b9%e7%90%86%e6%9c%891d%e7%ba%b9%e7%90%86-2d%e7%ba%b9%e7%90%86%e5%92%8c3d%e7%ba%b9%e7%90%86-%e7%ba%b9%e7%90%86%e7%bb%8f%e5%b8%b8%e5%8c%85%e6%8b%ac%e8%8b%a5%e5%b9%b2%e5%b1%82%e7%ba%a7%e7%9a%84mipmap">#</a>
+</h2>
+<h2 id="类型有-default-sprite2d-andui-normalmap-editorgui-ligthmap-cookie">
+  类型有 Default, Sprite(2D andUI), NormalMap, EditorGUI, Ligthmap, Cookie
+  <a class="anchor" href="#%e7%b1%bb%e5%9e%8b%e6%9c%89-default-sprite2d-andui-normalmap-editorgui-ligthmap-cookie">#</a>
+</h2>
+<h2 id="windows下有-dxt5">
+  windows下有 DXT5
+  <a class="anchor" href="#windows%e4%b8%8b%e6%9c%89-dxt5">#</a>
+</h2>
+<h2 id="android系统下常用-etc1-etc2">
+  Android系统下常用 ETC1, ETC2,
+  <a class="anchor" href="#android%e7%b3%bb%e7%bb%9f%e4%b8%8b%e5%b8%b8%e7%94%a8-etc1-etc2">#</a>
+</h2>
+<h2 id="ios-常用-pvrtc">
+  iOS 常用 PVRTC
+  <a class="anchor" href="#ios-%e5%b8%b8%e7%94%a8-pvrtc">#</a>
+</h2>
+<h1 id="图形学-uv坐标是什么">
+  (图形学) UV坐标是什么?
+  <a class="anchor" href="#%e5%9b%be%e5%bd%a2%e5%ad%a6-uv%e5%9d%90%e6%a0%87%e6%98%af%e4%bb%80%e4%b9%88">#</a>
+</h1>
+<h2 id="todo-待完善">
+  //todo: 待完善.
+  <a class="anchor" href="#todo-%e5%be%85%e5%ae%8c%e5%96%84">#</a>
+</h2>
+<h2 id="uv坐标是归一化后normalized的纹素坐标">
+  uv坐标是归一化后(Normalized)的纹素坐标.
+  <a class="anchor" href="#uv%e5%9d%90%e6%a0%87%e6%98%af%e5%bd%92%e4%b8%80%e5%8c%96%e5%90%8enormalized%e7%9a%84%e7%ba%b9%e7%b4%a0%e5%9d%90%e6%a0%87">#</a>
+</h2>
+<h2 id="heading-2">
+  ??
+  <a class="anchor" href="#heading-2">#</a>
+</h2>
+<h1 id="图形学mipmap是什么作用">
+  (图形学)MipMap是什么，作用？
+  <a class="anchor" href="#%e5%9b%be%e5%bd%a2%e5%ad%a6mipmap%e6%98%af%e4%bb%80%e4%b9%88%e4%bd%9c%e7%94%a8">#</a>
+</h1>
+<h2 id="mipmapping在三维计算机图形的贴图渲染中有常用的技术为加快渲染进度和减少图像锯齿贴图被处理成由一系列被预先计算和优化过的图片组成的文件这样的贴图被称为mipmap">
+  MipMapping：在三维计算机图形的贴图渲染中有常用的技术，为加快渲染进度和减少图像锯齿，贴图被处理成由一系列被预先计算和优化过的图片组成的文件，这样的贴图被称为MipMap。
+  <a class="anchor" href="#mipmapping%e5%9c%a8%e4%b8%89%e7%bb%b4%e8%ae%a1%e7%ae%97%e6%9c%ba%e5%9b%be%e5%bd%a2%e7%9a%84%e8%b4%b4%e5%9b%be%e6%b8%b2%e6%9f%93%e4%b8%ad%e6%9c%89%e5%b8%b8%e7%94%a8%e7%9a%84%e6%8a%80%e6%9c%af%e4%b8%ba%e5%8a%a0%e5%bf%ab%e6%b8%b2%e6%9f%93%e8%bf%9b%e5%ba%a6%e5%92%8c%e5%87%8f%e5%b0%91%e5%9b%be%e5%83%8f%e9%94%af%e9%bd%bf%e8%b4%b4%e5%9b%be%e8%a2%ab%e5%a4%84%e7%90%86%e6%88%90%e7%94%b1%e4%b8%80%e7%b3%bb%e5%88%97%e8%a2%ab%e9%a2%84%e5%85%88%e8%ae%a1%e7%ae%97%e5%92%8c%e4%bc%98%e5%8c%96%e8%bf%87%e7%9a%84%e5%9b%be%e7%89%87%e7%bb%84%e6%88%90%e7%9a%84%e6%96%87%e4%bb%b6%e8%bf%99%e6%a0%b7%e7%9a%84%e8%b4%b4%e5%9b%be%e8%a2%ab%e7%a7%b0%e4%b8%bamipmap">#</a>
+</h2>
+<h1 id="c-难度-较高泛型接口的抗变也叫逆变-contravariance和协变covariance有什么区别">
+  (C# 难度: 较高)泛型接口的抗变(也叫逆变 Contravariance)和协变(Covariance)有什么区别?
+  <a class="anchor" href="#c-%e9%9a%be%e5%ba%a6-%e8%be%83%e9%ab%98%e6%b3%9b%e5%9e%8b%e6%8e%a5%e5%8f%a3%e7%9a%84%e6%8a%97%e5%8f%98%e4%b9%9f%e5%8f%ab%e9%80%86%e5%8f%98-contravariance%e5%92%8c%e5%8d%8f%e5%8f%98covariance%e6%9c%89%e4%bb%80%e4%b9%88%e5%8c%ba%e5%88%ab">#</a>
+</h1>
+<h2 id="先说定义-协变和逆变能够实现数组类型委托类型和泛型类型参数的隐式引用转换">
+  先说定义, 协变和逆变能够实现数组类型、委托类型和泛型类型参数的隐式引用转换。
+  <a class="anchor" href="#%e5%85%88%e8%af%b4%e5%ae%9a%e4%b9%89-%e5%8d%8f%e5%8f%98%e5%92%8c%e9%80%86%e5%8f%98%e8%83%bd%e5%a4%9f%e5%ae%9e%e7%8e%b0%e6%95%b0%e7%bb%84%e7%b1%bb%e5%9e%8b%e5%a7%94%e6%89%98%e7%b1%bb%e5%9e%8b%e5%92%8c%e6%b3%9b%e5%9e%8b%e7%b1%bb%e5%9e%8b%e5%8f%82%e6%95%b0%e7%9a%84%e9%9a%90%e5%bc%8f%e5%bc%95%e7%94%a8%e8%bd%ac%e6%8d%a2">#</a>
+</h2>
+<h1 id="在面向对象设计中子类的实例可以赋值给父类类型的变量-这是协变-如-object-o--hello-是正确的-这个是符合里氏替换原则-但是-string-s--new-object-这样的隐式转换语法不允许的-除非自定义了等号操作符-但是逆变让这种隐私转换变为合法的当然有很多前置条件">
+  在面向对象设计中子类的实例可以赋值给父类类型的变量, 这是协变. 如 object o = &ldquo;hello&rdquo; 是正确的, 这个是符合里氏替换原则, 但是 string s = new object(), 这样的隐式转换语法不允许的, 除非自定义了等号操作符. 但是逆变让这种隐私转换变为合法的,当然有很多前置条件,
+  <a class="anchor" href="#%e5%9c%a8%e9%9d%a2%e5%90%91%e5%af%b9%e8%b1%a1%e8%ae%be%e8%ae%a1%e4%b8%ad%e5%ad%90%e7%b1%bb%e7%9a%84%e5%ae%9e%e4%be%8b%e5%8f%af%e4%bb%a5%e8%b5%8b%e5%80%bc%e7%bb%99%e7%88%b6%e7%b1%bb%e7%b1%bb%e5%9e%8b%e7%9a%84%e5%8f%98%e9%87%8f-%e8%bf%99%e6%98%af%e5%8d%8f%e5%8f%98-%e5%a6%82-object-o--hello-%e6%98%af%e6%ad%a3%e7%a1%ae%e7%9a%84-%e8%bf%99%e4%b8%aa%e6%98%af%e7%ac%a6%e5%90%88%e9%87%8c%e6%b0%8f%e6%9b%bf%e6%8d%a2%e5%8e%9f%e5%88%99-%e4%bd%86%e6%98%af-string-s--new-object-%e8%bf%99%e6%a0%b7%e7%9a%84%e9%9a%90%e5%bc%8f%e8%bd%ac%e6%8d%a2%e8%af%ad%e6%b3%95%e4%b8%8d%e5%85%81%e8%ae%b8%e7%9a%84-%e9%99%a4%e9%9d%9e%e8%87%aa%e5%ae%9a%e4%b9%89%e4%ba%86%e7%ad%89%e5%8f%b7%e6%93%8d%e4%bd%9c%e7%ac%a6-%e4%bd%86%e6%98%af%e9%80%86%e5%8f%98%e8%ae%a9%e8%bf%99%e7%a7%8d%e9%9a%90%e7%a7%81%e8%bd%ac%e6%8d%a2%e5%8f%98%e4%b8%ba%e5%90%88%e6%b3%95%e7%9a%84%e5%bd%93%e7%84%b6%e6%9c%89%e5%be%88%e5%a4%9a%e5%89%8d%e7%bd%ae%e6%9d%a1%e4%bb%b6">#</a>
+</h1>
+<h2 id="首先必须是数组类型泛型委托或者泛型接口">
+  首先必须是数组类型,泛型委托或者泛型接口.
+  <a class="anchor" href="#%e9%a6%96%e5%85%88%e5%bf%85%e9%a1%bb%e6%98%af%e6%95%b0%e7%bb%84%e7%b1%bb%e5%9e%8b%e6%b3%9b%e5%9e%8b%e5%a7%94%e6%89%98%e6%88%96%e8%80%85%e6%b3%9b%e5%9e%8b%e6%8e%a5%e5%8f%a3">#</a>
+</h2>
+<h2 id="泛型参数必须用-in-关键字修饰--也就是说这个泛型参数只能作为方法的形参类型-而不能是返回值">
+  泛型参数必须用 in 关键字修饰.  也就是说这个泛型参数只能作为方法的形参类型, 而不能是返回值.
+  <a class="anchor" href="#%e6%b3%9b%e5%9e%8b%e5%8f%82%e6%95%b0%e5%bf%85%e9%a1%bb%e7%94%a8-in-%e5%85%b3%e9%94%ae%e5%ad%97%e4%bf%ae%e9%a5%b0--%e4%b9%9f%e5%b0%b1%e6%98%af%e8%af%b4%e8%bf%99%e4%b8%aa%e6%b3%9b%e5%9e%8b%e5%8f%82%e6%95%b0%e5%8f%aa%e8%83%bd%e4%bd%9c%e4%b8%ba%e6%96%b9%e6%b3%95%e7%9a%84%e5%bd%a2%e5%8f%82%e7%b1%bb%e5%9e%8b-%e8%80%8c%e4%b8%8d%e8%83%bd%e6%98%af%e8%bf%94%e5%9b%9e%e5%80%bc">#</a>
+</h2>
+<h2 id="net-framework4-之后支持变体泛型接口">
+  .net framework4 之后支持变体泛型接口.
+  <a class="anchor" href="#net-framework4-%e4%b9%8b%e5%90%8e%e6%94%af%e6%8c%81%e5%8f%98%e4%bd%93%e6%b3%9b%e5%9e%8b%e6%8e%a5%e5%8f%a3">#</a>
+</h2>
+<h2 id="委托的逆变的好处可以使用一个事件处理程序-而不是多个单独的处理程序-下面代码演示了委托的逆变">
+  委托的逆变的好处可以使用一个事件处理程序, 而不是多个单独的处理程序, 下面代码演示了委托的逆变.
+  <a class="anchor" href="#%e5%a7%94%e6%89%98%e7%9a%84%e9%80%86%e5%8f%98%e7%9a%84%e5%a5%bd%e5%a4%84%e5%8f%af%e4%bb%a5%e4%bd%bf%e7%94%a8%e4%b8%80%e4%b8%aa%e4%ba%8b%e4%bb%b6%e5%a4%84%e7%90%86%e7%a8%8b%e5%ba%8f-%e8%80%8c%e4%b8%8d%e6%98%af%e5%a4%9a%e4%b8%aa%e5%8d%95%e7%8b%ac%e7%9a%84%e5%a4%84%e7%90%86%e7%a8%8b%e5%ba%8f-%e4%b8%8b%e9%9d%a2%e4%bb%a3%e7%a0%81%e6%bc%94%e7%a4%ba%e4%ba%86%e5%a7%94%e6%89%98%e7%9a%84%e9%80%86%e5%8f%98">#</a>
+</h2>
+<h2 id="heading-3">
+  ??
+  <a class="anchor" href="#heading-3">#</a>
+</h2>
+<h2 id="泛型接口的逆变的设计还有待发掘-欢迎补充演示代码">
+  泛型接口的逆变的设计还有待发掘, 欢迎补充演示代码.
+  <a class="anchor" href="#%e6%b3%9b%e5%9e%8b%e6%8e%a5%e5%8f%a3%e7%9a%84%e9%80%86%e5%8f%98%e7%9a%84%e8%ae%be%e8%ae%a1%e8%bf%98%e6%9c%89%e5%be%85%e5%8f%91%e6%8e%98-%e6%ac%a2%e8%bf%8e%e8%a1%a5%e5%85%85%e6%bc%94%e7%a4%ba%e4%bb%a3%e7%a0%81">#</a>
+</h2>
+<h2 id="下面的代码演示了分配兼容性-协变和逆变的差异">
+  下面的代码演示了分配兼容性, 协变和逆变的差异
+  <a class="anchor" href="#%e4%b8%8b%e9%9d%a2%e7%9a%84%e4%bb%a3%e7%a0%81%e6%bc%94%e7%a4%ba%e4%ba%86%e5%88%86%e9%85%8d%e5%85%bc%e5%ae%b9%e6%80%a7-%e5%8d%8f%e5%8f%98%e5%92%8c%e9%80%86%e5%8f%98%e7%9a%84%e5%b7%ae%e5%bc%82">#</a>
+</h2>
+<h2 id="-分配兼容性">
+  // 分配兼容性
+  <a class="anchor" href="#-%e5%88%86%e9%85%8d%e5%85%bc%e5%ae%b9%e6%80%a7">#</a>
+</h2>
+<h2 id="string-str--test">
+  string str = &ldquo;test&rdquo;;
+  <a class="anchor" href="#string-str--test">#</a>
+</h2>
+<h2 id="-子类实例可以赋值给父类">
+  // 子类实例可以赋值给父类
+  <a class="anchor" href="#-%e5%ad%90%e7%b1%bb%e5%ae%9e%e4%be%8b%e5%8f%af%e4%bb%a5%e8%b5%8b%e5%80%bc%e7%bb%99%e7%88%b6%e7%b1%bb">#</a>
+</h2>
+<h2 id="object-obj--str">
+  object obj = str;
+  <a class="anchor" href="#object-obj--str">#</a>
+</h2>
+<h2 id="-协变接口-用out关键字参数定义">
+  // 协变接口, 用out关键字参数定义
+  <a class="anchor" href="#-%e5%8d%8f%e5%8f%98%e6%8e%a5%e5%8f%a3-%e7%94%a8out%e5%85%b3%e9%94%ae%e5%ad%97%e5%8f%82%e6%95%b0%e5%ae%9a%e4%b9%89">#</a>
+</h2>
+<h2 id="public-interface-ienumerableout-t--systemcollectionsienumerable">
+  public interface IEnumerable<!-- raw HTML omitted --> : System.Collections.IEnumerable
+  <a class="anchor" href="#public-interface-ienumerableout-t--systemcollectionsienumerable">#</a>
+</h2>
+<h2 id="ienumerablestring-strings--new-liststring">
+  IEnumerable<!-- raw HTML omitted --> strings = new List<!-- raw HTML omitted -->();
+  <a class="anchor" href="#ienumerablestring-strings--new-liststring">#</a>
+</h2>
+<h2 id="-ienumableobject-的泛型参数类型是-object-ienumrablestring-泛型参数类型是string--下面这样的赋值-协变符合分配兼容性">
+  // IEnumable<!-- raw HTML omitted --> 的泛型参数类型是 object, IEnumrable<!-- raw HTML omitted --> 泛型参数类型是string,  下面这样的赋值 协变符合分配兼容性
+  <a class="anchor" href="#-ienumableobject-%e7%9a%84%e6%b3%9b%e5%9e%8b%e5%8f%82%e6%95%b0%e7%b1%bb%e5%9e%8b%e6%98%af-object-ienumrablestring-%e6%b3%9b%e5%9e%8b%e5%8f%82%e6%95%b0%e7%b1%bb%e5%9e%8b%e6%98%afstring--%e4%b8%8b%e9%9d%a2%e8%bf%99%e6%a0%b7%e7%9a%84%e8%b5%8b%e5%80%bc-%e5%8d%8f%e5%8f%98%e7%ac%a6%e5%90%88%e5%88%86%e9%85%8d%e5%85%bc%e5%ae%b9%e6%80%a7">#</a>
+</h2>
+<h2 id="ienumerableobject-objects--strings">
+  IEnumerable<!-- raw HTML omitted --> objects = strings;
+  <a class="anchor" href="#ienumerableobject-objects--strings">#</a>
+</h2>
+<h1 id="-逆变委托">
+  // 逆变委托
+  <a class="anchor" href="#-%e9%80%86%e5%8f%98%e5%a7%94%e6%89%98">#</a>
+</h1>
+<h2 id="-假设有一个这样的类函数">
+  // 假设有一个这样的类函数
+  <a class="anchor" href="#-%e5%81%87%e8%ae%be%e6%9c%89%e4%b8%80%e4%b8%aa%e8%bf%99%e6%a0%b7%e7%9a%84%e7%b1%bb%e5%87%bd%e6%95%b0">#</a>
+</h2>
+<h2 id="static-void-setobjectobject-o--">
+  static void SetObject(object o) { }
+  <a class="anchor" href="#static-void-setobjectobject-o--">#</a>
+</h2>
+<h2 id="public-delegate-void-actionin-t--逆变的t-支持父类实例赋值给子类类型">
+  public delegate void Action<!-- raw HTML omitted -->  //逆变的T, 支持父类实例赋值给子类类型
+  <a class="anchor" href="#public-delegate-void-actionin-t--%e9%80%86%e5%8f%98%e7%9a%84t-%e6%94%af%e6%8c%81%e7%88%b6%e7%b1%bb%e5%ae%9e%e4%be%8b%e8%b5%8b%e5%80%bc%e7%bb%99%e5%ad%90%e7%b1%bb%e7%b1%bb%e5%9e%8b">#</a>
+</h2>
+<h2 id="actionobject-actobject--setobject--给具有逆变的委托赋值一个方法实例">
+  Action<!-- raw HTML omitted --> actObject = SetObject;  给具有逆变的委托赋值一个方法实例
+  <a class="anchor" href="#actionobject-actobject--setobject--%e7%bb%99%e5%85%b7%e6%9c%89%e9%80%86%e5%8f%98%e7%9a%84%e5%a7%94%e6%89%98%e8%b5%8b%e5%80%bc%e4%b8%80%e4%b8%aa%e6%96%b9%e6%b3%95%e5%ae%9e%e4%be%8b">#</a>
+</h2>
+<h2 id="-下面的操作是逆变-父类参数object实例赋值给子类类型string">
+  // 下面的操作是逆变, 父类参数object实例赋值给子类类型string
+  <a class="anchor" href="#-%e4%b8%8b%e9%9d%a2%e7%9a%84%e6%93%8d%e4%bd%9c%e6%98%af%e9%80%86%e5%8f%98-%e7%88%b6%e7%b1%bb%e5%8f%82%e6%95%b0object%e5%ae%9e%e4%be%8b%e8%b5%8b%e5%80%bc%e7%bb%99%e5%ad%90%e7%b1%bb%e7%b1%bb%e5%9e%8bstring">#</a>
+</h2>
+<h2 id="-逆变违反了分配兼容">
+  // 逆变违反了分配兼容
+  <a class="anchor" href="#-%e9%80%86%e5%8f%98%e8%bf%9d%e5%8f%8d%e4%ba%86%e5%88%86%e9%85%8d%e5%85%bc%e5%ae%b9">#</a>
+</h2>
+<h2 id="actionstring-actstring--actobject">
+  Action<!-- raw HTML omitted --> actString = actObject;
+  <a class="anchor" href="#actionstring-actstring--actobject">#</a>
+</h2>
+<h2 id="当泛型参数用-out-关键字修饰-意味着其为协变泛型接口-这时接口的方法只能把-t-作为函数的返回值类型-而不能作为函数的形参类型-如">
+  当泛型参数用 out 关键字修饰, 意味着其为协变泛型接口, 这时接口的方法只能把 T 作为函数的返回值类型, 而不能作为函数的形参类型 如:
+  <a class="anchor" href="#%e5%bd%93%e6%b3%9b%e5%9e%8b%e5%8f%82%e6%95%b0%e7%94%a8-out-%e5%85%b3%e9%94%ae%e5%ad%97%e4%bf%ae%e9%a5%b0-%e6%84%8f%e5%91%b3%e7%9d%80%e5%85%b6%e4%b8%ba%e5%8d%8f%e5%8f%98%e6%b3%9b%e5%9e%8b%e6%8e%a5%e5%8f%a3-%e8%bf%99%e6%97%b6%e6%8e%a5%e5%8f%a3%e7%9a%84%e6%96%b9%e6%b3%95%e5%8f%aa%e8%83%bd%e6%8a%8a-t-%e4%bd%9c%e4%b8%ba%e5%87%bd%e6%95%b0%e7%9a%84%e8%bf%94%e5%9b%9e%e5%80%bc%e7%b1%bb%e5%9e%8b-%e8%80%8c%e4%b8%8d%e8%83%bd%e4%bd%9c%e4%b8%ba%e5%87%bd%e6%95%b0%e7%9a%84%e5%bd%a2%e5%8f%82%e7%b1%bb%e5%9e%8b-%e5%a6%82">#</a>
+</h2>
+<h2 id="协变接口">
+  //协变接口
+  <a class="anchor" href="#%e5%8d%8f%e5%8f%98%e6%8e%a5%e5%8f%a3">#</a>
+</h2>
+<h2 id="public-interface-ienumerableout-t--systemcollectionsienumerable-1">
+  public interface IEnumerable<!-- raw HTML omitted --> : System.Collections.IEnumerable
+  <a class="anchor" href="#public-interface-ienumerableout-t--systemcollectionsienumerable-1">#</a>
+</h2>
+<h2 id="heading-4">
+  {
+  <a class="anchor" href="#heading-4">#</a>
+</h2>
+<h2 id="t-myfunciton---正确-t是协变">
+  T MyFunciton();  // 正确, T是协变
+  <a class="anchor" href="#t-myfunciton---%e6%ad%a3%e7%a1%ae-t%e6%98%af%e5%8d%8f%e5%8f%98">#</a>
+</h2>
+<h2 id="-编译错误-error-cs1961-变型无效-类型参数t必须是在">
+  // 编译错误 error CS1961: 变型无效: 类型参数“T”必须是在
+  <a class="anchor" href="#-%e7%bc%96%e8%af%91%e9%94%99%e8%af%af-error-cs1961-%e5%8f%98%e5%9e%8b%e6%97%a0%e6%95%88-%e7%b1%bb%e5%9e%8b%e5%8f%82%e6%95%b0t%e5%bf%85%e9%a1%bb%e6%98%af%e5%9c%a8">#</a>
+</h2>
+<h2 id="-interface1tfunction2t上有效的-逆变式t为-协变">
+  // “interface1<!-- raw HTML omitted -->.function2(T)”上有效的 逆变式。“T”为 协变。
+  <a class="anchor" href="#-interface1tfunction2t%e4%b8%8a%e6%9c%89%e6%95%88%e7%9a%84-%e9%80%86%e5%8f%98%e5%bc%8ft%e4%b8%ba-%e5%8d%8f%e5%8f%98">#</a>
+</h2>
+<h2 id="void-myfunciton2t-t">
+  void MyFunciton2(T t);
+  <a class="anchor" href="#void-myfunciton2t-t">#</a>
+</h2>
+<h2 id="heading-5">
+  }
+  <a class="anchor" href="#heading-5">#</a>
+</h2>
+<h2 id="当泛型参数用-in-关键字修饰-意味着逆变--t只能作为方法的形参类型-不能作为函数的返回值类型">
+  当泛型参数用 in 关键字修饰, 意味着逆变 , T只能作为方法的形参类型, 不能作为函数的返回值类型
+  <a class="anchor" href="#%e5%bd%93%e6%b3%9b%e5%9e%8b%e5%8f%82%e6%95%b0%e7%94%a8-in-%e5%85%b3%e9%94%ae%e5%ad%97%e4%bf%ae%e9%a5%b0-%e6%84%8f%e5%91%b3%e7%9d%80%e9%80%86%e5%8f%98--t%e5%8f%aa%e8%83%bd%e4%bd%9c%e4%b8%ba%e6%96%b9%e6%b3%95%e7%9a%84%e5%bd%a2%e5%8f%82%e7%b1%bb%e5%9e%8b-%e4%b8%8d%e8%83%bd%e4%bd%9c%e4%b8%ba%e5%87%bd%e6%95%b0%e7%9a%84%e8%bf%94%e5%9b%9e%e5%80%bc%e7%b1%bb%e5%9e%8b">#</a>
+</h2>
+<h2 id="public-interface-iequalitycomparerin-t">
+  public interface IEqualityComparer<!-- raw HTML omitted -->
+  <a class="anchor" href="#public-interface-iequalitycomparerin-t">#</a>
+</h2>
+<h2 id="heading-6">
+  {
+  <a class="anchor" href="#heading-6">#</a>
+</h2>
+<h2 id="void-myfunctiont-t-正确">
+  void MyFunction(T t); //正确,
+  <a class="anchor" href="#void-myfunctiont-t-%e6%ad%a3%e7%a1%ae">#</a>
+</h2>
+<h2 id="t-myfunction2--编译错误--error-cs1961-变型无效-类型参数t必须是在interface2tfunction2上有效的-协变式t为-逆变">
+  T MyFunction2();  //编译错误  error CS1961: 变型无效: 类型参数“T”必须是在“interface2<!-- raw HTML omitted -->.function2()”上有效的 协变式。“T”为 逆变。
+  <a class="anchor" href="#t-myfunction2--%e7%bc%96%e8%af%91%e9%94%99%e8%af%af--error-cs1961-%e5%8f%98%e5%9e%8b%e6%97%a0%e6%95%88-%e7%b1%bb%e5%9e%8b%e5%8f%82%e6%95%b0t%e5%bf%85%e9%a1%bb%e6%98%af%e5%9c%a8interface2tfunction2%e4%b8%8a%e6%9c%89%e6%95%88%e7%9a%84-%e5%8d%8f%e5%8f%98%e5%bc%8ft%e4%b8%ba-%e9%80%86%e5%8f%98">#</a>
+</h2>
+<h2 id="heading-7">
+  }
+  <a class="anchor" href="#heading-7">#</a>
+</h2>
+<h1 id="泛型接口的抗变和协变统称为变体泛型接口-以上资料参考">
+  泛型接口的抗变和协变统称为变体泛型接口 以上资料参考:
+  <a class="anchor" href="#%e6%b3%9b%e5%9e%8b%e6%8e%a5%e5%8f%a3%e7%9a%84%e6%8a%97%e5%8f%98%e5%92%8c%e5%8d%8f%e5%8f%98%e7%bb%9f%e7%a7%b0%e4%b8%ba%e5%8f%98%e4%bd%93%e6%b3%9b%e5%9e%8b%e6%8e%a5%e5%8f%a3-%e4%bb%a5%e4%b8%8a%e8%b5%84%e6%96%99%e5%8f%82%e8%80%83">#</a>
+</h1>
+<h2 id="c中的逆变和协变httpsdocsmicrosoftcomzh-cndotnetcsharpprogramming-guideconceptscovariance-contravariance">
+  <a href="https://docs.microsoft.com/zh-cn/dotnet/csharp/programming-guide/concepts/covariance-contravariance/">c#中的逆变和协变</a>
+  <a class="anchor" href="#c%e4%b8%ad%e7%9a%84%e9%80%86%e5%8f%98%e5%92%8c%e5%8d%8f%e5%8f%98httpsdocsmicrosoftcomzh-cndotnetcsharpprogramming-guideconceptscovariance-contravariance">#</a>
+</h2>
+<h2 id="委托中变体httpsdocsmicrosoftcomzh-cndotnetcsharpprogramming-guideconceptscovariance-contravarianceusing-variance-in-delegates">
+  <a href="https://docs.microsoft.com/zh-cn/dotnet/csharp/programming-guide/concepts/covariance-contravariance/using-variance-in-delegates">委托中变体</a>
+  <a class="anchor" href="#%e5%a7%94%e6%89%98%e4%b8%ad%e5%8f%98%e4%bd%93httpsdocsmicrosoftcomzh-cndotnetcsharpprogramming-guideconceptscovariance-contravarianceusing-variance-in-delegates">#</a>
+</h2>
+<h2 id="泛型接口中的变体httpsdocsmicrosoftcomzh-cndotnetcsharpprogramming-guideconceptscovariance-contravariancevariance-in-generic-interfaces">
+  <a href="https://docs.microsoft.com/zh-cn/dotnet/csharp/programming-guide/concepts/covariance-contravariance/variance-in-generic-interfaces">泛型接口中的变体</a>
+  <a class="anchor" href="#%e6%b3%9b%e5%9e%8b%e6%8e%a5%e5%8f%a3%e4%b8%ad%e7%9a%84%e5%8f%98%e4%bd%93httpsdocsmicrosoftcomzh-cndotnetcsharpprogramming-guideconceptscovariance-contravariancevariance-in-generic-interfaces">#</a>
+</h2>
+<h2 id="在泛型集合的接口中使用变体httpsdocsmicrosoftcomzh-cndotnetcsharpprogramming-guideconceptscovariance-contravarianceusing-variance-in-interfaces-for-generic-collections">
+  <a href="https://docs.microsoft.com/zh-cn/dotnet/csharp/programming-guide/concepts/covariance-contravariance/using-variance-in-interfaces-for-generic-collections">在泛型集合的接口中使用变体</a>
+  <a class="anchor" href="#%e5%9c%a8%e6%b3%9b%e5%9e%8b%e9%9b%86%e5%90%88%e7%9a%84%e6%8e%a5%e5%8f%a3%e4%b8%ad%e4%bd%bf%e7%94%a8%e5%8f%98%e4%bd%93httpsdocsmicrosoftcomzh-cndotnetcsharpprogramming-guideconceptscovariance-contravarianceusing-variance-in-interfaces-for-generic-collections">#</a>
+</h2>
+<h1 id="动态加载资源的方式">
+  动态加载资源的方式？
+  <a class="anchor" href="#%e5%8a%a8%e6%80%81%e5%8a%a0%e8%bd%bd%e8%b5%84%e6%ba%90%e7%9a%84%e6%96%b9%e5%bc%8f">#</a>
+</h1>
+<h2 id="1resourcesload">
+  1.Resources.Load();
+  <a class="anchor" href="#1resourcesload">#</a>
+</h2>
+<h2 id="2assetbundle">
+  2.AssetBundle
+  <a class="anchor" href="#2assetbundle">#</a>
+</h2>
+<h2 id="heading-8">
+  ??
+  <a class="anchor" href="#heading-8">#</a>
+</h2>
+<h2 id="assetbundle相关">
+  AssetBundle相关
+  <a class="anchor" href="#assetbundle%e7%9b%b8%e5%85%b3">#</a>
+</h2>
+<h2 id="在通过assetbundleunloadfalse卸载assetbundle对象后如果重新创建该对象并加载之前加载过的资源到内存时会出现冗余即两份相同的资源">
+  在通过AssetBundle.Unload(false)卸载AssetBundle对象后，如果重新创建该对象并加载之前加载过的资源到内存时，会出现冗余，即两份相同的资源。
+  <a class="anchor" href="#%e5%9c%a8%e9%80%9a%e8%bf%87assetbundleunloadfalse%e5%8d%b8%e8%bd%bdassetbundle%e5%af%b9%e8%b1%a1%e5%90%8e%e5%a6%82%e6%9e%9c%e9%87%8d%e6%96%b0%e5%88%9b%e5%bb%ba%e8%af%a5%e5%af%b9%e8%b1%a1%e5%b9%b6%e5%8a%a0%e8%bd%bd%e4%b9%8b%e5%89%8d%e5%8a%a0%e8%bd%bd%e8%bf%87%e7%9a%84%e8%b5%84%e6%ba%90%e5%88%b0%e5%86%85%e5%ad%98%e6%97%b6%e4%bc%9a%e5%87%ba%e7%8e%b0%e5%86%97%e4%bd%99%e5%8d%b3%e4%b8%a4%e4%bb%bd%e7%9b%b8%e5%90%8c%e7%9a%84%e8%b5%84%e6%ba%90">#</a>
+</h2>
+<h2 id="被脚本的静态变量引用的资源在调用resourcesunloadunusedassets时并不会被卸载在profiler中能够看到其引用情况">
+  被脚本的静态变量引用的资源，在调用Resources.UnloadUnusedAssets时，并不会被卸载，在Profiler中能够看到其引用情况。
+  <a class="anchor" href="#%e8%a2%ab%e8%84%9a%e6%9c%ac%e7%9a%84%e9%9d%99%e6%80%81%e5%8f%98%e9%87%8f%e5%bc%95%e7%94%a8%e7%9a%84%e8%b5%84%e6%ba%90%e5%9c%a8%e8%b0%83%e7%94%a8resourcesunloadunusedassets%e6%97%b6%e5%b9%b6%e4%b8%8d%e4%bc%9a%e8%a2%ab%e5%8d%b8%e8%bd%bd%e5%9c%a8profiler%e4%b8%ad%e8%83%bd%e5%a4%9f%e7%9c%8b%e5%88%b0%e5%85%b6%e5%bc%95%e7%94%a8%e6%83%85%e5%86%b5">#</a>
+</h2>
+<h1 id="unity3d从唤醒到销毁有一段生命周期请列出系统自己调用的几个重要方法">
+  unity3d从唤醒到销毁有一段生命周期，请列出系统自己调用的几个重要方法？
+  <a class="anchor" href="#unity3d%e4%bb%8e%e5%94%a4%e9%86%92%e5%88%b0%e9%94%80%e6%af%81%e6%9c%89%e4%b8%80%e6%ae%b5%e7%94%9f%e5%91%bd%e5%91%a8%e6%9c%9f%e8%af%b7%e5%88%97%e5%87%ba%e7%b3%bb%e7%bb%9f%e8%87%aa%e5%b7%b1%e8%b0%83%e7%94%a8%e7%9a%84%e5%87%a0%e4%b8%aa%e9%87%8d%e8%a6%81%e6%96%b9%e6%b3%95">#</a>
+</h1>
+<h2 id="答awake------start-----update-----fixedupdate----lateupdate----ongui---reset----ondisable---ondestory">
+  答：Awake &mdash;&gt;  Start &mdash;&gt; Update  &ndash;&gt; FixedUpdate &ndash;&gt; LateUpdate &mdash;&gt;OnGUI &ndash;&gt;Reset &ndash;&gt; OnDisable &ndash;&gt;OnDestory;
+  <a class="anchor" href="#%e7%ad%94awake------start-----update-----fixedupdate----lateupdate----ongui---reset----ondisable---ondestory">#</a>
+</h2>
+<h1 id="什么是协同程序">
+  什么是协同程序？
+  <a class="anchor" href="#%e4%bb%80%e4%b9%88%e6%98%af%e5%8d%8f%e5%90%8c%e7%a8%8b%e5%ba%8f">#</a>
+</h1>
+<h2 id="在主线程运行的同时开启另一段逻辑处理来协助当前程序的执行协程很像多线程但是不是多线程unity的协程是在每帧结束之后去检测yield的条件是否满足">
+  在主线程运行的同时开启另一段逻辑处理，来协助当前程序的执行，协程很像多线程，但是不是多线程，Unity的协程是在每帧结束之后去检测yield的条件是否满足。
+  <a class="anchor" href="#%e5%9c%a8%e4%b8%bb%e7%ba%bf%e7%a8%8b%e8%bf%90%e8%a1%8c%e7%9a%84%e5%90%8c%e6%97%b6%e5%bc%80%e5%90%af%e5%8f%a6%e4%b8%80%e6%ae%b5%e9%80%bb%e8%be%91%e5%a4%84%e7%90%86%e6%9d%a5%e5%8d%8f%e5%8a%a9%e5%bd%93%e5%89%8d%e7%a8%8b%e5%ba%8f%e7%9a%84%e6%89%a7%e8%a1%8c%e5%8d%8f%e7%a8%8b%e5%be%88%e5%83%8f%e5%a4%9a%e7%ba%bf%e7%a8%8b%e4%bd%86%e6%98%af%e4%b8%8d%e6%98%af%e5%a4%9a%e7%ba%bf%e7%a8%8bunity%e7%9a%84%e5%8d%8f%e7%a8%8b%e6%98%af%e5%9c%a8%e6%af%8f%e5%b8%a7%e7%bb%93%e6%9d%9f%e4%b9%8b%e5%90%8e%e5%8e%bb%e6%a3%80%e6%b5%8byield%e7%9a%84%e6%9d%a1%e4%bb%b6%e6%98%af%e5%90%a6%e6%bb%a1%e8%b6%b3">#</a>
+</h2>
+<h1 id="lod是什么优缺点是什么">
+  LOD是什么，优缺点是什么？
+  <a class="anchor" href="#lod%e6%98%af%e4%bb%80%e4%b9%88%e4%bc%98%e7%bc%ba%e7%82%b9%e6%98%af%e4%bb%80%e4%b9%88">#</a>
+</h1>
+<h2 id="lodlevel-of-detail多层次细节是最常用的游戏优化技术它按照模型的位置和重要程度决定物体渲染的资源分配降低非重要物体的面数和细节度从而获得高效率的渲染运算缺点是增加了内存">
+  LOD(Level of detail)多层次细节，是最常用的游戏优化技术。它按照模型的位置和重要程度决定物体渲染的资源分配，降低非重要物体的面数和细节度，从而获得高效率的渲染运算。缺点是增加了内存。
+  <a class="anchor" href="#lodlevel-of-detail%e5%a4%9a%e5%b1%82%e6%ac%a1%e7%bb%86%e8%8a%82%e6%98%af%e6%9c%80%e5%b8%b8%e7%94%a8%e7%9a%84%e6%b8%b8%e6%88%8f%e4%bc%98%e5%8c%96%e6%8a%80%e6%9c%af%e5%ae%83%e6%8c%89%e7%85%a7%e6%a8%a1%e5%9e%8b%e7%9a%84%e4%bd%8d%e7%bd%ae%e5%92%8c%e9%87%8d%e8%a6%81%e7%a8%8b%e5%ba%a6%e5%86%b3%e5%ae%9a%e7%89%a9%e4%bd%93%e6%b8%b2%e6%9f%93%e7%9a%84%e8%b5%84%e6%ba%90%e5%88%86%e9%85%8d%e9%99%8d%e4%bd%8e%e9%9d%9e%e9%87%8d%e8%a6%81%e7%89%a9%e4%bd%93%e7%9a%84%e9%9d%a2%e6%95%b0%e5%92%8c%e7%bb%86%e8%8a%82%e5%ba%a6%e4%bb%8e%e8%80%8c%e8%8e%b7%e5%be%97%e9%ab%98%e6%95%88%e7%8e%87%e7%9a%84%e6%b8%b2%e6%9f%93%e8%bf%90%e7%ae%97%e7%bc%ba%e7%82%b9%e6%98%af%e5%a2%9e%e5%8a%a0%e4%ba%86%e5%86%85%e5%ad%98">#</a>
+</h2>
+<h1 id="什么叫动态合批跟静态合批有什么区别">
+  什么叫动态合批？跟静态合批有什么区别？
+  <a class="anchor" href="#%e4%bb%80%e4%b9%88%e5%8f%ab%e5%8a%a8%e6%80%81%e5%90%88%e6%89%b9%e8%b7%9f%e9%9d%99%e6%80%81%e5%90%88%e6%89%b9%e6%9c%89%e4%bb%80%e4%b9%88%e5%8c%ba%e5%88%ab">#</a>
+</h1>
+<h2 id="如果动态物体共用着相同的材质那么unity会自动对这些物体进行批处理动态批处理操作是自动完成的并不需要你进行额外的操作">
+  如果动态物体共用着相同的材质，那么Unity会自动对这些物体进行批处理。动态批处理操作是自动完成的，并不需要你进行额外的操作。
+  <a class="anchor" href="#%e5%a6%82%e6%9e%9c%e5%8a%a8%e6%80%81%e7%89%a9%e4%bd%93%e5%85%b1%e7%94%a8%e7%9d%80%e7%9b%b8%e5%90%8c%e7%9a%84%e6%9d%90%e8%b4%a8%e9%82%a3%e4%b9%88unity%e4%bc%9a%e8%87%aa%e5%8a%a8%e5%af%b9%e8%bf%99%e4%ba%9b%e7%89%a9%e4%bd%93%e8%bf%9b%e8%a1%8c%e6%89%b9%e5%a4%84%e7%90%86%e5%8a%a8%e6%80%81%e6%89%b9%e5%a4%84%e7%90%86%e6%93%8d%e4%bd%9c%e6%98%af%e8%87%aa%e5%8a%a8%e5%ae%8c%e6%88%90%e7%9a%84%e5%b9%b6%e4%b8%8d%e9%9c%80%e8%a6%81%e4%bd%a0%e8%bf%9b%e8%a1%8c%e9%a2%9d%e5%a4%96%e7%9a%84%e6%93%8d%e4%bd%9c">#</a>
+</h2>
+<h2 id="区别动态批处理一切都是自动的不需要做任何操作而且物体是可以移动的但是限制很多">
+  区别：动态批处理一切都是自动的，不需要做任何操作，而且物体是可以移动的，但是限制很多。
+  <a class="anchor" href="#%e5%8c%ba%e5%88%ab%e5%8a%a8%e6%80%81%e6%89%b9%e5%a4%84%e7%90%86%e4%b8%80%e5%88%87%e9%83%bd%e6%98%af%e8%87%aa%e5%8a%a8%e7%9a%84%e4%b8%8d%e9%9c%80%e8%a6%81%e5%81%9a%e4%bb%bb%e4%bd%95%e6%93%8d%e4%bd%9c%e8%80%8c%e4%b8%94%e7%89%a9%e4%bd%93%e6%98%af%e5%8f%af%e4%bb%a5%e7%a7%bb%e5%8a%a8%e7%9a%84%e4%bd%86%e6%98%af%e9%99%90%e5%88%b6%e5%be%88%e5%a4%9a">#</a>
+</h2>
+<h2 id="静态批处理自由度很高限制很少缺点可能会占用更多的内存而且经过静态批处理后的所有物体都不可以再移动了">
+  静态批处理：自由度很高，限制很少，缺点可能会占用更多的内存，而且经过静态批处理后的所有物体都不可以再移动了
+  <a class="anchor" href="#%e9%9d%99%e6%80%81%e6%89%b9%e5%a4%84%e7%90%86%e8%87%aa%e7%94%b1%e5%ba%a6%e5%be%88%e9%ab%98%e9%99%90%e5%88%b6%e5%be%88%e5%b0%91%e7%bc%ba%e7%82%b9%e5%8f%af%e8%83%bd%e4%bc%9a%e5%8d%a0%e7%94%a8%e6%9b%b4%e5%a4%9a%e7%9a%84%e5%86%85%e5%ad%98%e8%80%8c%e4%b8%94%e7%bb%8f%e8%bf%87%e9%9d%99%e6%80%81%e6%89%b9%e5%a4%84%e7%90%86%e5%90%8e%e7%9a%84%e6%89%80%e6%9c%89%e7%89%a9%e4%bd%93%e9%83%bd%e4%b8%8d%e5%8f%af%e4%bb%a5%e5%86%8d%e7%a7%bb%e5%8a%a8%e4%ba%86">#</a>
+</h2>
+<h1 id="6大oo设计原则">
+  6大OO设计原则？
+  <a class="anchor" href="#6%e5%a4%a7oo%e8%ae%be%e8%ae%a1%e5%8e%9f%e5%88%99">#</a>
+</h1>
+<h2 id="1开闭原则">
+  1.开闭原则
+  <a class="anchor" href="#1%e5%bc%80%e9%97%ad%e5%8e%9f%e5%88%99">#</a>
+</h2>
+<h2 id="2单一职责原则">
+  2.单一职责原则
+  <a class="anchor" href="#2%e5%8d%95%e4%b8%80%e8%81%8c%e8%b4%a3%e5%8e%9f%e5%88%99">#</a>
+</h2>
+<h2 id="3依赖倒置原则">
+  3.依赖倒置原则
+  <a class="anchor" href="#3%e4%be%9d%e8%b5%96%e5%80%92%e7%bd%ae%e5%8e%9f%e5%88%99">#</a>
+</h2>
+<h2 id="4接口隔离原则">
+  4.接口隔离原则
+  <a class="anchor" href="#4%e6%8e%a5%e5%8f%a3%e9%9a%94%e7%a6%bb%e5%8e%9f%e5%88%99">#</a>
+</h2>
+<h2 id="5迪米特法则">
+  5.迪米特法则
+  <a class="anchor" href="#5%e8%bf%aa%e7%b1%b3%e7%89%b9%e6%b3%95%e5%88%99">#</a>
+</h2>
+<h2 id="6里氏替换原则">
+  6.里氏替换原则
+  <a class="anchor" href="#6%e9%87%8c%e6%b0%8f%e6%9b%bf%e6%8d%a2%e5%8e%9f%e5%88%99">#</a>
+</h2>
+<h1 id="什么是里氏代换原则">
+  什么是里氏代换原则？
+  <a class="anchor" href="#%e4%bb%80%e4%b9%88%e6%98%af%e9%87%8c%e6%b0%8f%e4%bb%a3%e6%8d%a2%e5%8e%9f%e5%88%99">#</a>
+</h1>
+<h2 id="里氏替换原则liskov-substitution-principle-lsp面向对象设计的基本原则之一通俗点就是子类对象可以赋值给基类对象基类对象不能赋值给子类对象">
+  里氏替换原则(Liskov Substitution Principle LSP)面向对象设计的基本原则之一。通俗点：就是子类对象可以赋值给基类对象，基类对象不能赋值给子类对象
+  <a class="anchor" href="#%e9%87%8c%e6%b0%8f%e6%9b%bf%e6%8d%a2%e5%8e%9f%e5%88%99liskov-substitution-principle-lsp%e9%9d%a2%e5%90%91%e5%af%b9%e8%b1%a1%e8%ae%be%e8%ae%a1%e7%9a%84%e5%9f%ba%e6%9c%ac%e5%8e%9f%e5%88%99%e4%b9%8b%e4%b8%80%e9%80%9a%e4%bf%97%e7%82%b9%e5%b0%b1%e6%98%af%e5%ad%90%e7%b1%bb%e5%af%b9%e8%b1%a1%e5%8f%af%e4%bb%a5%e8%b5%8b%e5%80%bc%e7%bb%99%e5%9f%ba%e7%b1%bb%e5%af%b9%e8%b1%a1%e5%9f%ba%e7%b1%bb%e5%af%b9%e8%b1%a1%e4%b8%8d%e8%83%bd%e8%b5%8b%e5%80%bc%e7%bb%99%e5%ad%90%e7%b1%bb%e5%af%b9%e8%b1%a1">#</a>
+</h2>
+<h2 id="你能说出几种创建型模式">
+  你能说出几种创建型模式
+  <a class="anchor" href="#%e4%bd%a0%e8%83%bd%e8%af%b4%e5%87%ba%e5%87%a0%e7%a7%8d%e5%88%9b%e5%bb%ba%e5%9e%8b%e6%a8%a1%e5%bc%8f">#</a>
+</h2>
+<h2 id="抽象工厂">
+  抽象工厂
+  <a class="anchor" href="#%e6%8a%bd%e8%b1%a1%e5%b7%a5%e5%8e%82">#</a>
+</h2>
+<h2 id="建造者">
+  建造者
+  <a class="anchor" href="#%e5%bb%ba%e9%80%a0%e8%80%85">#</a>
+</h2>
+<h2 id="工厂">
+  工厂
+  <a class="anchor" href="#%e5%b7%a5%e5%8e%82">#</a>
+</h2>
+<h2 id="原型模式克隆模式">
+  原型模式/克隆模式
+  <a class="anchor" href="#%e5%8e%9f%e5%9e%8b%e6%a8%a1%e5%bc%8f%e5%85%8b%e9%9a%86%e6%a8%a1%e5%bc%8f">#</a>
+</h2>
+<h2 id="单例模式">
+  单例模式
+  <a class="anchor" href="#%e5%8d%95%e4%be%8b%e6%a8%a1%e5%bc%8f">#</a>
+</h2>
+<h2 id="简述mvcmvpmvvm三种模式">
+  简述MVC、MVP、MVVM三种模式
+  <a class="anchor" href="#%e7%ae%80%e8%bf%b0mvcmvpmvvm%e4%b8%89%e7%a7%8d%e6%a8%a1%e5%bc%8f">#</a>
+</h2>
+<h2 id="你有了解过多少种软件的分层结构">
+  你有了解过多少种软件的分层结构
+  <a class="anchor" href="#%e4%bd%a0%e6%9c%89%e4%ba%86%e8%a7%a3%e8%bf%87%e5%a4%9a%e5%b0%91%e7%a7%8d%e8%bd%af%e4%bb%b6%e7%9a%84%e5%88%86%e5%b1%82%e7%bb%93%e6%9e%84">#</a>
+</h2>
+<h2 id="三层架构六边形洋葱架构整洁架构">
+  三层架构、六边形、洋葱架构、整洁架构
+  <a class="anchor" href="#%e4%b8%89%e5%b1%82%e6%9e%b6%e6%9e%84%e5%85%ad%e8%be%b9%e5%bd%a2%e6%b4%8b%e8%91%b1%e6%9e%b6%e6%9e%84%e6%95%b4%e6%b4%81%e6%9e%b6%e6%9e%84">#</a>
+</h2>
+<h1 id="在编辑场景时将gameobject设置为static有何作用">
+  在编辑场景时将GameObject设置为Static有何作用？
+  <a class="anchor" href="#%e5%9c%a8%e7%bc%96%e8%be%91%e5%9c%ba%e6%99%af%e6%97%b6%e5%b0%86gameobject%e8%ae%be%e7%bd%ae%e4%b8%bastatic%e6%9c%89%e4%bd%95%e4%bd%9c%e7%94%a8">#</a>
+</h1>
+<h2 id="设置游戏对象为static时这些部分被静态物体挡住而不可见时将会剔除或禁用网格对象因此在你的场景中的所有不会动的物体都应该标记为static">
+  设置游戏对象为Static时，这些部分被静态物体挡住而不可见时，将会剔除（或禁用）网格对象。因此，在你的场景中的所有不会动的物体都应该标记为Static。
+  <a class="anchor" href="#%e8%ae%be%e7%bd%ae%e6%b8%b8%e6%88%8f%e5%af%b9%e8%b1%a1%e4%b8%bastatic%e6%97%b6%e8%bf%99%e4%ba%9b%e9%83%a8%e5%88%86%e8%a2%ab%e9%9d%99%e6%80%81%e7%89%a9%e4%bd%93%e6%8c%a1%e4%bd%8f%e8%80%8c%e4%b8%8d%e5%8f%af%e8%a7%81%e6%97%b6%e5%b0%86%e4%bc%9a%e5%89%94%e9%99%a4%e6%88%96%e7%a6%81%e7%94%a8%e7%bd%91%e6%a0%bc%e5%af%b9%e8%b1%a1%e5%9b%a0%e6%ad%a4%e5%9c%a8%e4%bd%a0%e7%9a%84%e5%9c%ba%e6%99%af%e4%b8%ad%e7%9a%84%e6%89%80%e6%9c%89%e4%b8%8d%e4%bc%9a%e5%8a%a8%e7%9a%84%e7%89%a9%e4%bd%93%e9%83%bd%e5%ba%94%e8%af%a5%e6%a0%87%e8%ae%b0%e4%b8%bastatic">#</a>
+</h2>
+<h2 id="如果你在游戏中编写一个类不想让其他同事继承这个类你会怎么办">
+  如果你在游戏中编写一个类，不想让其他同事继承这个类，你会怎么办？
+  <a class="anchor" href="#%e5%a6%82%e6%9e%9c%e4%bd%a0%e5%9c%a8%e6%b8%b8%e6%88%8f%e4%b8%ad%e7%bc%96%e5%86%99%e4%b8%80%e4%b8%aa%e7%b1%bb%e4%b8%8d%e6%83%b3%e8%ae%a9%e5%85%b6%e4%bb%96%e5%90%8c%e4%ba%8b%e7%bb%a7%e6%89%bf%e8%bf%99%e4%b8%aa%e7%b1%bb%e4%bd%a0%e4%bc%9a%e6%80%8e%e4%b9%88%e5%8a%9e">#</a>
+</h2>
+<h2 id="在类声明时与函数声明时的作用sealed修饰的类为密封类类声明时可防止其他类继承此类在方法中声明则可防止派生类重写此方法">
+  在类声明时与函数声明时的作用sealed修饰的类为密封类，类声明时可防止其他类继承此类，在方法中声明则可防止派生类重写此方法。
+  <a class="anchor" href="#%e5%9c%a8%e7%b1%bb%e5%a3%b0%e6%98%8e%e6%97%b6%e4%b8%8e%e5%87%bd%e6%95%b0%e5%a3%b0%e6%98%8e%e6%97%b6%e7%9a%84%e4%bd%9c%e7%94%a8sealed%e4%bf%ae%e9%a5%b0%e7%9a%84%e7%b1%bb%e4%b8%ba%e5%af%86%e5%b0%81%e7%b1%bb%e7%b1%bb%e5%a3%b0%e6%98%8e%e6%97%b6%e5%8f%af%e9%98%b2%e6%ad%a2%e5%85%b6%e4%bb%96%e7%b1%bb%e7%bb%a7%e6%89%bf%e6%ad%a4%e7%b1%bb%e5%9c%a8%e6%96%b9%e6%b3%95%e4%b8%ad%e5%a3%b0%e6%98%8e%e5%88%99%e5%8f%af%e9%98%b2%e6%ad%a2%e6%b4%be%e7%94%9f%e7%b1%bb%e9%87%8d%e5%86%99%e6%ad%a4%e6%96%b9%e6%b3%95">#</a>
+</h2>
+<h1 id="如何理解委托">
+  如何理解委托？
+  <a class="anchor" href="#%e5%a6%82%e4%bd%95%e7%90%86%e8%a7%a3%e5%a7%94%e6%89%98">#</a>
+</h1>
+<h2 id="委托类似于-c-函数指针但它是类型安全的委托允许将方法作为参数进行传递委托可用于定义回调方法委托可以链接在一起例如可以对一个事件调用多个方法方法不需要与委托签名精确匹配">
+  委托类似于 C++ 函数指针，但它是类型安全的。委托允许将方法作为参数进行传递。委托可用于定义回调方法。委托可以链接在一起；例如，可以对一个事件调用多个方法。方法不需要与委托签名精确匹配。
+  <a class="anchor" href="#%e5%a7%94%e6%89%98%e7%b1%bb%e4%bc%bc%e4%ba%8e-c-%e5%87%bd%e6%95%b0%e6%8c%87%e9%92%88%e4%bd%86%e5%ae%83%e6%98%af%e7%b1%bb%e5%9e%8b%e5%ae%89%e5%85%a8%e7%9a%84%e5%a7%94%e6%89%98%e5%85%81%e8%ae%b8%e5%b0%86%e6%96%b9%e6%b3%95%e4%bd%9c%e4%b8%ba%e5%8f%82%e6%95%b0%e8%bf%9b%e8%a1%8c%e4%bc%a0%e9%80%92%e5%a7%94%e6%89%98%e5%8f%af%e7%94%a8%e4%ba%8e%e5%ae%9a%e4%b9%89%e5%9b%9e%e8%b0%83%e6%96%b9%e6%b3%95%e5%a7%94%e6%89%98%e5%8f%af%e4%bb%a5%e9%93%be%e6%8e%a5%e5%9c%a8%e4%b8%80%e8%b5%b7%e4%be%8b%e5%a6%82%e5%8f%af%e4%bb%a5%e5%af%b9%e4%b8%80%e4%b8%aa%e4%ba%8b%e4%bb%b6%e8%b0%83%e7%94%a8%e5%a4%9a%e4%b8%aa%e6%96%b9%e6%b3%95%e6%96%b9%e6%b3%95%e4%b8%8d%e9%9c%80%e8%a6%81%e4%b8%8e%e5%a7%94%e6%89%98%e7%ad%be%e5%90%8d%e7%b2%be%e7%a1%ae%e5%8c%b9%e9%85%8d">#</a>
+</h2>
+<h2 id="gc是什么-为什么要有gc">
+  GC是什么? 为什么要有GC？
+  <a class="anchor" href="#gc%e6%98%af%e4%bb%80%e4%b9%88-%e4%b8%ba%e4%bb%80%e4%b9%88%e8%a6%81%e6%9c%89gc">#</a>
+</h2>
+<h2 id="gc是垃圾收集器程序员不用担心内存管理因为垃圾收集器会自动进行管理要请求垃圾收集可以调用下面的方法之一-systemgc-runtimegetruntimegc">
+  GC是垃圾收集器。程序员不用担心内存管理，因为垃圾收集器会自动进行管理。要请求垃圾收集，可以调用下面的方法之一： System.gc() Runtime.getRuntime().gc()
+  <a class="anchor" href="#gc%e6%98%af%e5%9e%83%e5%9c%be%e6%94%b6%e9%9b%86%e5%99%a8%e7%a8%8b%e5%ba%8f%e5%91%98%e4%b8%8d%e7%94%a8%e6%8b%85%e5%bf%83%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86%e5%9b%a0%e4%b8%ba%e5%9e%83%e5%9c%be%e6%94%b6%e9%9b%86%e5%99%a8%e4%bc%9a%e8%87%aa%e5%8a%a8%e8%bf%9b%e8%a1%8c%e7%ae%a1%e7%90%86%e8%a6%81%e8%af%b7%e6%b1%82%e5%9e%83%e5%9c%be%e6%94%b6%e9%9b%86%e5%8f%af%e4%bb%a5%e8%b0%83%e7%94%a8%e4%b8%8b%e9%9d%a2%e7%9a%84%e6%96%b9%e6%b3%95%e4%b9%8b%e4%b8%80-systemgc-runtimegetruntimegc">#</a>
+</h2>
+<h1 id="死锁的必要条件怎么克服">
+  死锁的必要条件？怎么克服？
+  <a class="anchor" href="#%e6%ad%bb%e9%94%81%e7%9a%84%e5%bf%85%e8%a6%81%e6%9d%a1%e4%bb%b6%e6%80%8e%e4%b9%88%e5%85%8b%e6%9c%8d">#</a>
+</h1>
+<h2 id="系统的资源不足进程的推进的顺序不合适资源分配不当一个资源每次只能被一个进程使用一个资源请求资源时而此时这个资源已阻塞对已获得资源不放进程获得资源时未使用完前不能强行剥夺">
+  系统的资源不足，进程的推进的顺序不合适，资源分配不当，一个资源每次只能被一个进程使用，一个资源请求资源时，而此时这个资源已阻塞，对已获得资源不放，进程获得资源时，未使用完前，不能强行剥夺。
+  <a class="anchor" href="#%e7%b3%bb%e7%bb%9f%e7%9a%84%e8%b5%84%e6%ba%90%e4%b8%8d%e8%b6%b3%e8%bf%9b%e7%a8%8b%e7%9a%84%e6%8e%a8%e8%bf%9b%e7%9a%84%e9%a1%ba%e5%ba%8f%e4%b8%8d%e5%90%88%e9%80%82%e8%b5%84%e6%ba%90%e5%88%86%e9%85%8d%e4%b8%8d%e5%bd%93%e4%b8%80%e4%b8%aa%e8%b5%84%e6%ba%90%e6%af%8f%e6%ac%a1%e5%8f%aa%e8%83%bd%e8%a2%ab%e4%b8%80%e4%b8%aa%e8%bf%9b%e7%a8%8b%e4%bd%bf%e7%94%a8%e4%b8%80%e4%b8%aa%e8%b5%84%e6%ba%90%e8%af%b7%e6%b1%82%e8%b5%84%e6%ba%90%e6%97%b6%e8%80%8c%e6%ad%a4%e6%97%b6%e8%bf%99%e4%b8%aa%e8%b5%84%e6%ba%90%e5%b7%b2%e9%98%bb%e5%a1%9e%e5%af%b9%e5%b7%b2%e8%8e%b7%e5%be%97%e8%b5%84%e6%ba%90%e4%b8%8d%e6%94%be%e8%bf%9b%e7%a8%8b%e8%8e%b7%e5%be%97%e8%b5%84%e6%ba%90%e6%97%b6%e6%9c%aa%e4%bd%bf%e7%94%a8%e5%ae%8c%e5%89%8d%e4%b8%8d%e8%83%bd%e5%bc%ba%e8%a1%8c%e5%89%a5%e5%a4%ba">#</a>
+</h2>
+<h1 id="c是否可以对内存直接进行操作">
+  C#是否可以对内存直接进行操作？
+  <a class="anchor" href="#c%e6%98%af%e5%90%a6%e5%8f%af%e4%bb%a5%e5%af%b9%e5%86%85%e5%ad%98%e7%9b%b4%e6%8e%a5%e8%bf%9b%e8%a1%8c%e6%93%8d%e4%bd%9c">#</a>
+</h1>
+<h2 id="c是可以对内存进行直接操作的虽然很少用到指针但是c是可以使用指针的在用的时候需要在前边加unsafe在net中使用了垃圾回收机制gc功能它替代了程序员不过在c中不可以直接使用finalize方法而是在析构函数中调用基类的finalize方法">
+  C#是可以对内存进行直接操作的，虽然很少用到指针，但是C#是可以使用指针的，在用的时候需要在前边加unsafe,，在.net中使用了垃圾回收机制（GC）功能，它替代了程序员，不过在C#中不可以直接使用finalize方法，而是在析构函数中调用基类的finalize()方法。
+  <a class="anchor" href="#c%e6%98%af%e5%8f%af%e4%bb%a5%e5%af%b9%e5%86%85%e5%ad%98%e8%bf%9b%e8%a1%8c%e7%9b%b4%e6%8e%a5%e6%93%8d%e4%bd%9c%e7%9a%84%e8%99%bd%e7%84%b6%e5%be%88%e5%b0%91%e7%94%a8%e5%88%b0%e6%8c%87%e9%92%88%e4%bd%86%e6%98%afc%e6%98%af%e5%8f%af%e4%bb%a5%e4%bd%bf%e7%94%a8%e6%8c%87%e9%92%88%e7%9a%84%e5%9c%a8%e7%94%a8%e7%9a%84%e6%97%b6%e5%80%99%e9%9c%80%e8%a6%81%e5%9c%a8%e5%89%8d%e8%be%b9%e5%8a%a0unsafe%e5%9c%a8net%e4%b8%ad%e4%bd%bf%e7%94%a8%e4%ba%86%e5%9e%83%e5%9c%be%e5%9b%9e%e6%94%b6%e6%9c%ba%e5%88%b6gc%e5%8a%9f%e8%83%bd%e5%ae%83%e6%9b%bf%e4%bb%a3%e4%ba%86%e7%a8%8b%e5%ba%8f%e5%91%98%e4%b8%8d%e8%bf%87%e5%9c%a8c%e4%b8%ad%e4%b8%8d%e5%8f%af%e4%bb%a5%e7%9b%b4%e6%8e%a5%e4%bd%bf%e7%94%a8finalize%e6%96%b9%e6%b3%95%e8%80%8c%e6%98%af%e5%9c%a8%e6%9e%90%e6%9e%84%e5%87%bd%e6%95%b0%e4%b8%ad%e8%b0%83%e7%94%a8%e5%9f%ba%e7%b1%bb%e7%9a%84finalize%e6%96%b9%e6%b3%95">#</a>
+</h2>
+<h1 id="tcpudp协议在osi七层模型和si七层模型和tcpip四层模型中分别属于哪一层的网络协议">
+  TCP、UDP协议在OSI七层模型和SI七层模型和TCP/IP四层模型中分别属于哪一层的网络协议？
+  <a class="anchor" href="#tcpudp%e5%8d%8f%e8%ae%ae%e5%9c%a8osi%e4%b8%83%e5%b1%82%e6%a8%a1%e5%9e%8b%e5%92%8csi%e4%b8%83%e5%b1%82%e6%a8%a1%e5%9e%8b%e5%92%8ctcpip%e5%9b%9b%e5%b1%82%e6%a8%a1%e5%9e%8b%e4%b8%ad%e5%88%86%e5%88%ab%e5%b1%9e%e4%ba%8e%e5%93%aa%e4%b8%80%e5%b1%82%e7%9a%84%e7%bd%91%e7%bb%9c%e5%8d%8f%e8%ae%ae">#</a>
+</h1>
+<h2 id="都是属于传输层的网络协议传输层提供了应用程序之间的通信">
+  都是属于传输层的网络协议。传输层提供了应用程序之间的通信。
+  <a class="anchor" href="#%e9%83%bd%e6%98%af%e5%b1%9e%e4%ba%8e%e4%bc%a0%e8%be%93%e5%b1%82%e7%9a%84%e7%bd%91%e7%bb%9c%e5%8d%8f%e8%ae%ae%e4%bc%a0%e8%be%93%e5%b1%82%e6%8f%90%e4%be%9b%e4%ba%86%e5%ba%94%e7%94%a8%e7%a8%8b%e5%ba%8f%e4%b9%8b%e9%97%b4%e7%9a%84%e9%80%9a%e4%bf%a1">#</a>
+</h2>
+<h2 id="如何实现可靠udp">
+  如何实现可靠UDP？
+  <a class="anchor" href="#%e5%a6%82%e4%bd%95%e5%ae%9e%e7%8e%b0%e5%8f%af%e9%9d%a0udp">#</a>
+</h2>
+<h1 id="高级ugui性能优化">
+  （高级）UGUI性能优化
+  <a class="anchor" href="#%e9%ab%98%e7%ba%a7ugui%e6%80%a7%e8%83%bd%e4%bc%98%e5%8c%96">#</a>
+</h1>
+<h2 id="1动静分离将程序会动态设置的组件跟静态组件分离">
+  1.动静分离，将程序会动态设置的组件跟静态组件分离
+  <a class="anchor" href="#1%e5%8a%a8%e9%9d%99%e5%88%86%e7%a6%bb%e5%b0%86%e7%a8%8b%e5%ba%8f%e4%bc%9a%e5%8a%a8%e6%80%81%e8%ae%be%e7%bd%ae%e7%9a%84%e7%bb%84%e4%bb%b6%e8%b7%9f%e9%9d%99%e6%80%81%e7%bb%84%e4%bb%b6%e5%88%86%e7%a6%bb">#</a>
+</h2>
+<h2 id="2文本与图片穿插编排会打断drawcall">
+  2.文本与图片穿插编排会打断DrawCall
+  <a class="anchor" href="#2%e6%96%87%e6%9c%ac%e4%b8%8e%e5%9b%be%e7%89%87%e7%a9%bf%e6%8f%92%e7%bc%96%e6%8e%92%e4%bc%9a%e6%89%93%e6%96%addrawcall">#</a>
+</h2>
+<h2 id="3静态合并图集降低drawcall">
+  3.静态合并图集，降低DrawCall
+  <a class="anchor" href="#3%e9%9d%99%e6%80%81%e5%90%88%e5%b9%b6%e5%9b%be%e9%9b%86%e9%99%8d%e4%bd%8edrawcall">#</a>
+</h2>
+<h2 id="4对于复杂的场景可以考虑动态合并图集降低drawcall">
+  4.对于复杂的场景，可以考虑动态合并图集，降低DrawCall
+  <a class="anchor" href="#4%e5%af%b9%e4%ba%8e%e5%a4%8d%e6%9d%82%e7%9a%84%e5%9c%ba%e6%99%af%e5%8f%af%e4%bb%a5%e8%80%83%e8%99%91%e5%8a%a8%e6%80%81%e5%90%88%e5%b9%b6%e5%9b%be%e9%9b%86%e9%99%8d%e4%bd%8edrawcall">#</a>
+</h2>
+<h2 id="5使用多个canvasrender例如一个界面一个canvasrender">
+  5.使用多个CanvasRender，例如一个界面一个CanvasRender
+  <a class="anchor" href="#5%e4%bd%bf%e7%94%a8%e5%a4%9a%e4%b8%aacanvasrender%e4%be%8b%e5%a6%82%e4%b8%80%e4%b8%aa%e7%95%8c%e9%9d%a2%e4%b8%80%e4%b8%aacanvasrender">#</a>
+</h2>
+<h2 id="6降低mesh重建次数">
+  6.降低Mesh重建次数
+  <a class="anchor" href="#6%e9%99%8d%e4%bd%8emesh%e9%87%8d%e5%bb%ba%e6%ac%a1%e6%95%b0">#</a>
+</h2>
+<h2 id="7隐藏物件可以使用scale0-移动到非渲染层级移动位置到相机外关闭canvasrender">
+  7.隐藏物件可以使用Scale=0, 移动到非渲染层级，移动位置到相机外，关闭CanvasRender
+  <a class="anchor" href="#7%e9%9a%90%e8%97%8f%e7%89%a9%e4%bb%b6%e5%8f%af%e4%bb%a5%e4%bd%bf%e7%94%a8scale0-%e7%a7%bb%e5%8a%a8%e5%88%b0%e9%9d%9e%e6%b8%b2%e6%9f%93%e5%b1%82%e7%ba%a7%e7%a7%bb%e5%8a%a8%e4%bd%8d%e7%bd%ae%e5%88%b0%e7%9b%b8%e6%9c%ba%e5%a4%96%e5%85%b3%e9%97%adcanvasrender">#</a>
+</h2>
+<h1 id="高级游戏热更新">
+  （高级）游戏热更新
+  <a class="anchor" href="#%e9%ab%98%e7%ba%a7%e6%b8%b8%e6%88%8f%e7%83%ad%e6%9b%b4%e6%96%b0">#</a>
+</h1>
+<h2 id="代码热更新的具体方案--lua-ilrt">
+  代码热更新的具体方案:  lua, ILRT
+  <a class="anchor" href="#%e4%bb%a3%e7%a0%81%e7%83%ad%e6%9b%b4%e6%96%b0%e7%9a%84%e5%85%b7%e4%bd%93%e6%96%b9%e6%a1%88--lua-ilrt">#</a>
+</h2>
+<h2 id="资源热更新的具体方案-ab">
+  资源热更新的具体方案: AB
+  <a class="anchor" href="#%e8%b5%84%e6%ba%90%e7%83%ad%e6%9b%b4%e6%96%b0%e7%9a%84%e5%85%b7%e4%bd%93%e6%96%b9%e6%a1%88-ab">#</a>
+</h2>
+<h2 id="资源分发方案">
+  资源分发方案
+  <a class="anchor" href="#%e8%b5%84%e6%ba%90%e5%88%86%e5%8f%91%e6%96%b9%e6%a1%88">#</a>
+</h2>
+<h2 id="外部玩家存在不同的版本如何同步升级这些版本-打包差异升级包-版本号">
+  外部玩家存在不同的版本，如何同步升级这些版本: 打包差异升级包, 版本号
+  <a class="anchor" href="#%e5%a4%96%e9%83%a8%e7%8e%a9%e5%ae%b6%e5%ad%98%e5%9c%a8%e4%b8%8d%e5%90%8c%e7%9a%84%e7%89%88%e6%9c%ac%e5%a6%82%e4%bd%95%e5%90%8c%e6%ad%a5%e5%8d%87%e7%ba%a7%e8%bf%99%e4%ba%9b%e7%89%88%e6%9c%ac-%e6%89%93%e5%8c%85%e5%b7%ae%e5%bc%82%e5%8d%87%e7%ba%a7%e5%8c%85-%e7%89%88%e6%9c%ac%e5%8f%b7">#</a>
+</h2>
+<h1 id="高级游戏sdk">
+  （高级）游戏SDK
+  <a class="anchor" href="#%e9%ab%98%e7%ba%a7%e6%b8%b8%e6%88%8fsdk">#</a>
+</h1>
+<h2 id="渠道如何打包">
+  渠道如何打包
+  <a class="anchor" href="#%e6%b8%a0%e9%81%93%e5%a6%82%e4%bd%95%e6%89%93%e5%8c%85">#</a>
+</h2>
+<h2 id="渠道sdk如何接入">
+  渠道SDK如何接入
+  <a class="anchor" href="#%e6%b8%a0%e9%81%93sdk%e5%a6%82%e4%bd%95%e6%8e%a5%e5%85%a5">#</a>
+</h2>
+<h1 id="数组和链表的区别">
+  数组和链表的区别
+  <a class="anchor" href="#%e6%95%b0%e7%bb%84%e5%92%8c%e9%93%be%e8%a1%a8%e7%9a%84%e5%8c%ba%e5%88%ab">#</a>
+</h1>
+<h2 id="从逻辑结构上来看数组必须实现定于固定的长度不能适应数据动态增减的情况即数组的大小一旦定义就不能改变当数据增加是可能超过原先定义的元素的个数当数据减少时造成内存浪费">
+  从逻辑结构上来看，数组必须实现定于固定的长度，不能适应数据动态增减的情况，即数组的大小一旦定义就不能改变。当数据增加是，可能超过原先定义的元素的个数；当数据减少时，造成内存浪费；
+  <a class="anchor" href="#%e4%bb%8e%e9%80%bb%e8%be%91%e7%bb%93%e6%9e%84%e4%b8%8a%e6%9d%a5%e7%9c%8b%e6%95%b0%e7%bb%84%e5%bf%85%e9%a1%bb%e5%ae%9e%e7%8e%b0%e5%ae%9a%e4%ba%8e%e5%9b%ba%e5%ae%9a%e7%9a%84%e9%95%bf%e5%ba%a6%e4%b8%8d%e8%83%bd%e9%80%82%e5%ba%94%e6%95%b0%e6%8d%ae%e5%8a%a8%e6%80%81%e5%a2%9e%e5%87%8f%e7%9a%84%e6%83%85%e5%86%b5%e5%8d%b3%e6%95%b0%e7%bb%84%e7%9a%84%e5%a4%a7%e5%b0%8f%e4%b8%80%e6%97%a6%e5%ae%9a%e4%b9%89%e5%b0%b1%e4%b8%8d%e8%83%bd%e6%94%b9%e5%8f%98%e5%bd%93%e6%95%b0%e6%8d%ae%e5%a2%9e%e5%8a%a0%e6%98%af%e5%8f%af%e8%83%bd%e8%b6%85%e8%bf%87%e5%8e%9f%e5%85%88%e5%ae%9a%e4%b9%89%e7%9a%84%e5%85%83%e7%b4%a0%e7%9a%84%e4%b8%aa%e6%95%b0%e5%bd%93%e6%95%b0%e6%8d%ae%e5%87%8f%e5%b0%91%e6%97%b6%e9%80%a0%e6%88%90%e5%86%85%e5%ad%98%e6%b5%aa%e8%b4%b9">#</a>
+</h2>
+<h2 id="链表动态进行存储分配可以适应数据动态地增减的情况且可以方便地插入删除数据项">
+  链表动态进行存储分配，可以适应数据动态地增减的情况，且可以方便地插入、删除数据项。
+  <a class="anchor" href="#%e9%93%be%e8%a1%a8%e5%8a%a8%e6%80%81%e8%bf%9b%e8%a1%8c%e5%ad%98%e5%82%a8%e5%88%86%e9%85%8d%e5%8f%af%e4%bb%a5%e9%80%82%e5%ba%94%e6%95%b0%e6%8d%ae%e5%8a%a8%e6%80%81%e5%9c%b0%e5%a2%9e%e5%87%8f%e7%9a%84%e6%83%85%e5%86%b5%e4%b8%94%e5%8f%af%e4%bb%a5%e6%96%b9%e4%be%bf%e5%9c%b0%e6%8f%92%e5%85%a5%e5%88%a0%e9%99%a4%e6%95%b0%e6%8d%ae%e9%a1%b9">#</a>
+</h2>
+<h2 id="从内存存储的角度看数组从栈中分配空间用new则在堆上创建对程序员方便快速但是自由度小链表从堆中分配空间自由度大但是申请管理比较麻烦">
+  从内存存储的角度看；数组从栈中分配空间（用new则在堆上创建），对程序员方便快速，但是自由度小；链表从堆中分配空间，自由度大但是申请管理比较麻烦。
+  <a class="anchor" href="#%e4%bb%8e%e5%86%85%e5%ad%98%e5%ad%98%e5%82%a8%e7%9a%84%e8%a7%92%e5%ba%a6%e7%9c%8b%e6%95%b0%e7%bb%84%e4%bb%8e%e6%a0%88%e4%b8%ad%e5%88%86%e9%85%8d%e7%a9%ba%e9%97%b4%e7%94%a8new%e5%88%99%e5%9c%a8%e5%a0%86%e4%b8%8a%e5%88%9b%e5%bb%ba%e5%af%b9%e7%a8%8b%e5%ba%8f%e5%91%98%e6%96%b9%e4%be%bf%e5%bf%ab%e9%80%9f%e4%bd%86%e6%98%af%e8%87%aa%e7%94%b1%e5%ba%a6%e5%b0%8f%e9%93%be%e8%a1%a8%e4%bb%8e%e5%a0%86%e4%b8%ad%e5%88%86%e9%85%8d%e7%a9%ba%e9%97%b4%e8%87%aa%e7%94%b1%e5%ba%a6%e5%a4%a7%e4%bd%86%e6%98%af%e7%94%b3%e8%af%b7%e7%ae%a1%e7%90%86%e6%af%94%e8%be%83%e9%ba%bb%e7%83%a6">#</a>
+</h2>
+<h2 id="从访问方式类看数组在内存中是连续的存储因此可以利用下标索引进行访问链表是链式存储结构在访问元素时候只能够通过线性方式由前到后顺序的访问所以访问效率比数组要低">
+  从访问方式类看，数组在内存中是连续的存储，因此可以利用下标索引进行访问；链表是链式存储结构，在访问元素时候只能够通过线性方式由前到后顺序的访问，所以访问效率比数组要低。
+  <a class="anchor" href="#%e4%bb%8e%e8%ae%bf%e9%97%ae%e6%96%b9%e5%bc%8f%e7%b1%bb%e7%9c%8b%e6%95%b0%e7%bb%84%e5%9c%a8%e5%86%85%e5%ad%98%e4%b8%ad%e6%98%af%e8%bf%9e%e7%bb%ad%e7%9a%84%e5%ad%98%e5%82%a8%e5%9b%a0%e6%ad%a4%e5%8f%af%e4%bb%a5%e5%88%a9%e7%94%a8%e4%b8%8b%e6%a0%87%e7%b4%a2%e5%bc%95%e8%bf%9b%e8%a1%8c%e8%ae%bf%e9%97%ae%e9%93%be%e8%a1%a8%e6%98%af%e9%93%be%e5%bc%8f%e5%ad%98%e5%82%a8%e7%bb%93%e6%9e%84%e5%9c%a8%e8%ae%bf%e9%97%ae%e5%85%83%e7%b4%a0%e6%97%b6%e5%80%99%e5%8f%aa%e8%83%bd%e5%a4%9f%e9%80%9a%e8%bf%87%e7%ba%bf%e6%80%a7%e6%96%b9%e5%bc%8f%e7%94%b1%e5%89%8d%e5%88%b0%e5%90%8e%e9%a1%ba%e5%ba%8f%e7%9a%84%e8%ae%bf%e9%97%ae%e6%89%80%e4%bb%a5%e8%ae%bf%e9%97%ae%e6%95%88%e7%8e%87%e6%af%94%e6%95%b0%e7%bb%84%e8%a6%81%e4%bd%8e">#</a>
+</h2>
+<h1 id="核心素质">
+  核心素质：
+  <a class="anchor" href="#%e6%a0%b8%e5%bf%83%e7%b4%a0%e8%b4%a8">#</a>
+</h1>
+<h2 id="抗压能力组织协调能力学习能力解决问题能力主动反馈执行力">
+  抗压能力、组织协调能力、学习能力、解决问题能力、主动反馈、执行力
+  <a class="anchor" href="#%e6%8a%97%e5%8e%8b%e8%83%bd%e5%8a%9b%e7%bb%84%e7%bb%87%e5%8d%8f%e8%b0%83%e8%83%bd%e5%8a%9b%e5%ad%a6%e4%b9%a0%e8%83%bd%e5%8a%9b%e8%a7%a3%e5%86%b3%e9%97%ae%e9%a2%98%e8%83%bd%e5%8a%9b%e4%b8%bb%e5%8a%a8%e5%8f%8d%e9%a6%88%e6%89%a7%e8%a1%8c%e5%8a%9b">#</a>
+</h2>
+<h1 id="专业能力">
+  专业能力：
+  <a class="anchor" href="#%e4%b8%93%e4%b8%9a%e8%83%bd%e5%8a%9b">#</a>
+</h1>
+<h2 id="完整的上线项目经历架构业务设计能力工程管理规范文档代码审核">
+  完整的上线项目经历、架构/业务设计能力、工程管理（规范、文档、代码审核）
+  <a class="anchor" href="#%e5%ae%8c%e6%95%b4%e7%9a%84%e4%b8%8a%e7%ba%bf%e9%a1%b9%e7%9b%ae%e7%bb%8f%e5%8e%86%e6%9e%b6%e6%9e%84%e4%b8%9a%e5%8a%a1%e8%ae%be%e8%ae%a1%e8%83%bd%e5%8a%9b%e5%b7%a5%e7%a8%8b%e7%ae%a1%e7%90%86%e8%a7%84%e8%8c%83%e6%96%87%e6%a1%a3%e4%bb%a3%e7%a0%81%e5%ae%a1%e6%a0%b8">#</a>
+</h2>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+
+</div>
+
+
+
+  <script>(function(){function e(n){const e=window.getSelection(),t=document.createRange();t.selectNodeContents(n),e.removeAllRanges(),e.addRange(t)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#模型预加载-动态图集-光效粒子-屏幕内外-自定义uimesh-gpu-instancing-容器扩容优化遍历容器线程安全容器">模型预加载 动态图集 光效粒子 屏幕内外 自定义UIMesh GPU Instancing, 容器扩容优化，遍历容器，线程安全容器</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#动态图集是为了解决游戏中动态图片太多的问题也就是我们没有办法预先放在ui上的下图案例中可以看到右下角的英雄技能图标天赋技能图标以及主动使用的物品图片均为动态加载左上角的英雄头像也是动态加载而且由于技能之类的图片太多毕竟有几十个英雄所以没有办法打成一张静态图集而如果作为独立图片动态加载就会多十几个drawcall即便是打成多张静态图集也会导致ui渲染的批次被打断">动态图集是为了解决游戏中动态图片太多的问题，也就是我们没有办法预先放在UI上的。下图案例中可以看到右下角的英雄技能图标、天赋技能图标，以及主动使用的物品图片，均为动态加载。左上角的英雄头像也是动态加载，而且由于技能之类的图片太多（毕竟有几十个英雄），所以没有办法打成一张静态图集。而如果作为独立图片动态加载，就会多十几个DrawCall。即便是打成多张静态图集，也会导致UI渲染的批次被打断。</a></li>
+    <li><a href="#解决方案用动态打图集的方式因为我们没有unity源码所以图集的分块算法参考了这个开源项目-httpdavikingcodecomblogunity-generate-spritesheets-at-runtime这个算法效率比较不错建议大家可以研究一下它的分块算法的思路上本质上类似于bsp">解决方案：用动态打图集的方式。因为我们没有Unity源码，所以图集的分块算法参考了这个开源项目 <a href="http://davikingcode.com/blog/unity-generate-spritesheets-at-runtime/">http://davikingcode.com/blog/unity-generate-spritesheets-at-runtime/</a>，这个算法效率比较不错，建议大家可以研究一下，它的分块算法的思路上本质上类似于BSP。</a></li>
+    <li><a href="#大图集是在游戏loading时获得动态图片然后把这些动态图片渲染到rendertexture上用gpu的方式来做可以保证加载的效率在游戏中英雄头像使用了一张256x256的rendertexture而英雄技能天赋技能和物品图标使用了一张512x512的rendertexture这样一来技能面板动态图标的消耗从12个drawcall降低到1个drawcall而英雄头像部分从最多9个drawcall降低到2个drawcall这个结果是因为敌我双方英雄头像使用的材质不同实际操作中技能面板的动态图片放在同一个层级里这样就只有1个drawcall上面的蒙板边框零散图片打成静态图集在不出现穿插的情况下ugui也会协助合批因此通过这种方式大量减少了drawcall后面讲到的一些点其实也用到了动态图集">大图集是在游戏Loading时获得动态图片，然后把这些动态图片渲染到RenderTexture上，用GPU的方式来做可以保证加载的效率。在游戏中，英雄头像使用了一张256x256的RenderTexture，而英雄技能、天赋技能和物品图标使用了一张512x512的RenderTexture。这样一来，技能面板动态图标的消耗从12个DrawCall降低到1个DrawCall。而英雄头像部分，从最多9个DrawCall降低到2个DrawCall，这个结果是因为敌我双方英雄头像使用的材质不同。实际操作中，技能面板的动态图片放在同一个层级里，这样就只有1个DrawCall，上面的蒙板、边框零散图片打成静态图集，在不出现穿插的情况下，UGUI也会协助合批。因此通过这种方式大量减少了DrawCall。后面讲到的一些点其实也用到了动态图集。</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#渲染流程可以分为三个阶段应用阶段几何阶段光栅化阶段">渲染流程，可以分为三个阶段。应用阶段，几何阶段，光栅化阶段</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#mvc-面向对象继承多态封装高度耦合-一个英雄charactor包含了-属性状态控制器">mvc 面向对象,（继承，多态，封装）高度耦合， 一个英雄charactor包含了 属性，状态，控制器</a></li>
+    <li><a href="#ecs-面向数据组合模式推崇组合优于继承理念函数式编程system只对他关系的component负责业务上更加专一遍历内存上更加高效保证内存的连续性业务拆分的越细-代码复用率越高">ecs 面向数据：（组合模式）推崇组合优于继承理念，函数式编程，system只对他关系的component负责。业务上更加专一。遍历内存上更加高效（保证内存的连续性）,业务拆分的越细 代码复用率越高</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#浮点类型多线程随机种子静态变量全局变量容器顺序需要确定性">浮点类型，多线程，随机种子，静态变量，全局变量，容器顺序需要确定性</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#指的是把硬盘中的一部分空间用来当做内存使用虚拟内存的作用是为了解决计算机在运行较大的程序时内存不足的情况虚拟内存是在硬盘上的它的速度要比内存慢的多虚拟内存其实就是为了运行很大的程序的一种妥协的办法妥协了软件的运行速度">指的是把硬盘中的一部分空间用来当做内存使用,虚拟内存的作用：是为了解决计算机在运行较大的程序时内存不足的情况,虚拟内存是在硬盘上的，它的速度要比内存慢的多，虚拟内存其实就是为了运行很大的程序的一种妥协的办法，妥协了软件的运行速度。</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#基类的指针可以指向派生类对象但是反过来则不行派生类的指针不可以指向基类的指针这是为什么呢这是因为派生类的对象所占的存储空间通常要比基类的对象大原因就是派生类除了继承基类的成员之外还拥有自己的成员所以基类的指针操作派生类的对象时由于基类指针会向操作基类对象那样操作派生类对象而基类对象所占用的内存空间通常小于派生类对象所以基类指针不会超出派生类对象去操作数据">基类的指针可以指向派生类对象，但是反过来则不行，派生类的指针不可以指向基类的指针。这是为什么呢？这是因为派生类的对象所占的存储空间通常要比基类的对象大，原因就是派生类除了继承基类的成员之外，还拥有自己的成员，所以基类的指针操作派生类的对象时，由于基类指针会向操作基类对象那样操作派生类对象，而基类对象所占用的内存空间通常小于派生类对象，所以基类指针不会超出派生类对象去操作数据。</a></li>
+    <li><a href="#同样的道理基类的引用可以作为派生类对象的别名但是反过来则不行派生类的引用不可以作为基类对象的别名">同样的道理，基类的引用可以作为派生类对象的别名，但是反过来则不行，派生类的引用不可以作为基类对象的别名。</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#构造出来的mesh使用一个单独的正交摄像机来绘制">构造出来的Mesh使用一个单独的正交摄像机来绘制，</a></li>
+    <li><a href="#在ui-mesh的构造函数中可以看到是创建了一个gameobject附加meshfilter和meshrenderer然后再做一些初始化的工作">在UI Mesh的构造函数中可以看到是创建了一个GameObject，附加MeshFilter和MeshRenderer，然后再做一些初始化的工作。</a></li>
+    <li><a href="#重点在于自行填充mesh的三个buffer位置uv和索引另外为了避免在运行时重复申请内存在初始化的时候要申请足够多的顶点">重点在于自行填充Mesh的三个Buffer：位置、UV和索引。另外为了避免在运行时重复申请内存，在初始化的时候要申请足够多的顶点。</a></li>
+    <li><a href="#在实际游戏中用到了多个ui-mesh总体的顶点数大概在3000左右">在实际游戏中用到了多个UI Mesh，总体的顶点数大概在3000左右。</a></li>
+    <li><a href="#初始化mesh之后还要去维护顶点buffer一个小兵的血条包含背景底框和前景血条2个矩形8个顶点在游戏中去动态地改变这8个顶点的位置如果某个actor不在视野中那么把它所有顶点坍缩到一个点就不显示了另外actor死亡的时候并不删除它的数据而是先设置为不显示然后缓存起来准备复用也就是说无论整场战斗创建了多少个角色实际上血条都是在这个mesh的buffer里不断复用">初始化Mesh之后，还要去维护顶点Buffer。一个小兵的血条包含背景底框和前景血条，2个矩形8个顶点，在游戏中去动态地改变这8个顶点的位置。如果某个Actor不在视野中，那么把它所有顶点坍缩到一个点就不显示了。另外，Actor死亡的时候，并不删除它的数据，而是先设置为不显示，然后缓存起来准备复用。也就是说无论整场战斗创建了多少个角色，实际上血条都是在这个Mesh的Buffer里不断复用。</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#heading-1"></a></li>
+    <li><a href="#装箱是将值类型转换为-object-类型或由此值类型实现的任何接口类型的过程-clr-对值类型进行装箱时会将值包装在-systemobject-实例中并将其存储在托管堆中">装箱是将值类型转换为 object 类型或由此值类型实现的任何接口类型的过程. CLR 对值类型进行装箱时，会将值包装在 System.Object 实例中并将其存储在托管堆中。</a></li>
+    <li><a href="#拆箱取消装箱将从对象中提取值类型-装箱是隐式的取消装箱是显式的">拆箱(取消装箱)将从对象中提取值类型。 装箱是隐式的；取消装箱是显式的。</a></li>
+    <li><a href="#int-i-1">int i =1;</a></li>
+    <li><a href="#object-o--i-装箱">object o = i; //装箱</a></li>
+    <li><a href="#i--into--拆箱">i = (int)o;  //拆箱</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#图形学用4元数表示旋转">图形学用4元数表示旋转.</a></li>
+    <li><a href="#1-解决万向节死锁问题-2-四元数方便插值-求逆运算">1) 解决万向节死锁问题; 2) 四元数方便插值, 求逆运算</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#深度缓冲区或-z-缓冲区存储深度信息以控制渲染哪些多边形区域用于决定不透明物体是否被绘制">深度缓冲区（或 z 缓冲区）存储深度信息，以控制渲染哪些多边形区域。用于决定不透明物体是否被绘制.</a></li>
+    <li><a href="#模具缓冲区用于遮罩图像中的像素以产生特殊效果-掩码控制是否绘制像素-特殊效果包括合成贴纸溶解淡化滑动轮廓描绘和剪影-模板缓冲区逐个像素地启用或禁用渲染目标图面绘制-究其本质它使应用程序遮罩部分渲染图像因此这些部分不会显示-应用程序常常使用模板缓冲区实现特殊效果例如溶解贴纸和轮廓描绘">模具缓冲区用于遮罩图像中的像素，以产生特殊效果。 掩码控制是否绘制像素。 特殊效果包括合成、贴纸、溶解、淡化、滑动、轮廓描绘和剪影, 模板缓冲区逐个像素地启用或禁用渲染目标图面绘制。 究其本质，它使应用程序遮罩部分渲染图像，因此这些部分不会显示。 应用程序常常使用模板缓冲区实现特殊效果，例如溶解、贴纸和轮廓描绘。</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#纹理是为图形对象mesh提供纹理外观的像素颜色的位图-位图资源jpeg-png-加载到引擎后变为纹理资源-纹理资源是存储纹素的数据结构--纹素是可以读取或者写入纹理的最小单位-在着色器读取纹理时-可以通过采样器对纹理进行筛选和读取-纹理有1d纹理-2d纹理和3d纹理-纹理经常包括若干层级的mipmap">纹理是为图形对象(mesh)提供纹理外观的像素颜色的位图. 位图资源(jpeg, png) 加载到引擎后变为纹理资源, 纹理资源是存储纹素的数据结构,  纹素是可以读取或者写入纹理的最小单位. 在着色器读取纹理时, 可以通过采样器对纹理进行筛选和读取. 纹理有1d纹理, 2d纹理和3d纹理. 纹理经常包括若干层级的mipmap.</a></li>
+    <li><a href="#类型有-default-sprite2d-andui-normalmap-editorgui-ligthmap-cookie">类型有 Default, Sprite(2D andUI), NormalMap, EditorGUI, Ligthmap, Cookie</a></li>
+    <li><a href="#windows下有-dxt5">windows下有 DXT5</a></li>
+    <li><a href="#android系统下常用-etc1-etc2">Android系统下常用 ETC1, ETC2,</a></li>
+    <li><a href="#ios-常用-pvrtc">iOS 常用 PVRTC</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#todo-待完善">//todo: 待完善.</a></li>
+    <li><a href="#uv坐标是归一化后normalized的纹素坐标">uv坐标是归一化后(Normalized)的纹素坐标.</a></li>
+    <li><a href="#heading-2">??</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#mipmapping在三维计算机图形的贴图渲染中有常用的技术为加快渲染进度和减少图像锯齿贴图被处理成由一系列被预先计算和优化过的图片组成的文件这样的贴图被称为mipmap">MipMapping：在三维计算机图形的贴图渲染中有常用的技术，为加快渲染进度和减少图像锯齿，贴图被处理成由一系列被预先计算和优化过的图片组成的文件，这样的贴图被称为MipMap。</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#先说定义-协变和逆变能够实现数组类型委托类型和泛型类型参数的隐式引用转换">先说定义, 协变和逆变能够实现数组类型、委托类型和泛型类型参数的隐式引用转换。</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#首先必须是数组类型泛型委托或者泛型接口">首先必须是数组类型,泛型委托或者泛型接口.</a></li>
+    <li><a href="#泛型参数必须用-in-关键字修饰--也就是说这个泛型参数只能作为方法的形参类型-而不能是返回值">泛型参数必须用 in 关键字修饰.  也就是说这个泛型参数只能作为方法的形参类型, 而不能是返回值.</a></li>
+    <li><a href="#net-framework4-之后支持变体泛型接口">.net framework4 之后支持变体泛型接口.</a></li>
+    <li><a href="#委托的逆变的好处可以使用一个事件处理程序-而不是多个单独的处理程序-下面代码演示了委托的逆变">委托的逆变的好处可以使用一个事件处理程序, 而不是多个单独的处理程序, 下面代码演示了委托的逆变.</a></li>
+    <li><a href="#heading-3">??</a></li>
+    <li><a href="#泛型接口的逆变的设计还有待发掘-欢迎补充演示代码">泛型接口的逆变的设计还有待发掘, 欢迎补充演示代码.</a></li>
+    <li><a href="#下面的代码演示了分配兼容性-协变和逆变的差异">下面的代码演示了分配兼容性, 协变和逆变的差异</a></li>
+    <li><a href="#-分配兼容性">// 分配兼容性</a></li>
+    <li><a href="#string-str--test">string str = &ldquo;test&rdquo;;</a></li>
+    <li><a href="#-子类实例可以赋值给父类">// 子类实例可以赋值给父类</a></li>
+    <li><a href="#object-obj--str">object obj = str;</a></li>
+    <li><a href="#-协变接口-用out关键字参数定义">// 协变接口, 用out关键字参数定义</a></li>
+    <li><a href="#public-interface-ienumerableout-t--systemcollectionsienumerable">public interface IEnumerable<!-- raw HTML omitted --> : System.Collections.IEnumerable</a></li>
+    <li><a href="#ienumerablestring-strings--new-liststring">IEnumerable<!-- raw HTML omitted --> strings = new List<!-- raw HTML omitted -->();</a></li>
+    <li><a href="#-ienumableobject-的泛型参数类型是-object-ienumrablestring-泛型参数类型是string--下面这样的赋值-协变符合分配兼容性">// IEnumable<!-- raw HTML omitted --> 的泛型参数类型是 object, IEnumrable<!-- raw HTML omitted --> 泛型参数类型是string,  下面这样的赋值 协变符合分配兼容性</a></li>
+    <li><a href="#ienumerableobject-objects--strings">IEnumerable<!-- raw HTML omitted --> objects = strings;</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#-假设有一个这样的类函数">// 假设有一个这样的类函数</a></li>
+    <li><a href="#static-void-setobjectobject-o--">static void SetObject(object o) { }</a></li>
+    <li><a href="#public-delegate-void-actionin-t--逆变的t-支持父类实例赋值给子类类型">public delegate void Action<!-- raw HTML omitted -->  //逆变的T, 支持父类实例赋值给子类类型</a></li>
+    <li><a href="#actionobject-actobject--setobject--给具有逆变的委托赋值一个方法实例">Action<!-- raw HTML omitted --> actObject = SetObject;  给具有逆变的委托赋值一个方法实例</a></li>
+    <li><a href="#-下面的操作是逆变-父类参数object实例赋值给子类类型string">// 下面的操作是逆变, 父类参数object实例赋值给子类类型string</a></li>
+    <li><a href="#-逆变违反了分配兼容">// 逆变违反了分配兼容</a></li>
+    <li><a href="#actionstring-actstring--actobject">Action<!-- raw HTML omitted --> actString = actObject;</a></li>
+    <li><a href="#当泛型参数用-out-关键字修饰-意味着其为协变泛型接口-这时接口的方法只能把-t-作为函数的返回值类型-而不能作为函数的形参类型-如">当泛型参数用 out 关键字修饰, 意味着其为协变泛型接口, 这时接口的方法只能把 T 作为函数的返回值类型, 而不能作为函数的形参类型 如:</a></li>
+    <li><a href="#协变接口">//协变接口</a></li>
+    <li><a href="#public-interface-ienumerableout-t--systemcollectionsienumerable-1">public interface IEnumerable<!-- raw HTML omitted --> : System.Collections.IEnumerable</a></li>
+    <li><a href="#heading-4">{</a></li>
+    <li><a href="#t-myfunciton---正确-t是协变">T MyFunciton();  // 正确, T是协变</a></li>
+    <li><a href="#-编译错误-error-cs1961-变型无效-类型参数t必须是在">// 编译错误 error CS1961: 变型无效: 类型参数“T”必须是在</a></li>
+    <li><a href="#-interface1tfunction2t上有效的-逆变式t为-协变">// “interface1<!-- raw HTML omitted -->.function2(T)”上有效的 逆变式。“T”为 协变。</a></li>
+    <li><a href="#void-myfunciton2t-t">void MyFunciton2(T t);</a></li>
+    <li><a href="#heading-5">}</a></li>
+    <li><a href="#当泛型参数用-in-关键字修饰-意味着逆变--t只能作为方法的形参类型-不能作为函数的返回值类型">当泛型参数用 in 关键字修饰, 意味着逆变 , T只能作为方法的形参类型, 不能作为函数的返回值类型</a></li>
+    <li><a href="#public-interface-iequalitycomparerin-t">public interface IEqualityComparer<!-- raw HTML omitted --></a></li>
+    <li><a href="#heading-6">{</a></li>
+    <li><a href="#void-myfunctiont-t-正确">void MyFunction(T t); //正确,</a></li>
+    <li><a href="#t-myfunction2--编译错误--error-cs1961-变型无效-类型参数t必须是在interface2tfunction2上有效的-协变式t为-逆变">T MyFunction2();  //编译错误  error CS1961: 变型无效: 类型参数“T”必须是在“interface2<!-- raw HTML omitted -->.function2()”上有效的 协变式。“T”为 逆变。</a></li>
+    <li><a href="#heading-7">}</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#c中的逆变和协变httpsdocsmicrosoftcomzh-cndotnetcsharpprogramming-guideconceptscovariance-contravariance"><a href="https://docs.microsoft.com/zh-cn/dotnet/csharp/programming-guide/concepts/covariance-contravariance/">c#中的逆变和协变</a></a></li>
+    <li><a href="#委托中变体httpsdocsmicrosoftcomzh-cndotnetcsharpprogramming-guideconceptscovariance-contravarianceusing-variance-in-delegates"><a href="https://docs.microsoft.com/zh-cn/dotnet/csharp/programming-guide/concepts/covariance-contravariance/using-variance-in-delegates">委托中变体</a></a></li>
+    <li><a href="#泛型接口中的变体httpsdocsmicrosoftcomzh-cndotnetcsharpprogramming-guideconceptscovariance-contravariancevariance-in-generic-interfaces"><a href="https://docs.microsoft.com/zh-cn/dotnet/csharp/programming-guide/concepts/covariance-contravariance/variance-in-generic-interfaces">泛型接口中的变体</a></a></li>
+    <li><a href="#在泛型集合的接口中使用变体httpsdocsmicrosoftcomzh-cndotnetcsharpprogramming-guideconceptscovariance-contravarianceusing-variance-in-interfaces-for-generic-collections"><a href="https://docs.microsoft.com/zh-cn/dotnet/csharp/programming-guide/concepts/covariance-contravariance/using-variance-in-interfaces-for-generic-collections">在泛型集合的接口中使用变体</a></a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#1resourcesload">1.Resources.Load();</a></li>
+    <li><a href="#2assetbundle">2.AssetBundle</a></li>
+    <li><a href="#heading-8">??</a></li>
+    <li><a href="#assetbundle相关">AssetBundle相关</a></li>
+    <li><a href="#在通过assetbundleunloadfalse卸载assetbundle对象后如果重新创建该对象并加载之前加载过的资源到内存时会出现冗余即两份相同的资源">在通过AssetBundle.Unload(false)卸载AssetBundle对象后，如果重新创建该对象并加载之前加载过的资源到内存时，会出现冗余，即两份相同的资源。</a></li>
+    <li><a href="#被脚本的静态变量引用的资源在调用resourcesunloadunusedassets时并不会被卸载在profiler中能够看到其引用情况">被脚本的静态变量引用的资源，在调用Resources.UnloadUnusedAssets时，并不会被卸载，在Profiler中能够看到其引用情况。</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#答awake------start-----update-----fixedupdate----lateupdate----ongui---reset----ondisable---ondestory">答：Awake &mdash;&gt;  Start &mdash;&gt; Update  &ndash;&gt; FixedUpdate &ndash;&gt; LateUpdate &mdash;&gt;OnGUI &ndash;&gt;Reset &ndash;&gt; OnDisable &ndash;&gt;OnDestory;</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#在主线程运行的同时开启另一段逻辑处理来协助当前程序的执行协程很像多线程但是不是多线程unity的协程是在每帧结束之后去检测yield的条件是否满足">在主线程运行的同时开启另一段逻辑处理，来协助当前程序的执行，协程很像多线程，但是不是多线程，Unity的协程是在每帧结束之后去检测yield的条件是否满足。</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#lodlevel-of-detail多层次细节是最常用的游戏优化技术它按照模型的位置和重要程度决定物体渲染的资源分配降低非重要物体的面数和细节度从而获得高效率的渲染运算缺点是增加了内存">LOD(Level of detail)多层次细节，是最常用的游戏优化技术。它按照模型的位置和重要程度决定物体渲染的资源分配，降低非重要物体的面数和细节度，从而获得高效率的渲染运算。缺点是增加了内存。</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#如果动态物体共用着相同的材质那么unity会自动对这些物体进行批处理动态批处理操作是自动完成的并不需要你进行额外的操作">如果动态物体共用着相同的材质，那么Unity会自动对这些物体进行批处理。动态批处理操作是自动完成的，并不需要你进行额外的操作。</a></li>
+    <li><a href="#区别动态批处理一切都是自动的不需要做任何操作而且物体是可以移动的但是限制很多">区别：动态批处理一切都是自动的，不需要做任何操作，而且物体是可以移动的，但是限制很多。</a></li>
+    <li><a href="#静态批处理自由度很高限制很少缺点可能会占用更多的内存而且经过静态批处理后的所有物体都不可以再移动了">静态批处理：自由度很高，限制很少，缺点可能会占用更多的内存，而且经过静态批处理后的所有物体都不可以再移动了</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#1开闭原则">1.开闭原则</a></li>
+    <li><a href="#2单一职责原则">2.单一职责原则</a></li>
+    <li><a href="#3依赖倒置原则">3.依赖倒置原则</a></li>
+    <li><a href="#4接口隔离原则">4.接口隔离原则</a></li>
+    <li><a href="#5迪米特法则">5.迪米特法则</a></li>
+    <li><a href="#6里氏替换原则">6.里氏替换原则</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#里氏替换原则liskov-substitution-principle-lsp面向对象设计的基本原则之一通俗点就是子类对象可以赋值给基类对象基类对象不能赋值给子类对象">里氏替换原则(Liskov Substitution Principle LSP)面向对象设计的基本原则之一。通俗点：就是子类对象可以赋值给基类对象，基类对象不能赋值给子类对象</a></li>
+    <li><a href="#你能说出几种创建型模式">你能说出几种创建型模式</a></li>
+    <li><a href="#抽象工厂">抽象工厂</a></li>
+    <li><a href="#建造者">建造者</a></li>
+    <li><a href="#工厂">工厂</a></li>
+    <li><a href="#原型模式克隆模式">原型模式/克隆模式</a></li>
+    <li><a href="#单例模式">单例模式</a></li>
+    <li><a href="#简述mvcmvpmvvm三种模式">简述MVC、MVP、MVVM三种模式</a></li>
+    <li><a href="#你有了解过多少种软件的分层结构">你有了解过多少种软件的分层结构</a></li>
+    <li><a href="#三层架构六边形洋葱架构整洁架构">三层架构、六边形、洋葱架构、整洁架构</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#设置游戏对象为static时这些部分被静态物体挡住而不可见时将会剔除或禁用网格对象因此在你的场景中的所有不会动的物体都应该标记为static">设置游戏对象为Static时，这些部分被静态物体挡住而不可见时，将会剔除（或禁用）网格对象。因此，在你的场景中的所有不会动的物体都应该标记为Static。</a></li>
+    <li><a href="#如果你在游戏中编写一个类不想让其他同事继承这个类你会怎么办">如果你在游戏中编写一个类，不想让其他同事继承这个类，你会怎么办？</a></li>
+    <li><a href="#在类声明时与函数声明时的作用sealed修饰的类为密封类类声明时可防止其他类继承此类在方法中声明则可防止派生类重写此方法">在类声明时与函数声明时的作用sealed修饰的类为密封类，类声明时可防止其他类继承此类，在方法中声明则可防止派生类重写此方法。</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#委托类似于-c-函数指针但它是类型安全的委托允许将方法作为参数进行传递委托可用于定义回调方法委托可以链接在一起例如可以对一个事件调用多个方法方法不需要与委托签名精确匹配">委托类似于 C++ 函数指针，但它是类型安全的。委托允许将方法作为参数进行传递。委托可用于定义回调方法。委托可以链接在一起；例如，可以对一个事件调用多个方法。方法不需要与委托签名精确匹配。</a></li>
+    <li><a href="#gc是什么-为什么要有gc">GC是什么? 为什么要有GC？</a></li>
+    <li><a href="#gc是垃圾收集器程序员不用担心内存管理因为垃圾收集器会自动进行管理要请求垃圾收集可以调用下面的方法之一-systemgc-runtimegetruntimegc">GC是垃圾收集器。程序员不用担心内存管理，因为垃圾收集器会自动进行管理。要请求垃圾收集，可以调用下面的方法之一： System.gc() Runtime.getRuntime().gc()</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#系统的资源不足进程的推进的顺序不合适资源分配不当一个资源每次只能被一个进程使用一个资源请求资源时而此时这个资源已阻塞对已获得资源不放进程获得资源时未使用完前不能强行剥夺">系统的资源不足，进程的推进的顺序不合适，资源分配不当，一个资源每次只能被一个进程使用，一个资源请求资源时，而此时这个资源已阻塞，对已获得资源不放，进程获得资源时，未使用完前，不能强行剥夺。</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#c是可以对内存进行直接操作的虽然很少用到指针但是c是可以使用指针的在用的时候需要在前边加unsafe在net中使用了垃圾回收机制gc功能它替代了程序员不过在c中不可以直接使用finalize方法而是在析构函数中调用基类的finalize方法">C#是可以对内存进行直接操作的，虽然很少用到指针，但是C#是可以使用指针的，在用的时候需要在前边加unsafe,，在.net中使用了垃圾回收机制（GC）功能，它替代了程序员，不过在C#中不可以直接使用finalize方法，而是在析构函数中调用基类的finalize()方法。</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#都是属于传输层的网络协议传输层提供了应用程序之间的通信">都是属于传输层的网络协议。传输层提供了应用程序之间的通信。</a></li>
+    <li><a href="#如何实现可靠udp">如何实现可靠UDP？</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#1动静分离将程序会动态设置的组件跟静态组件分离">1.动静分离，将程序会动态设置的组件跟静态组件分离</a></li>
+    <li><a href="#2文本与图片穿插编排会打断drawcall">2.文本与图片穿插编排会打断DrawCall</a></li>
+    <li><a href="#3静态合并图集降低drawcall">3.静态合并图集，降低DrawCall</a></li>
+    <li><a href="#4对于复杂的场景可以考虑动态合并图集降低drawcall">4.对于复杂的场景，可以考虑动态合并图集，降低DrawCall</a></li>
+    <li><a href="#5使用多个canvasrender例如一个界面一个canvasrender">5.使用多个CanvasRender，例如一个界面一个CanvasRender</a></li>
+    <li><a href="#6降低mesh重建次数">6.降低Mesh重建次数</a></li>
+    <li><a href="#7隐藏物件可以使用scale0-移动到非渲染层级移动位置到相机外关闭canvasrender">7.隐藏物件可以使用Scale=0, 移动到非渲染层级，移动位置到相机外，关闭CanvasRender</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#代码热更新的具体方案--lua-ilrt">代码热更新的具体方案:  lua, ILRT</a></li>
+    <li><a href="#资源热更新的具体方案-ab">资源热更新的具体方案: AB</a></li>
+    <li><a href="#资源分发方案">资源分发方案</a></li>
+    <li><a href="#外部玩家存在不同的版本如何同步升级这些版本-打包差异升级包-版本号">外部玩家存在不同的版本，如何同步升级这些版本: 打包差异升级包, 版本号</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#渠道如何打包">渠道如何打包</a></li>
+    <li><a href="#渠道sdk如何接入">渠道SDK如何接入</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#从逻辑结构上来看数组必须实现定于固定的长度不能适应数据动态增减的情况即数组的大小一旦定义就不能改变当数据增加是可能超过原先定义的元素的个数当数据减少时造成内存浪费">从逻辑结构上来看，数组必须实现定于固定的长度，不能适应数据动态增减的情况，即数组的大小一旦定义就不能改变。当数据增加是，可能超过原先定义的元素的个数；当数据减少时，造成内存浪费；</a></li>
+    <li><a href="#链表动态进行存储分配可以适应数据动态地增减的情况且可以方便地插入删除数据项">链表动态进行存储分配，可以适应数据动态地增减的情况，且可以方便地插入、删除数据项。</a></li>
+    <li><a href="#从内存存储的角度看数组从栈中分配空间用new则在堆上创建对程序员方便快速但是自由度小链表从堆中分配空间自由度大但是申请管理比较麻烦">从内存存储的角度看；数组从栈中分配空间（用new则在堆上创建），对程序员方便快速，但是自由度小；链表从堆中分配空间，自由度大但是申请管理比较麻烦。</a></li>
+    <li><a href="#从访问方式类看数组在内存中是连续的存储因此可以利用下标索引进行访问链表是链式存储结构在访问元素时候只能够通过线性方式由前到后顺序的访问所以访问效率比数组要低">从访问方式类看，数组在内存中是连续的存储，因此可以利用下标索引进行访问；链表是链式存储结构，在访问元素时候只能够通过线性方式由前到后顺序的访问，所以访问效率比数组要低。</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#抗压能力组织协调能力学习能力解决问题能力主动反馈执行力">抗压能力、组织协调能力、学习能力、解决问题能力、主动反馈、执行力</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#完整的上线项目经历架构业务设计能力工程管理规范文档代码审核">完整的上线项目经历、架构/业务设计能力、工程管理（规范、文档、代码审核）</a></li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
