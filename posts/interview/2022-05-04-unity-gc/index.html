@@ -1,285 +1,58 @@
 <!DOCTYPE html>
-<html lang="en-us" dir="ltr">
+<html>
 <head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="GC的实现 #  实现GC的策略有很多种，其中最常见一种就是 Tracing garbage collection，或者叫 Mark-Sweep，这种算法会通过一个 root Object，遍历这个该对象引用的变量，并且标记，递归这个过程，这样就确定了所有reachable的对象，剩下的对象即视为garbage。 #  #  另一种常见的策略还有引用计数（Reference counting），它是通过为每个对象维护一个引用计数，这代表当前对该对象的引用数目，当引用为0，即代表该对象为 Garage。引用技术有如下缺点 #  #  循环引用问题 #  保存计数带来的空间开销 #  修改引用数目带来的速度开销以及原子性要求 #  非实时（一个引用的变化可能递归得导致一系列引用修改，内存释放) #  有很多算法可以一定程度解决上述问题，顺便一提，C&#43;&#43;使用的智能指针即是基于引用计数实现的，COM对象也使用了引用计数来管理。 #  Unity 中的GC #  Unity的脚本后端是基于Mono的实现（当然现在多了个IL2CPP，不过也是类似的GC实现)，而Mono使用的GC是所谓的Boehm–Demers–Weiser garbage collector。是Mark-Sweep 的实现，它会在需要进行GC时占用主线程，进行遍历-标记-垃圾回收的过程，然后在归还主线程控制权。这会导致帧数的突然下降，产生卡顿（不过因为该实现是非压缩式的，所以卡顿现象相对较轻，但是对内存利用率进一步下降了，会有内存碎片的问题。。囧）。所以我们需要慎重地处理对象的创建（内存请求），还有释放（使用GC管理内存是没有主动释放内存的接口的，但是我们可以通过消除对某个对象的引用来做到这一点）。此外，Unity的代码分为两部分：托管与非托管，GC影响的只有托管部分的代码使用的堆内存。而且这个托管堆占用的地址空间不会返还给操作系统。。 #  ">
-<meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="Unity::GC的实现" />
-<meta property="og:description" content="GC的实现 #  实现GC的策略有很多种，其中最常见一种就是 Tracing garbage collection，或者叫 Mark-Sweep，这种算法会通过一个 root Object，遍历这个该对象引用的变量，并且标记，递归这个过程，这样就确定了所有reachable的对象，剩下的对象即视为garbage。 #  #  另一种常见的策略还有引用计数（Reference counting），它是通过为每个对象维护一个引用计数，这代表当前对该对象的引用数目，当引用为0，即代表该对象为 Garage。引用技术有如下缺点 #  #  循环引用问题 #  保存计数带来的空间开销 #  修改引用数目带来的速度开销以及原子性要求 #  非实时（一个引用的变化可能递归得导致一系列引用修改，内存释放) #  有很多算法可以一定程度解决上述问题，顺便一提，C&#43;&#43;使用的智能指针即是基于引用计数实现的，COM对象也使用了引用计数来管理。 #  Unity 中的GC #  Unity的脚本后端是基于Mono的实现（当然现在多了个IL2CPP，不过也是类似的GC实现)，而Mono使用的GC是所谓的Boehm–Demers–Weiser garbage collector。是Mark-Sweep 的实现，它会在需要进行GC时占用主线程，进行遍历-标记-垃圾回收的过程，然后在归还主线程控制权。这会导致帧数的突然下降，产生卡顿（不过因为该实现是非压缩式的，所以卡顿现象相对较轻，但是对内存利用率进一步下降了，会有内存碎片的问题。。囧）。所以我们需要慎重地处理对象的创建（内存请求），还有释放（使用GC管理内存是没有主动释放内存的接口的，但是我们可以通过消除对某个对象的引用来做到这一点）。此外，Unity的代码分为两部分：托管与非托管，GC影响的只有托管部分的代码使用的堆内存。而且这个托管堆占用的地址空间不会返还给操作系统。。 #  " />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="http://example.org/posts/interview/2022-05-04-unity-gc/" /><meta property="article:section" content="posts" />
-
-
-
-<title>Unity::GC的实现 | junfff blog </title>
-<link rel="manifest" href="/manifest.json">
-<link rel="icon" href="/favicon.png" type="image/x-icon">
-<link rel="stylesheet" href="/book.min.82c5dbd23447cee0b4c2aa3ed08ce0961faa40e1fa370eee4f8c9f02e0d46b5f.css" integrity="sha256-gsXb0jRHzuC0wqo&#43;0Izglh&#43;qQOH6Nw7uT4yfAuDUa18=" crossorigin="anonymous">
-  <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.f016c1f7cd1cd468f90836d5b3db574eac0183406b8f25ab568e6873e6581204.js" integrity="sha256-8BbB980c1Gj5CDbVs9tXTqwBg0BrjyWrVo5oc&#43;ZYEgQ=" crossorigin="anonymous"></script>
-<!--
-Made with Book Theme
-https://github.com/alex-shpak/hugo-book
--->
-  
+    <title>Unity::GC的实现</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="http://example.org/assets/css/main.css"/>
+    <link rel="canonical" href="http://example.org/posts/interview/2022-05-04-unity-gc/">
+    <noscript><link rel="stylesheet" href="http://example.org/assets/css/noscript.css"/></noscript>
+    <style>
+        :root{--site-background : url("http://example.org/images/bg.jpg")};
+    </style> 
+    
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
-<body dir="ltr">
-  <input type="checkbox" class="hidden toggle" id="menu-control" />
-  <input type="checkbox" class="hidden toggle" id="toc-control" />
-  <main class="container flex">
-    <aside class="book-menu">
-      <div class="book-menu-content">
-        
-  <nav>
-<h2 class="book-brand">
-  <a class="flex align-center" href="/"><span>junfff blog </span>
-  </a>
-</h2>
 
 
-<div class="book-search">
-  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
-  <div class="book-search-spinner hidden"></div>
-  <ul id="book-search-results"></ul>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</nav>
-
-
-
-
-  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
-
-
- 
-      </div>
-    </aside>
-
-    <div class="book-page">
-      <header class="book-header">
-        
-  <div class="flex align-center justify-between">
-  <label for="menu-control">
-    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
-  </label>
-
-  <strong>Unity::GC的实现</strong>
-
-  <label for="toc-control">
-    
-    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
-    
-  </label>
-</div>
-
-
-  
-  <aside class="hidden clearfix">
-    
-  
-<nav id="TableOfContents">
-  <ul>
-    <li><a href="#实现gc的策略有很多种其中最常见一种就是-tracing-garbage-collection或者叫-mark-sweep这种算法会通过一个-root-object遍历这个该对象引用的变量并且标记递归这个过程这样就确定了所有reachable的对象剩下的对象即视为garbage">实现GC的策略有很多种，其中最常见一种就是 Tracing garbage collection，或者叫 Mark-Sweep，这种算法会通过一个 root Object，遍历这个该对象引用的变量，并且标记，递归这个过程，这样就确定了所有reachable的对象，剩下的对象即视为garbage。</a></li>
-    <li><a href="#heading"></a></li>
-    <li><a href="#另一种常见的策略还有引用计数reference-counting它是通过为每个对象维护一个引用计数这代表当前对该对象的引用数目当引用为0即代表该对象为-garage引用技术有如下缺点">另一种常见的策略还有引用计数（Reference counting），它是通过为每个对象维护一个引用计数，这代表当前对该对象的引用数目，当引用为0，即代表该对象为 Garage。引用技术有如下缺点</a></li>
-    <li><a href="#heading-1"></a></li>
-    <li><a href="#循环引用问题">循环引用问题</a></li>
-    <li><a href="#保存计数带来的空间开销">保存计数带来的空间开销</a></li>
-    <li><a href="#修改引用数目带来的速度开销以及原子性要求">修改引用数目带来的速度开销以及原子性要求</a></li>
-    <li><a href="#非实时一个引用的变化可能递归得导致一系列引用修改内存释放">非实时（一个引用的变化可能递归得导致一系列引用修改，内存释放)</a></li>
-    <li><a href="#有很多算法可以一定程度解决上述问题顺便一提c使用的智能指针即是基于引用计数实现的com对象也使用了引用计数来管理">有很多算法可以一定程度解决上述问题，顺便一提，C++使用的智能指针即是基于引用计数实现的，COM对象也使用了引用计数来管理。</a></li>
-  </ul>
-
-  <ul>
-    <li><a href="#unity的脚本后端是基于mono的实现当然现在多了个il2cpp不过也是类似的gc实现而mono使用的gc是所谓的boehmdemersweiser-garbage-collector是mark-sweep-的实现它会在需要进行gc时占用主线程进行遍历-标记-垃圾回收的过程然后在归还主线程控制权这会导致帧数的突然下降产生卡顿不过因为该实现是非压缩式的所以卡顿现象相对较轻但是对内存利用率进一步下降了会有内存碎片的问题囧所以我们需要慎重地处理对象的创建内存请求还有释放使用gc管理内存是没有主动释放内存的接口的但是我们可以通过消除对某个对象的引用来做到这一点此外unity的代码分为两部分托管与非托管gc影响的只有托管部分的代码使用的堆内存而且这个托管堆占用的地址空间不会返还给操作系统">Unity的脚本后端是基于Mono的实现（当然现在多了个IL2CPP，不过也是类似的GC实现)，而Mono使用的GC是所谓的Boehm–Demers–Weiser garbage collector。是Mark-Sweep 的实现，它会在需要进行GC时占用主线程，进行遍历-标记-垃圾回收的过程，然后在归还主线程控制权。这会导致帧数的突然下降，产生卡顿（不过因为该实现是非压缩式的，所以卡顿现象相对较轻，但是对内存利用率进一步下降了，会有内存碎片的问题。。囧）。所以我们需要慎重地处理对象的创建（内存请求），还有释放（使用GC管理内存是没有主动释放内存的接口的，但是我们可以通过消除对某个对象的引用来做到这一点）。此外，Unity的代码分为两部分：托管与非托管，GC影响的只有托管部分的代码使用的堆内存。而且这个托管堆占用的地址空间不会返还给操作系统。。</a></li>
-  </ul>
-</nav>
-
-
-
-  </aside>
-  
- 
-      </header>
-
-      
-      
-<article class="markdown">
-  <h1>
-    <a href="/posts/interview/2022-05-04-unity-gc/">Unity::GC的实现</a>
-  </h1>
-  
-
-
-  
-  <div>
-    
-      <a href="/categories/unity/">Unity</a>
-  </div>
-  
-
-  
-  <div>
-    
-      <a href="/tags/unity/">Unity</a>
-  </div>
-  
-
-
-
-<h1 id="gc的实现">
-  GC的实现
-  <a class="anchor" href="#gc%e7%9a%84%e5%ae%9e%e7%8e%b0">#</a>
-</h1>
-<h2 id="实现gc的策略有很多种其中最常见一种就是-tracing-garbage-collection或者叫-mark-sweep这种算法会通过一个-root-object遍历这个该对象引用的变量并且标记递归这个过程这样就确定了所有reachable的对象剩下的对象即视为garbage">
-  实现GC的策略有很多种，其中最常见一种就是 Tracing garbage collection，或者叫 Mark-Sweep，这种算法会通过一个 root Object，遍历这个该对象引用的变量，并且标记，递归这个过程，这样就确定了所有reachable的对象，剩下的对象即视为garbage。
-  <a class="anchor" href="#%e5%ae%9e%e7%8e%b0gc%e7%9a%84%e7%ad%96%e7%95%a5%e6%9c%89%e5%be%88%e5%a4%9a%e7%a7%8d%e5%85%b6%e4%b8%ad%e6%9c%80%e5%b8%b8%e8%a7%81%e4%b8%80%e7%a7%8d%e5%b0%b1%e6%98%af-tracing-garbage-collection%e6%88%96%e8%80%85%e5%8f%ab-mark-sweep%e8%bf%99%e7%a7%8d%e7%ae%97%e6%b3%95%e4%bc%9a%e9%80%9a%e8%bf%87%e4%b8%80%e4%b8%aa-root-object%e9%81%8d%e5%8e%86%e8%bf%99%e4%b8%aa%e8%af%a5%e5%af%b9%e8%b1%a1%e5%bc%95%e7%94%a8%e7%9a%84%e5%8f%98%e9%87%8f%e5%b9%b6%e4%b8%94%e6%a0%87%e8%ae%b0%e9%80%92%e5%bd%92%e8%bf%99%e4%b8%aa%e8%bf%87%e7%a8%8b%e8%bf%99%e6%a0%b7%e5%b0%b1%e7%a1%ae%e5%ae%9a%e4%ba%86%e6%89%80%e6%9c%89reachable%e7%9a%84%e5%af%b9%e8%b1%a1%e5%89%a9%e4%b8%8b%e7%9a%84%e5%af%b9%e8%b1%a1%e5%8d%b3%e8%a7%86%e4%b8%bagarbage">#</a>
-</h2>
-<h2 id="heading">
-  
-  <a class="anchor" href="#heading">#</a>
-</h2>
-<h2 id="另一种常见的策略还有引用计数reference-counting它是通过为每个对象维护一个引用计数这代表当前对该对象的引用数目当引用为0即代表该对象为-garage引用技术有如下缺点">
-  另一种常见的策略还有引用计数（Reference counting），它是通过为每个对象维护一个引用计数，这代表当前对该对象的引用数目，当引用为0，即代表该对象为 Garage。引用技术有如下缺点
-  <a class="anchor" href="#%e5%8f%a6%e4%b8%80%e7%a7%8d%e5%b8%b8%e8%a7%81%e7%9a%84%e7%ad%96%e7%95%a5%e8%bf%98%e6%9c%89%e5%bc%95%e7%94%a8%e8%ae%a1%e6%95%b0reference-counting%e5%ae%83%e6%98%af%e9%80%9a%e8%bf%87%e4%b8%ba%e6%af%8f%e4%b8%aa%e5%af%b9%e8%b1%a1%e7%bb%b4%e6%8a%a4%e4%b8%80%e4%b8%aa%e5%bc%95%e7%94%a8%e8%ae%a1%e6%95%b0%e8%bf%99%e4%bb%a3%e8%a1%a8%e5%bd%93%e5%89%8d%e5%af%b9%e8%af%a5%e5%af%b9%e8%b1%a1%e7%9a%84%e5%bc%95%e7%94%a8%e6%95%b0%e7%9b%ae%e5%bd%93%e5%bc%95%e7%94%a8%e4%b8%ba0%e5%8d%b3%e4%bb%a3%e8%a1%a8%e8%af%a5%e5%af%b9%e8%b1%a1%e4%b8%ba-garage%e5%bc%95%e7%94%a8%e6%8a%80%e6%9c%af%e6%9c%89%e5%a6%82%e4%b8%8b%e7%bc%ba%e7%82%b9">#</a>
-</h2>
-<h2 id="heading-1">
-  
-  <a class="anchor" href="#heading-1">#</a>
-</h2>
-<h2 id="循环引用问题">
-  循环引用问题
-  <a class="anchor" href="#%e5%be%aa%e7%8e%af%e5%bc%95%e7%94%a8%e9%97%ae%e9%a2%98">#</a>
-</h2>
-<h2 id="保存计数带来的空间开销">
-  保存计数带来的空间开销
-  <a class="anchor" href="#%e4%bf%9d%e5%ad%98%e8%ae%a1%e6%95%b0%e5%b8%a6%e6%9d%a5%e7%9a%84%e7%a9%ba%e9%97%b4%e5%bc%80%e9%94%80">#</a>
-</h2>
-<h2 id="修改引用数目带来的速度开销以及原子性要求">
-  修改引用数目带来的速度开销以及原子性要求
-  <a class="anchor" href="#%e4%bf%ae%e6%94%b9%e5%bc%95%e7%94%a8%e6%95%b0%e7%9b%ae%e5%b8%a6%e6%9d%a5%e7%9a%84%e9%80%9f%e5%ba%a6%e5%bc%80%e9%94%80%e4%bb%a5%e5%8f%8a%e5%8e%9f%e5%ad%90%e6%80%a7%e8%a6%81%e6%b1%82">#</a>
-</h2>
-<h2 id="非实时一个引用的变化可能递归得导致一系列引用修改内存释放">
-  非实时（一个引用的变化可能递归得导致一系列引用修改，内存释放)
-  <a class="anchor" href="#%e9%9d%9e%e5%ae%9e%e6%97%b6%e4%b8%80%e4%b8%aa%e5%bc%95%e7%94%a8%e7%9a%84%e5%8f%98%e5%8c%96%e5%8f%af%e8%83%bd%e9%80%92%e5%bd%92%e5%be%97%e5%af%bc%e8%87%b4%e4%b8%80%e7%b3%bb%e5%88%97%e5%bc%95%e7%94%a8%e4%bf%ae%e6%94%b9%e5%86%85%e5%ad%98%e9%87%8a%e6%94%be">#</a>
-</h2>
-<h2 id="有很多算法可以一定程度解决上述问题顺便一提c使用的智能指针即是基于引用计数实现的com对象也使用了引用计数来管理">
-  有很多算法可以一定程度解决上述问题，顺便一提，C++使用的智能指针即是基于引用计数实现的，COM对象也使用了引用计数来管理。
-  <a class="anchor" href="#%e6%9c%89%e5%be%88%e5%a4%9a%e7%ae%97%e6%b3%95%e5%8f%af%e4%bb%a5%e4%b8%80%e5%ae%9a%e7%a8%8b%e5%ba%a6%e8%a7%a3%e5%86%b3%e4%b8%8a%e8%bf%b0%e9%97%ae%e9%a2%98%e9%a1%ba%e4%be%bf%e4%b8%80%e6%8f%90c%e4%bd%bf%e7%94%a8%e7%9a%84%e6%99%ba%e8%83%bd%e6%8c%87%e9%92%88%e5%8d%b3%e6%98%af%e5%9f%ba%e4%ba%8e%e5%bc%95%e7%94%a8%e8%ae%a1%e6%95%b0%e5%ae%9e%e7%8e%b0%e7%9a%84com%e5%af%b9%e8%b1%a1%e4%b9%9f%e4%bd%bf%e7%94%a8%e4%ba%86%e5%bc%95%e7%94%a8%e8%ae%a1%e6%95%b0%e6%9d%a5%e7%ae%a1%e7%90%86">#</a>
-</h2>
-<h1 id="unity-中的gc">
-  Unity 中的GC
-  <a class="anchor" href="#unity-%e4%b8%ad%e7%9a%84gc">#</a>
-</h1>
-<h2 id="unity的脚本后端是基于mono的实现当然现在多了个il2cpp不过也是类似的gc实现而mono使用的gc是所谓的boehmdemersweiser-garbage-collector是mark-sweep-的实现它会在需要进行gc时占用主线程进行遍历-标记-垃圾回收的过程然后在归还主线程控制权这会导致帧数的突然下降产生卡顿不过因为该实现是非压缩式的所以卡顿现象相对较轻但是对内存利用率进一步下降了会有内存碎片的问题囧所以我们需要慎重地处理对象的创建内存请求还有释放使用gc管理内存是没有主动释放内存的接口的但是我们可以通过消除对某个对象的引用来做到这一点此外unity的代码分为两部分托管与非托管gc影响的只有托管部分的代码使用的堆内存而且这个托管堆占用的地址空间不会返还给操作系统">
-  Unity的脚本后端是基于Mono的实现（当然现在多了个IL2CPP，不过也是类似的GC实现)，而Mono使用的GC是所谓的Boehm–Demers–Weiser garbage collector。是Mark-Sweep 的实现，它会在需要进行GC时占用主线程，进行遍历-标记-垃圾回收的过程，然后在归还主线程控制权。这会导致帧数的突然下降，产生卡顿（不过因为该实现是非压缩式的，所以卡顿现象相对较轻，但是对内存利用率进一步下降了，会有内存碎片的问题。。囧）。所以我们需要慎重地处理对象的创建（内存请求），还有释放（使用GC管理内存是没有主动释放内存的接口的，但是我们可以通过消除对某个对象的引用来做到这一点）。此外，Unity的代码分为两部分：托管与非托管，GC影响的只有托管部分的代码使用的堆内存。而且这个托管堆占用的地址空间不会返还给操作系统。。
-  <a class="anchor" href="#unity%e7%9a%84%e8%84%9a%e6%9c%ac%e5%90%8e%e7%ab%af%e6%98%af%e5%9f%ba%e4%ba%8emono%e7%9a%84%e5%ae%9e%e7%8e%b0%e5%bd%93%e7%84%b6%e7%8e%b0%e5%9c%a8%e5%a4%9a%e4%ba%86%e4%b8%aail2cpp%e4%b8%8d%e8%bf%87%e4%b9%9f%e6%98%af%e7%b1%bb%e4%bc%bc%e7%9a%84gc%e5%ae%9e%e7%8e%b0%e8%80%8cmono%e4%bd%bf%e7%94%a8%e7%9a%84gc%e6%98%af%e6%89%80%e8%b0%93%e7%9a%84boehmdemersweiser-garbage-collector%e6%98%afmark-sweep-%e7%9a%84%e5%ae%9e%e7%8e%b0%e5%ae%83%e4%bc%9a%e5%9c%a8%e9%9c%80%e8%a6%81%e8%bf%9b%e8%a1%8cgc%e6%97%b6%e5%8d%a0%e7%94%a8%e4%b8%bb%e7%ba%bf%e7%a8%8b%e8%bf%9b%e8%a1%8c%e9%81%8d%e5%8e%86-%e6%a0%87%e8%ae%b0-%e5%9e%83%e5%9c%be%e5%9b%9e%e6%94%b6%e7%9a%84%e8%bf%87%e7%a8%8b%e7%84%b6%e5%90%8e%e5%9c%a8%e5%bd%92%e8%bf%98%e4%b8%bb%e7%ba%bf%e7%a8%8b%e6%8e%a7%e5%88%b6%e6%9d%83%e8%bf%99%e4%bc%9a%e5%af%bc%e8%87%b4%e5%b8%a7%e6%95%b0%e7%9a%84%e7%aa%81%e7%84%b6%e4%b8%8b%e9%99%8d%e4%ba%a7%e7%94%9f%e5%8d%a1%e9%a1%bf%e4%b8%8d%e8%bf%87%e5%9b%a0%e4%b8%ba%e8%af%a5%e5%ae%9e%e7%8e%b0%e6%98%af%e9%9d%9e%e5%8e%8b%e7%bc%a9%e5%bc%8f%e7%9a%84%e6%89%80%e4%bb%a5%e5%8d%a1%e9%a1%bf%e7%8e%b0%e8%b1%a1%e7%9b%b8%e5%af%b9%e8%be%83%e8%bd%bb%e4%bd%86%e6%98%af%e5%af%b9%e5%86%85%e5%ad%98%e5%88%a9%e7%94%a8%e7%8e%87%e8%bf%9b%e4%b8%80%e6%ad%a5%e4%b8%8b%e9%99%8d%e4%ba%86%e4%bc%9a%e6%9c%89%e5%86%85%e5%ad%98%e7%a2%8e%e7%89%87%e7%9a%84%e9%97%ae%e9%a2%98%e5%9b%a7%e6%89%80%e4%bb%a5%e6%88%91%e4%bb%ac%e9%9c%80%e8%a6%81%e6%85%8e%e9%87%8d%e5%9c%b0%e5%a4%84%e7%90%86%e5%af%b9%e8%b1%a1%e7%9a%84%e5%88%9b%e5%bb%ba%e5%86%85%e5%ad%98%e8%af%b7%e6%b1%82%e8%bf%98%e6%9c%89%e9%87%8a%e6%94%be%e4%bd%bf%e7%94%a8gc%e7%ae%a1%e7%90%86%e5%86%85%e5%ad%98%e6%98%af%e6%b2%a1%e6%9c%89%e4%b8%bb%e5%8a%a8%e9%87%8a%e6%94%be%e5%86%85%e5%ad%98%e7%9a%84%e6%8e%a5%e5%8f%a3%e7%9a%84%e4%bd%86%e6%98%af%e6%88%91%e4%bb%ac%e5%8f%af%e4%bb%a5%e9%80%9a%e8%bf%87%e6%b6%88%e9%99%a4%e5%af%b9%e6%9f%90%e4%b8%aa%e5%af%b9%e8%b1%a1%e7%9a%84%e5%bc%95%e7%94%a8%e6%9d%a5%e5%81%9a%e5%88%b0%e8%bf%99%e4%b8%80%e7%82%b9%e6%ad%a4%e5%a4%96unity%e7%9a%84%e4%bb%a3%e7%a0%81%e5%88%86%e4%b8%ba%e4%b8%a4%e9%83%a8%e5%88%86%e6%89%98%e7%ae%a1%e4%b8%8e%e9%9d%9e%e6%89%98%e7%ae%a1gc%e5%bd%b1%e5%93%8d%e7%9a%84%e5%8f%aa%e6%9c%89%e6%89%98%e7%ae%a1%e9%83%a8%e5%88%86%e7%9a%84%e4%bb%a3%e7%a0%81%e4%bd%bf%e7%94%a8%e7%9a%84%e5%a0%86%e5%86%85%e5%ad%98%e8%80%8c%e4%b8%94%e8%bf%99%e4%b8%aa%e6%89%98%e7%ae%a1%e5%a0%86%e5%8d%a0%e7%94%a8%e7%9a%84%e5%9c%b0%e5%9d%80%e7%a9%ba%e9%97%b4%e4%b8%8d%e4%bc%9a%e8%bf%94%e8%bf%98%e7%bb%99%e6%93%8d%e4%bd%9c%e7%b3%bb%e7%bb%9f">#</a>
-</h2>
-</article>
- 
-      
-
-      <footer class="book-footer">
-        
-  <div class="flex flex-wrap justify-between">
-
-
-
-
-
-</div>
-
-
-
-  <script>(function(){function e(n){const e=window.getSelection(),t=document.createRange();t.selectNodeContents(n),e.removeAllRanges(),e.addRange(t)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
-
-
- 
-        
-      </footer>
-
-      
-  
-  <div class="book-comments">
-
-</div>
-  
- 
-
-      <label for="menu-control" class="hidden book-menu-overlay"></label>
-    </div>
+<body class="is-preload">
 
     
-    <aside class="book-toc">
-      <div class="book-toc-content">
-        
-  
-<nav id="TableOfContents">
-  <ul>
-    <li><a href="#实现gc的策略有很多种其中最常见一种就是-tracing-garbage-collection或者叫-mark-sweep这种算法会通过一个-root-object遍历这个该对象引用的变量并且标记递归这个过程这样就确定了所有reachable的对象剩下的对象即视为garbage">实现GC的策略有很多种，其中最常见一种就是 Tracing garbage collection，或者叫 Mark-Sweep，这种算法会通过一个 root Object，遍历这个该对象引用的变量，并且标记，递归这个过程，这样就确定了所有reachable的对象，剩下的对象即视为garbage。</a></li>
-    <li><a href="#heading"></a></li>
-    <li><a href="#另一种常见的策略还有引用计数reference-counting它是通过为每个对象维护一个引用计数这代表当前对该对象的引用数目当引用为0即代表该对象为-garage引用技术有如下缺点">另一种常见的策略还有引用计数（Reference counting），它是通过为每个对象维护一个引用计数，这代表当前对该对象的引用数目，当引用为0，即代表该对象为 Garage。引用技术有如下缺点</a></li>
-    <li><a href="#heading-1"></a></li>
-    <li><a href="#循环引用问题">循环引用问题</a></li>
-    <li><a href="#保存计数带来的空间开销">保存计数带来的空间开销</a></li>
-    <li><a href="#修改引用数目带来的速度开销以及原子性要求">修改引用数目带来的速度开销以及原子性要求</a></li>
-    <li><a href="#非实时一个引用的变化可能递归得导致一系列引用修改内存释放">非实时（一个引用的变化可能递归得导致一系列引用修改，内存释放)</a></li>
-    <li><a href="#有很多算法可以一定程度解决上述问题顺便一提c使用的智能指针即是基于引用计数实现的com对象也使用了引用计数来管理">有很多算法可以一定程度解决上述问题，顺便一提，C++使用的智能指针即是基于引用计数实现的，COM对象也使用了引用计数来管理。</a></li>
-  </ul>
+        <div id="wrapper">
 
-  <ul>
-    <li><a href="#unity的脚本后端是基于mono的实现当然现在多了个il2cpp不过也是类似的gc实现而mono使用的gc是所谓的boehmdemersweiser-garbage-collector是mark-sweep-的实现它会在需要进行gc时占用主线程进行遍历-标记-垃圾回收的过程然后在归还主线程控制权这会导致帧数的突然下降产生卡顿不过因为该实现是非压缩式的所以卡顿现象相对较轻但是对内存利用率进一步下降了会有内存碎片的问题囧所以我们需要慎重地处理对象的创建内存请求还有释放使用gc管理内存是没有主动释放内存的接口的但是我们可以通过消除对某个对象的引用来做到这一点此外unity的代码分为两部分托管与非托管gc影响的只有托管部分的代码使用的堆内存而且这个托管堆占用的地址空间不会返还给操作系统">Unity的脚本后端是基于Mono的实现（当然现在多了个IL2CPP，不过也是类似的GC实现)，而Mono使用的GC是所谓的Boehm–Demers–Weiser garbage collector。是Mark-Sweep 的实现，它会在需要进行GC时占用主线程，进行遍历-标记-垃圾回收的过程，然后在归还主线程控制权。这会导致帧数的突然下降，产生卡顿（不过因为该实现是非压缩式的，所以卡顿现象相对较轻，但是对内存利用率进一步下降了，会有内存碎片的问题。。囧）。所以我们需要慎重地处理对象的创建（内存请求），还有释放（使用GC管理内存是没有主动释放内存的接口的，但是我们可以通过消除对某个对象的引用来做到这一点）。此外，Unity的代码分为两部分：托管与非托管，GC影响的只有托管部分的代码使用的堆内存。而且这个托管堆占用的地址空间不会返还给操作系统。。</a></li>
-  </ul>
-</nav>
+            
+                <header id="header">
+                    <div class="logo">
+                        <span class="icon fa-gem"></span>
+                    </div>
+                    <div class="content">
+                        <div class="inner">
+                            <h1><a href="/">Go Home</a></h1>
+                            <p>
+                                Nothing to see here
+                            </p>
+                        </div>
+                    </div>
+                </header>
 
+                
+<footer id="footer">
+    <p class="copyright">&copy; Design: <a href="https://github.com/d-asnaghi">d-asnaghi</a> and <a href="https://html5up.net">HTML5 UP</a>.</p>
+</footer>
 
- 
-      </div>
-    </aside>
+        </div>
+
     
-  </main>
+    <div id="bg"></div>
 
-  
 </body>
+
+
+    
+    <script src=http://example.org/assets/js/jquery.min.js></script>
+    <script src=http://example.org/assets/js/browser.min.js></script>
+    <script src=http://example.org/assets/js/breakpoints.min.js></script>
+    <script src=http://example.org/assets/js/util.js></script>
+    <script src=http://example.org/assets/js/main.js></script>
+
 </html>
-
-
-
-
-
-
-
-
-
-
-
-

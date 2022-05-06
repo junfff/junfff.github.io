@@ -1,18 +1,64 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Posts on junfff blog </title>
+    <title>Blog on junfff blog </title>
     <link>http://example.org/posts/</link>
-    <description>Recent content in Posts on junfff blog </description>
+    <description>Recent content in Blog on junfff blog </description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language><atom:link href="http://example.org/posts/index.xml" rel="self" type="application/rss+xml" />
+    <language>en-us</language>
+    <lastBuildDate>Sun, 28 Sep 2014 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Creating a New Theme</title>
+      <link>http://example.org/posts/creating-a-new-theme/</link>
+      <pubDate>Sun, 28 Sep 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/posts/creating-a-new-theme/</guid>
+      <description>Introduction This tutorial will show you how to create a simple theme in Hugo. I assume that you are familiar with HTML, the bash command line, and that you are comfortable using Markdown to format content. I&amp;rsquo;ll explain how Hugo uses templates and how you can organize your templates to create a theme. I won&amp;rsquo;t cover using CSS to style your theme.
+We&amp;rsquo;ll start with creating a new site with a very basic template.</description>
+    </item>
+    
+    <item>
+      <title>Migrate to Hugo from Jekyll</title>
+      <link>http://example.org/posts/migrate-from-jekyll/</link>
+      <pubDate>Mon, 10 Mar 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/posts/migrate-from-jekyll/</guid>
+      <description>Move static content to static Jekyll has a rule that any directory not starting with _ will be copied as-is to the _site output. Hugo keeps all static content under static. You should therefore move it all there. With Jekyll, something that looked like
+▾ &amp;lt;root&amp;gt;/ ▾ images/ logo.png  should become
+▾ &amp;lt;root&amp;gt;/ ▾ static/ ▾ images/ logo.png  Additionally, you&amp;rsquo;ll want any files that should reside at the root (such as CNAME) to be moved to static.</description>
+    </item>
+    
+    <item>
+      <title>(Hu)go Template Primer</title>
+      <link>http://example.org/posts/goisforlovers/</link>
+      <pubDate>Wed, 02 Apr 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/posts/goisforlovers/</guid>
+      <description>Hugo uses the excellent Go html/template library for its template engine. It is an extremely lightweight engine that provides a very small amount of logic. In our experience that it is just the right amount of logic to be able to create a good static website. If you have used other template systems from different languages or frameworks you will find a lot of similarities in Go templates.
+This document is a brief primer on using Go templates.</description>
+    </item>
+    
+    <item>
+      <title>Getting Started with Hugo</title>
+      <link>http://example.org/posts/hugoisforlovers/</link>
+      <pubDate>Wed, 02 Apr 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/posts/hugoisforlovers/</guid>
+      <description>Step 1. Install Hugo Go to Hugo releases and download the appropriate version for your OS and architecture.
+Save it somewhere specific as we will be using it in the next step.
+More complete instructions are available at Install Hugo
+Step 2. Build the Docs Hugo has its own example site which happens to also be the documentation site you are reading right now.
+Follow the following steps:
+ Clone the Hugo repository Go into the repo Run hugo in server mode and build the docs Open your browser to http://localhost:1313  Corresponding pseudo commands:</description>
+    </item>
+    
     <item>
       <title>ArchLinux Tes9999999</title>
       <link>http://example.org/posts/archlinux/2022-02-20-tst/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>http://example.org/posts/archlinux/2022-02-20-tst/</guid>
-      <description>Subject #  TestTest 12312312332121123123312321  </description>
+      <description>Subject TestTest 12312312332121123123312321  </description>
     </item>
     
     <item>
@@ -21,7 +67,7 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>http://example.org/posts/archlinux/archlinuxtest/</guid>
-      <description>Subject #  1312312312312321 TestTest</description>
+      <description>Subject 1312312312312321 TestTest</description>
     </item>
     
     <item>
@@ -30,7 +76,7 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>http://example.org/posts/archlinux/2022-02-19-archlinuxtest/</guid>
-      <description>Subject #  1312312312312321 TestTest 12312312332121123123312321</description>
+      <description>Subject 1312312312312321 TestTest 12312312332121123123312321</description>
     </item>
     
     <item>
@@ -52,7 +98,7 @@ rm -fr /etc/pacman.d/gnupg pacman-key &amp;ndash;init pacman-key &amp;ndash;popu
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>http://example.org/posts/2020-12-08-helloworld/</guid>
-      <description>Welcome #  Hello world, this is my first Jekyll blog post.
+      <description>Welcome Hello world, this is my first Jekyll blog post.
 I hope you like it!</description>
     </item>
     
@@ -62,7 +108,7 @@ I hope you like it!</description>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>http://example.org/posts/interview/2021-06-29-c&#43;&#43;%E8%99%9A%E5%87%BD%E6%95%B0-%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0/</guid>
-      <description>Subject C++ 构造函数可以是虚函数吗？ 析构函数可以是虚函数吗？ #    1.构造函数不能为虚函数
+      <description>Subject C++ 构造函数可以是虚函数吗？ 析构函数可以是虚函数吗？   1.构造函数不能为虚函数
   当我们将构造函数定义为虚函数时,会直接报错:
   首先回忆下以前学的virtual虚函数概念:
   如果类定义了虚函数,创建对象时,则会分配内存空间,并且为该父类以及其所有子类的内存空间上额外分配一个虚函数表.
@@ -87,7 +133,7 @@ virtual void func() //虚函数成员 { cout&amp;lt;&amp;lt;&amp;quot;ClassBase:
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>http://example.org/posts/interview/2021-06-26-five-ball-select-two/</guid>
-      <description>Subject #    从2个红球，2个黄球，1个白球中随机取出两个球，则两球颜色不同的概率是___．.
+      <description>Subject   从2个红球，2个黄球，1个白球中随机取出两个球，则两球颜色不同的概率是___．.
  从5个球中任意取两个共有C52=10种，两球颜色相同的有2种，两球颜色不同的概率是1-2/10=4/5， 故答案为：4/5． 根据互斥时间的概率公式计算即可． 本题考点：古典概型及其概率计算公式  考点点评： 本题考查了概率的基本性质和等可能事件的概率，求解方法采用了正难则反的原则，解答的关键是求出基本事件总数和发生事件的个数，属基本题型
   </description>
     </item>
@@ -98,7 +144,7 @@ virtual void func() //虚函数成员 { cout&amp;lt;&amp;lt;&amp;quot;ClassBase:
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>http://example.org/posts/interview/2021-06-26-for-for-for/</guid>
-      <description>Subject #   int a = 3; int b = 4; int c = 5; int x = 0; for (int i = 0; i &amp;lt; a; i++) { for (int j = 0; j &amp;lt; b; j++) { for (int k = 0; k &amp;lt; c; k++) { x++; } } } 任意断点 x 位置,根据 x 值 推断 i j k,求出公式。 x = 58 k = 58%5=3 , j = 58/5=11%4=3, i =11/4=2 x = 33 k = 33%5=3 , j = 33/5=6%4=2, i =6/4=1 公式： k=x%c,j=x/c%b, i=x/c/b  </description>
+      <description>Subject  int a = 3; int b = 4; int c = 5; int x = 0; for (int i = 0; i &amp;lt; a; i++) { for (int j = 0; j &amp;lt; b; j++) { for (int k = 0; k &amp;lt; c; k++) { x++; } } } 任意断点 x 位置,根据 x 值 推断 i j k,求出公式。 x = 58 k = 58%5=3 , j = 58/5=11%4=3, i =11/4=2 x = 33 k = 33%5=3 , j = 33/5=6%4=2, i =6/4=1 公式： k=x%c,j=x/c%b, i=x/c/b  </description>
     </item>
     
     <item>
@@ -107,7 +153,7 @@ virtual void func() //虚函数成员 { cout&amp;lt;&amp;lt;&amp;quot;ClassBase:
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>http://example.org/posts/interview/2021-06-29-unity/</guid>
-      <description>Subject assetBundle.Unload true 和false 区别 #  - 当传入的参数为true，则不仅仅内存中的AssetBundle对象包含的资源会被销毁。根据这些资源实例化而来的游戏内的对象也会销毁。 - 当传入的参数为false，则仅仅销毁内存中的AssetBundle对象包含的资源。  Unity GC 机制 #  战场优化 #  模型预加载 动态图集 光效粒子 屏幕内外 自定义UIMesh GPU Instancing, 容器扩容优化，遍历容器，线程安全容器 #  寻路 A* B* #  物理碰撞,静态碰撞。动态碰撞RVO #  动态图集的优化原理是什么 #  所谓动态图集就是没有办法静态生成的，需要在运行时动态生成的图集，那么我们为什么需要动态图集？ #  动态图集是为了解决游戏中动态图片太多的问题，也就是我们没有办法预先放在UI上的。下图案例中可以看到右下角的英雄技能图标、天赋技能图标，以及主动使用的物品图片，均为动态加载。左上角的英雄头像也是动态加载，而且由于技能之类的图片太多（毕竟有几十个英雄），所以没有办法打成一张静态图集。而如果作为独立图片动态加载，就会多十几个DrawCall。即便是打成多张静态图集，也会导致UI渲染的批次被打断。 #  解决方案：用动态打图集的方式。因为我们没有Unity源码，所以图集的分块算法参考了这个开源项目 http://davikingcode.com/blog/unity-generate-spritesheets-at-runtime/，这个算法效率比较不错，建议大家可以研究一下，它的分块算法的思路上本质上类似于BSP。 #  大图集是在游戏Loading时获得动态图片，然后把这些动态图片渲染到RenderTexture上，用GPU的方式来做可以保证加载的效率。在游戏中，英雄头像使用了一张256x256的RenderTexture，而英雄技能、天赋技能和物品图标使用了一张512x512的RenderTexture。这样一来，技能面板动态图标的消耗从12个DrawCall降低到1个DrawCall。而英雄头像部分，从最多9个DrawCall降低到2个DrawCall，这个结果是因为敌我双方英雄头像使用的材质不同。实际操作中，技能面板的动态图片放在同一个层级里，这样就只有1个DrawCall，上面的蒙板、边框零散图片打成静态图集，在不出现穿插的情况下，UGUI也会协助合批。因此通过这种方式大量减少了DrawCall。后面讲到的一些点其实也用到了动态图集。 #  渲染流水线的原理 #  渲染流程，可以分为三个阶段。应用阶段，几何阶段，光栅化阶段 #  ecs 优缺点，和mvc这些相比。 为啥选ecs #  mvc 面向对象,（继承，多态，封装）高度耦合， 一个英雄charactor包含了 属性，状态，控制器 #  ecs 面向数据：（组合模式）推崇组合优于继承理念，函数式编程，system只对他关系的component负责。业务上更加专一。遍历内存上更加高效（保证内存的连续性）,业务拆分的越细 代码复用率越高 #  帧同步 #  浮点类型，多线程，随机种子，静态变量，全局变量，容器顺序需要确定性 #  内存和虚拟内存的区别 #  指的是把硬盘中的一部分空间用来当做内存使用,虚拟内存的作用：是为了解决计算机在运行较大的程序时内存不足的情况,虚拟内存是在硬盘上的，它的速度要比内存慢的多，虚拟内存其实就是为了运行很大的程序的一种妥协的办法，妥协了软件的运行速度。 #  子类为什么可以赋值给基类对象 #  基类的指针可以指向派生类对象，但是反过来则不行，派生类的指针不可以指向基类的指针。这是为什么呢？这是因为派生类的对象所占的存储空间通常要比基类的对象大，原因就是派生类除了继承基类的成员之外，还拥有自己的成员，所以基类的指针操作派生类的对象时，由于基类指针会向操作基类对象那样操作派生类对象，而基类对象所占用的内存空间通常小于派生类对象，所以基类指针不会超出派生类对象去操作数据。 #  同样的道理，基类的引用可以作为派生类对象的别名，但是反过来则不行，派生类的引用不可以作为基类对象的别名。 #  自定义的UI Mesh #  构造出来的Mesh使用一个单独的正交摄像机来绘制， #  在UI Mesh的构造函数中可以看到是创建了一个GameObject，附加MeshFilter和MeshRenderer，然后再做一些初始化的工作。 #  重点在于自行填充Mesh的三个Buffer：位置、UV和索引。另外为了避免在运行时重复申请内存，在初始化的时候要申请足够多的顶点。 #  在实际游戏中用到了多个UI Mesh，总体的顶点数大概在3000左右。 #  初始化Mesh之后，还要去维护顶点Buffer。一个小兵的血条包含背景底框和前景血条，2个矩形8个顶点，在游戏中去动态地改变这8个顶点的位置。如果某个Actor不在视野中，那么把它所有顶点坍缩到一个点就不显示了。另外，Actor死亡的时候，并不删除它的数据，而是先设置为不显示，然后缓存起来准备复用。也就是说无论整场战斗创建了多少个角色，实际上血条都是在这个Mesh的Buffer里不断复用。 #  ================================================================================================================================ #  (.</description>
+      <description>Subject assetBundle.Unload true 和false 区别 - 当传入的参数为true，则不仅仅内存中的AssetBundle对象包含的资源会被销毁。根据这些资源实例化而来的游戏内的对象也会销毁。 - 当传入的参数为false，则仅仅销毁内存中的AssetBundle对象包含的资源。  Unity GC 机制 战场优化 模型预加载 动态图集 光效粒子 屏幕内外 自定义UIMesh GPU Instancing, 容器扩容优化，遍历容器，线程安全容器 寻路 A* B* 物理碰撞,静态碰撞。动态碰撞RVO 动态图集的优化原理是什么 所谓动态图集就是没有办法静态生成的，需要在运行时动态生成的图集，那么我们为什么需要动态图集？ 动态图集是为了解决游戏中动态图片太多的问题，也就是我们没有办法预先放在UI上的。下图案例中可以看到右下角的英雄技能图标、天赋技能图标，以及主动使用的物品图片，均为动态加载。左上角的英雄头像也是动态加载，而且由于技能之类的图片太多（毕竟有几十个英雄），所以没有办法打成一张静态图集。而如果作为独立图片动态加载，就会多十几个DrawCall。即便是打成多张静态图集，也会导致UI渲染的批次被打断。 解决方案：用动态打图集的方式。因为我们没有Unity源码，所以图集的分块算法参考了这个开源项目 http://davikingcode.com/blog/unity-generate-spritesheets-at-runtime/，这个算法效率比较不错，建议大家可以研究一下，它的分块算法的思路上本质上类似于BSP。 大图集是在游戏Loading时获得动态图片，然后把这些动态图片渲染到RenderTexture上，用GPU的方式来做可以保证加载的效率。在游戏中，英雄头像使用了一张256x256的RenderTexture，而英雄技能、天赋技能和物品图标使用了一张512x512的RenderTexture。这样一来，技能面板动态图标的消耗从12个DrawCall降低到1个DrawCall。而英雄头像部分，从最多9个DrawCall降低到2个DrawCall，这个结果是因为敌我双方英雄头像使用的材质不同。实际操作中，技能面板的动态图片放在同一个层级里，这样就只有1个DrawCall，上面的蒙板、边框零散图片打成静态图集，在不出现穿插的情况下，UGUI也会协助合批。因此通过这种方式大量减少了DrawCall。后面讲到的一些点其实也用到了动态图集。 渲染流水线的原理 渲染流程，可以分为三个阶段。应用阶段，几何阶段，光栅化阶段 ecs 优缺点，和mvc这些相比。 为啥选ecs mvc 面向对象,（继承，多态，封装）高度耦合， 一个英雄charactor包含了 属性，状态，控制器 ecs 面向数据：（组合模式）推崇组合优于继承理念，函数式编程，system只对他关系的component负责。业务上更加专一。遍历内存上更加高效（保证内存的连续性）,业务拆分的越细 代码复用率越高 帧同步 浮点类型，多线程，随机种子，静态变量，全局变量，容器顺序需要确定性 内存和虚拟内存的区别 指的是把硬盘中的一部分空间用来当做内存使用,虚拟内存的作用：是为了解决计算机在运行较大的程序时内存不足的情况,虚拟内存是在硬盘上的，它的速度要比内存慢的多，虚拟内存其实就是为了运行很大的程序的一种妥协的办法，妥协了软件的运行速度。 子类为什么可以赋值给基类对象 基类的指针可以指向派生类对象，但是反过来则不行，派生类的指针不可以指向基类的指针。这是为什么呢？这是因为派生类的对象所占的存储空间通常要比基类的对象大，原因就是派生类除了继承基类的成员之外，还拥有自己的成员，所以基类的指针操作派生类的对象时，由于基类指针会向操作基类对象那样操作派生类对象，而基类对象所占用的内存空间通常小于派生类对象，所以基类指针不会超出派生类对象去操作数据。 同样的道理，基类的引用可以作为派生类对象的别名，但是反过来则不行，派生类的引用不可以作为基类对象的别名。 自定义的UI Mesh 构造出来的Mesh使用一个单独的正交摄像机来绘制， 在UI Mesh的构造函数中可以看到是创建了一个GameObject，附加MeshFilter和MeshRenderer，然后再做一些初始化的工作。 重点在于自行填充Mesh的三个Buffer：位置、UV和索引。另外为了避免在运行时重复申请内存，在初始化的时候要申请足够多的顶点。 在实际游戏中用到了多个UI Mesh，总体的顶点数大概在3000左右。 初始化Mesh之后，还要去维护顶点Buffer。一个小兵的血条包含背景底框和前景血条，2个矩形8个顶点，在游戏中去动态地改变这8个顶点的位置。如果某个Actor不在视野中，那么把它所有顶点坍缩到一个点就不显示了。另外，Actor死亡的时候，并不删除它的数据，而是先设置为不显示，然后缓存起来准备复用。也就是说无论整场战斗创建了多少个角色，实际上血条都是在这个Mesh的Buffer里不断复用。 ================================================================================================================================ (.net)装箱拆箱的概念  装箱是将值类型转换为 object 类型或由此值类型实现的任何接口类型的过程. CLR 对值类型进行装箱时，会将值包装在 System.Object 实例中并将其存储在托管堆中。 拆箱(取消装箱)将从对象中提取值类型。 装箱是隐式的；取消装箱是显式的。 int i =1; object o = i; //装箱 i = (int)o; //拆箱 (3D数学)4元数的做用是什么?</description>
     </item>
     
     <item>
@@ -116,7 +162,7 @@ virtual void func() //虚函数成员 { cout&amp;lt;&amp;lt;&amp;quot;ClassBase:
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>http://example.org/posts/rust/2020-12-27-rust-channels/</guid>
-      <description>Flavors: #   Synchronous channels: Channel where send() can block. Limited capacity.  Mutex + Condvar + VecDeque Atomic VecDeque (atomic queue) + thread::pack + thread::Thread::notify   Asynchronous channels: Channel where send() cannot block. Unbounded.  Mutex + Condvar + VecDeque Mutex + Condvar + LinkedList AtomicLinkedList or Atomic Queue Atomic linked list, linked list of T Atomic block linked list, linked of atomic VecDeque   Rendezvous channels: Synchronous with capacity = 0.</description>
+      <description>Flavors:  Synchronous channels: Channel where send() can block. Limited capacity.  Mutex + Condvar + VecDeque Atomic VecDeque (atomic queue) + thread::pack + thread::Thread::notify   Asynchronous channels: Channel where send() cannot block. Unbounded.  Mutex + Condvar + VecDeque Mutex + Condvar + LinkedList AtomicLinkedList or Atomic Queue Atomic linked list, linked list of T Atomic block linked list, linked of atomic VecDeque   Rendezvous channels: Synchronous with capacity = 0.</description>
     </item>
     
     <item>
@@ -125,13 +171,13 @@ virtual void func() //虚函数成员 { cout&amp;lt;&amp;lt;&amp;quot;ClassBase:
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>http://example.org/posts/rust/2021-02-23-rust-mio-epoll/</guid>
-      <description>Flavors: #   from url: https://blog.csdn.net/s_lisheng/article/details/80593426  【Rust】轻量级I/O库mio
+      <description>Flavors:  from url: https://blog.csdn.net/s_lisheng/article/details/80593426  【Rust】轻量级I/O库mio
 让我思考一下 2018-06-06 12:53:45 4054 收藏 3 分类专栏： Rust 文章标签： Rust mio 版权 mio是rust实现的一个轻量级的I/O库。其实现基本上就是对不同操作系统底层相关API的封装，抽象出统一的接口供上层使用。Linux下为epoll，Windows下为IOCP，OS X下为kqueue。
 一、关于mio 1、重要特性 非阻塞TCP，UDP I/O事件通知epoll,kqeue,IOCP实现 运行时零分配 平台可扩展 2、基础用法 其使用方法与Linux中epoll差不多，mio底层封装了epoll，使用步骤思路：
 创建Poll 注册事件 事件循环等待与处理事件 mio提供可跨平台的sytem selector访问，不同平台如下表，都可调用相同的API。不同平台使用的API开销不尽相同。由于mio是基于readiness(就绪状态)的API，与Linux epoll相似，可以看到很多API在Linux上都可以一对一映射。相比之下，Windows IOCP是基于完成（completion-based）而非基于就绪的API，所以两者间会有较多桥接。 同时mio提供自身版本的TcpListener、TcpStream、UdpSocket，这些API封装了底层平台相关API，并设为非阻塞且实现Evented trait。
 OS	Selector Linux	epoll OS X, iOS	kqueue Windows	IOCP FreeBSD	kqueue Android	epoll mio实现的是一个单线程事件循环，并没有实现线程池及多线程事件循环，如果需要线程池及多线程事件循环等需要自己实现。
 二、源码分析 先给出mio的源码目录结构，只列出了关键的部分，如下所示：
-mio代码目录结构 mio |&amp;mdash;-&amp;gt;test |&amp;mdash;-&amp;gt;src |&amp;mdash;&amp;mdash;&amp;ndash;&amp;gt;deprecated	//事件循环代码 |&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;ndash;&amp;gt;event_loop.rs	//EventLoop的实现，内部封装了Poll	【1】 |&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;ndash;&amp;gt;handler.rs	//供上层实现的接口 |&amp;mdash;&amp;mdash;&amp;ndash;&amp;gt;net |&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;gt;mod.rs |&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;gt;tcp.</description>
+mio代码目录结构 mio |&amp;mdash;-&amp;gt;test |&amp;mdash;-&amp;gt;src |&amp;mdash;&amp;mdash;&amp;ndash;&amp;gt;deprecated	//事件循环代码 |&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;ndash;&amp;gt;event_loop.rs	//EventLoop的实现，内部封装了Poll	【1】 |&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;ndash;&amp;gt;handler.rs	//供上层实现的接口 |&amp;mdash;&amp;mdash;&amp;ndash;&amp;gt;net |&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;gt;mod.rs |&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;gt;tcp.rs |&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;gt;udp.rs |&amp;mdash;&amp;mdash;&amp;ndash;&amp;gt;sys	//不同系统下的实现 |&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;gt;mod.</description>
     </item>
     
     <item>
@@ -140,7 +186,7 @@ mio代码目录结构 mio |&amp;mdash;-&amp;gt;test |&amp;mdash;-&amp;gt;src |&a
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>http://example.org/posts/interview/2022-05-04-unity-gc/</guid>
-      <description>GC的实现 #  实现GC的策略有很多种，其中最常见一种就是 Tracing garbage collection，或者叫 Mark-Sweep，这种算法会通过一个 root Object，遍历这个该对象引用的变量，并且标记，递归这个过程，这样就确定了所有reachable的对象，剩下的对象即视为garbage。 #  #  另一种常见的策略还有引用计数（Reference counting），它是通过为每个对象维护一个引用计数，这代表当前对该对象的引用数目，当引用为0，即代表该对象为 Garage。引用技术有如下缺点 #  #  循环引用问题 #  保存计数带来的空间开销 #  修改引用数目带来的速度开销以及原子性要求 #  非实时（一个引用的变化可能递归得导致一系列引用修改，内存释放) #  有很多算法可以一定程度解决上述问题，顺便一提，C++使用的智能指针即是基于引用计数实现的，COM对象也使用了引用计数来管理。 #  Unity 中的GC #  Unity的脚本后端是基于Mono的实现（当然现在多了个IL2CPP，不过也是类似的GC实现)，而Mono使用的GC是所谓的Boehm–Demers–Weiser garbage collector。是Mark-Sweep 的实现，它会在需要进行GC时占用主线程，进行遍历-标记-垃圾回收的过程，然后在归还主线程控制权。这会导致帧数的突然下降，产生卡顿（不过因为该实现是非压缩式的，所以卡顿现象相对较轻，但是对内存利用率进一步下降了，会有内存碎片的问题。。囧）。所以我们需要慎重地处理对象的创建（内存请求），还有释放（使用GC管理内存是没有主动释放内存的接口的，但是我们可以通过消除对某个对象的引用来做到这一点）。此外，Unity的代码分为两部分：托管与非托管，GC影响的只有托管部分的代码使用的堆内存。而且这个托管堆占用的地址空间不会返还给操作系统。。 #  </description>
+      <description>GC的实现 实现GC的策略有很多种，其中最常见一种就是 Tracing garbage collection，或者叫 Mark-Sweep，这种算法会通过一个 root Object，遍历这个该对象引用的变量，并且标记，递归这个过程，这样就确定了所有reachable的对象，剩下的对象即视为garbage。  另一种常见的策略还有引用计数（Reference counting），它是通过为每个对象维护一个引用计数，这代表当前对该对象的引用数目，当引用为0，即代表该对象为 Garage。引用技术有如下缺点  循环引用问题 保存计数带来的空间开销 修改引用数目带来的速度开销以及原子性要求 非实时（一个引用的变化可能递归得导致一系列引用修改，内存释放) 有很多算法可以一定程度解决上述问题，顺便一提，C++使用的智能指针即是基于引用计数实现的，COM对象也使用了引用计数来管理。 Unity 中的GC Unity的脚本后端是基于Mono的实现（当然现在多了个IL2CPP，不过也是类似的GC实现)，而Mono使用的GC是所谓的Boehm–Demers–Weiser garbage collector。是Mark-Sweep 的实现，它会在需要进行GC时占用主线程，进行遍历-标记-垃圾回收的过程，然后在归还主线程控制权。这会导致帧数的突然下降，产生卡顿（不过因为该实现是非压缩式的，所以卡顿现象相对较轻，但是对内存利用率进一步下降了，会有内存碎片的问题。。囧）。所以我们需要慎重地处理对象的创建（内存请求），还有释放（使用GC管理内存是没有主动释放内存的接口的，但是我们可以通过消除对某个对象的引用来做到这一点）。此外，Unity的代码分为两部分：托管与非托管，GC影响的只有托管部分的代码使用的堆内存。而且这个托管堆占用的地址空间不会返还给操作系统。。 </description>
     </item>
     
     <item>

@@ -1,340 +1,58 @@
 <!DOCTYPE html>
-<html lang="en-us" dir="ltr">
+<html>
 <head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Subject C&#43;&#43; 构造函数可以是虚函数吗？ 析构函数可以是虚函数吗？ #    1.构造函数不能为虚函数
-  当我们将构造函数定义为虚函数时,会直接报错:
-  首先回忆下以前学的virtual虚函数概念:
-  如果类定义了虚函数,创建对象时,则会分配内存空间,并且为该父类以及其所有子类的内存空间上额外分配一个虚函数表.
-  虚函数表的作用在于,存储每个类的相同的虚函数名,然后每一次虚函数调用,都会去虚函数表查找地址
-  分析:
-  假如构造函数是虚函数的话,由于对象开始还未分配内存空间,所以根本就无法找到虚函数表,从而构造函数也无法被调用.所以构造函数是不能成为虚函数.
-  2.析构函数可以为虚函数
-  首先回忆下析构函数:
-  当某个内对象被注销时,编译器会自动顺序调用该类以及其父类的析构函数,而不会调用派生类的析构函数.
-  虚析构函数的好处
-  假如我们通过派生类生成基类对象时,如果析构函数是虚函数,则我们释放其基类对象时,能使整个类(包括派生类)对象完全释放,如果析构函数只是普通函数,则不能析构完全.
-  分析:
-  所以当我们在用多态的时候(通过基类来调用派生类成员函数),析构函数最好为虚函数
-  #include using namespace std;
-class ClassBase { public: ClassBase(){}; virtual ~ClassBase() { cout&laquo;&quot;~ClassBase()&quot;&laquo;endl; }
-virtual void func() //虚函数成员 { cout&lt;&lt;&quot;ClassBase: func()&quot;&lt;&lt;endl; }  };">
-<meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="Interview::C&#43;&#43;虚函数-构造函数" />
-<meta property="og:description" content="Subject C&#43;&#43; 构造函数可以是虚函数吗？ 析构函数可以是虚函数吗？ #    1.构造函数不能为虚函数
-  当我们将构造函数定义为虚函数时,会直接报错:
-  首先回忆下以前学的virtual虚函数概念:
-  如果类定义了虚函数,创建对象时,则会分配内存空间,并且为该父类以及其所有子类的内存空间上额外分配一个虚函数表.
-  虚函数表的作用在于,存储每个类的相同的虚函数名,然后每一次虚函数调用,都会去虚函数表查找地址
-  分析:
-  假如构造函数是虚函数的话,由于对象开始还未分配内存空间,所以根本就无法找到虚函数表,从而构造函数也无法被调用.所以构造函数是不能成为虚函数.
-  2.析构函数可以为虚函数
-  首先回忆下析构函数:
-  当某个内对象被注销时,编译器会自动顺序调用该类以及其父类的析构函数,而不会调用派生类的析构函数.
-  虚析构函数的好处
-  假如我们通过派生类生成基类对象时,如果析构函数是虚函数,则我们释放其基类对象时,能使整个类(包括派生类)对象完全释放,如果析构函数只是普通函数,则不能析构完全.
-  分析:
-  所以当我们在用多态的时候(通过基类来调用派生类成员函数),析构函数最好为虚函数
-  #include using namespace std;
-class ClassBase { public: ClassBase(){}; virtual ~ClassBase() { cout&laquo;&quot;~ClassBase()&quot;&laquo;endl; }
-virtual void func() //虚函数成员 { cout&lt;&lt;&quot;ClassBase: func()&quot;&lt;&lt;endl; }  };" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="http://example.org/posts/interview/2021-06-29-c&#43;&#43;%E8%99%9A%E5%87%BD%E6%95%B0-%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0/" /><meta property="article:section" content="posts" />
-
-
-
-<title>Interview::C&#43;&#43;虚函数-构造函数 | junfff blog </title>
-<link rel="manifest" href="/manifest.json">
-<link rel="icon" href="/favicon.png" type="image/x-icon">
-<link rel="stylesheet" href="/book.min.82c5dbd23447cee0b4c2aa3ed08ce0961faa40e1fa370eee4f8c9f02e0d46b5f.css" integrity="sha256-gsXb0jRHzuC0wqo&#43;0Izglh&#43;qQOH6Nw7uT4yfAuDUa18=" crossorigin="anonymous">
-  <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.f016c1f7cd1cd468f90836d5b3db574eac0183406b8f25ab568e6873e6581204.js" integrity="sha256-8BbB980c1Gj5CDbVs9tXTqwBg0BrjyWrVo5oc&#43;ZYEgQ=" crossorigin="anonymous"></script>
-<!--
-Made with Book Theme
-https://github.com/alex-shpak/hugo-book
--->
-  
+    <title>Interview::C&#43;&#43;虚函数-构造函数</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="http://example.org/assets/css/main.css"/>
+    <link rel="canonical" href="http://example.org/posts/interview/2021-06-29-c&#43;&#43;%E8%99%9A%E5%87%BD%E6%95%B0-%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0/">
+    <noscript><link rel="stylesheet" href="http://example.org/assets/css/noscript.css"/></noscript>
+    <style>
+        :root{--site-background : url("http://example.org/images/bg.jpg")};
+    </style> 
+    
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
-<body dir="ltr">
-  <input type="checkbox" class="hidden toggle" id="menu-control" />
-  <input type="checkbox" class="hidden toggle" id="toc-control" />
-  <main class="container flex">
-    <aside class="book-menu">
-      <div class="book-menu-content">
-        
-  <nav>
-<h2 class="book-brand">
-  <a class="flex align-center" href="/"><span>junfff blog </span>
-  </a>
-</h2>
 
 
-<div class="book-search">
-  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
-  <div class="book-search-spinner hidden"></div>
-  <ul id="book-search-results"></ul>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</nav>
-
-
-
-
-  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
-
-
- 
-      </div>
-    </aside>
-
-    <div class="book-page">
-      <header class="book-header">
-        
-  <div class="flex align-center justify-between">
-  <label for="menu-control">
-    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
-  </label>
-
-  <strong>Interview::C&#43;&#43;虚函数-构造函数</strong>
-
-  <label for="toc-control">
-    
-    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
-    
-  </label>
-</div>
-
-
-  
-  <aside class="hidden clearfix">
-    
-  
-<nav id="TableOfContents"></nav>
-
-
-
-  </aside>
-  
- 
-      </header>
-
-      
-      
-<article class="markdown">
-  <h1>
-    <a href="/posts/interview/2021-06-29-c&#43;&#43;%E8%99%9A%E5%87%BD%E6%95%B0-%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0/">Interview::C&#43;&#43;虚函数-构造函数</a>
-  </h1>
-  
-
-
-  
-  <div>
-    
-      <a href="/categories/interview/">Interview</a>
-  </div>
-  
-
-  
-  <div>
-    
-      <a href="/tags/interview/">Interview</a>
-  </div>
-  
-
-
-
-<h1 id="subject--c-构造函数可以是虚函数吗-析构函数可以是虚函数吗">
-  Subject  C++ 构造函数可以是虚函数吗？ 析构函数可以是虚函数吗？
-  <a class="anchor" href="#subject--c-%e6%9e%84%e9%80%a0%e5%87%bd%e6%95%b0%e5%8f%af%e4%bb%a5%e6%98%af%e8%99%9a%e5%87%bd%e6%95%b0%e5%90%97-%e6%9e%90%e6%9e%84%e5%87%bd%e6%95%b0%e5%8f%af%e4%bb%a5%e6%98%af%e8%99%9a%e5%87%bd%e6%95%b0%e5%90%97">#</a>
-</h1>
-<ul>
-<li>
-<p>1.构造函数不能为虚函数</p>
-<ul>
-<li>
-<p>当我们将构造函数定义为虚函数时,会直接报错:</p>
-</li>
-<li>
-<p>首先回忆下以前学的virtual虚函数概念:</p>
-</li>
-<li>
-<p>如果类定义了虚函数,创建对象时,则会分配内存空间,并且为该父类以及其所有子类的内存空间上额外分配一个虚函数表.</p>
-</li>
-<li>
-<p>虚函数表的作用在于,存储每个类的相同的虚函数名,然后每一次虚函数调用,都会去虚函数表查找地址</p>
-</li>
-<li>
-<p>分析:</p>
-</li>
-<li>
-<p>假如构造函数是虚函数的话,由于对象开始还未分配内存空间,所以根本就无法找到虚函数表,从而构造函数也无法被调用.所以构造函数是不能成为虚函数.</p>
-</li>
-<li>
-<p>2.析构函数可以为虚函数</p>
-</li>
-<li>
-<p>首先回忆下析构函数:</p>
-</li>
-<li>
-<p>当某个内对象被注销时,编译器会自动顺序调用该类以及其父类的析构函数,而不会调用派生类的析构函数.</p>
-</li>
-<li>
-<p>虚析构函数的好处</p>
-</li>
-<li>
-<p>假如我们通过派生类生成基类对象时,如果析构函数是虚函数,则我们释放其基类对象时,能使整个类(包括派生类)对象完全释放,如果析构函数只是普通函数,则不能析构完全.</p>
-</li>
-<li>
-<p>分析:</p>
-</li>
-<li>
-<p>所以当我们在用多态的时候(通过基类来调用派生类成员函数),析构函数最好为虚函数</p>
-</li>
-</ul>
-<p>#include <!-- raw HTML omitted -->
-using namespace std;</p>
-<p>class ClassBase
-{
-public:
-ClassBase(){};
-virtual ~ClassBase()
-{
-cout&laquo;&quot;~ClassBase()&quot;&laquo;endl;
-}</p>
-<pre><code>virtual void func()                         //虚函数成员
-{
-    cout&lt;&lt;&quot;ClassBase: func()&quot;&lt;&lt;endl;
-}
-</code></pre>
-<p>};</p>
-<p>class ClassDerived : public ClassBase
-{
-public:
-ClassDerived(){};
-~ClassDerived()
-{
-cout&laquo;&quot;~ClassDerived()&quot;&laquo;endl;
-}
-void func()                    //虚函数成员
-{
-cout&laquo;&ldquo;ClassDerived: func()&quot;&laquo;endl;
-}
-};</p>
-<p>int main()
-{
-ClassBase *p = new  ClassDerived;</p>
-<pre><code> p-&gt;func();                   //通过多态来调用派生类虚函数
-
- delete p;
-
- return 0;
-</code></pre>
-<p>}</p>
-<ul>
-<li>
-<p>打印如下:</p>
-</li>
-<li>
-<p>ClassBase: func()</p>
-</li>
-<li>
-<p>~ClassDerived()</p>
-</li>
-<li>
-<p>~ClassBase()</p>
-</li>
-</ul>
-</li>
-</ul>
-</article>
- 
-      
-
-      <footer class="book-footer">
-        
-  <div class="flex flex-wrap justify-between">
-
-
-
-
-
-</div>
-
-
-
-  <script>(function(){function e(n){const e=window.getSelection(),t=document.createRange();t.selectNodeContents(n),e.removeAllRanges(),e.addRange(t)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
-
-
- 
-        
-      </footer>
-
-      
-  
-  <div class="book-comments">
-
-</div>
-  
- 
-
-      <label for="menu-control" class="hidden book-menu-overlay"></label>
-    </div>
+<body class="is-preload">
 
     
-    <aside class="book-toc">
-      <div class="book-toc-content">
-        
-  
-<nav id="TableOfContents"></nav>
+        <div id="wrapper">
 
+            
+                <header id="header">
+                    <div class="logo">
+                        <span class="icon fa-gem"></span>
+                    </div>
+                    <div class="content">
+                        <div class="inner">
+                            <h1><a href="/">Go Home</a></h1>
+                            <p>
+                                Nothing to see here
+                            </p>
+                        </div>
+                    </div>
+                </header>
 
- 
-      </div>
-    </aside>
+                
+<footer id="footer">
+    <p class="copyright">&copy; Design: <a href="https://github.com/d-asnaghi">d-asnaghi</a> and <a href="https://html5up.net">HTML5 UP</a>.</p>
+</footer>
+
+        </div>
+
     
-  </main>
+    <div id="bg"></div>
 
-  
 </body>
+
+
+    
+    <script src=http://example.org/assets/js/jquery.min.js></script>
+    <script src=http://example.org/assets/js/browser.min.js></script>
+    <script src=http://example.org/assets/js/breakpoints.min.js></script>
+    <script src=http://example.org/assets/js/util.js></script>
+    <script src=http://example.org/assets/js/main.js></script>
+
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
