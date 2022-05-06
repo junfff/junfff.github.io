@@ -1,161 +1,99 @@
-<!DOCTYPE html>
-<html lang="en-us" dir="ltr">
-<head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Flavors: #   from url: https://blog.csdn.net/s_lisheng/article/details/80593426  【Rust】轻量级I/O库mio
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Rust::mio // junfff blog </title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.98.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="John Doe" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="http://example.org/css/main.min.4a7ec8660f9a44b08c4da97c5f2e31b1192df1d4d0322e65c0dbbc6ecb1b863f.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Rust::mio"/>
+<meta name="twitter:description" content="Flavors:  from url: https://blog.csdn.net/s_lisheng/article/details/80593426  【Rust】轻量级I/O库mio
 让我思考一下 2018-06-06 12:53:45 4054 收藏 3 分类专栏： Rust 文章标签： Rust mio 版权 mio是rust实现的一个轻量级的I/O库。其实现基本上就是对不同操作系统底层相关API的封装，抽象出统一的接口供上层使用。Linux下为epoll，Windows下为IOCP，OS X下为kqueue。
 一、关于mio 1、重要特性 非阻塞TCP，UDP I/O事件通知epoll,kqeue,IOCP实现 运行时零分配 平台可扩展 2、基础用法 其使用方法与Linux中epoll差不多，mio底层封装了epoll，使用步骤思路：
 创建Poll 注册事件 事件循环等待与处理事件 mio提供可跨平台的sytem selector访问，不同平台如下表，都可调用相同的API。不同平台使用的API开销不尽相同。由于mio是基于readiness(就绪状态)的API，与Linux epoll相似，可以看到很多API在Linux上都可以一对一映射。相比之下，Windows IOCP是基于完成（completion-based）而非基于就绪的API，所以两者间会有较多桥接。 同时mio提供自身版本的TcpListener、TcpStream、UdpSocket，这些API封装了底层平台相关API，并设为非阻塞且实现Evented trait。
 OS	Selector Linux	epoll OS X, iOS	kqueue Windows	IOCP FreeBSD	kqueue Android	epoll mio实现的是一个单线程事件循环，并没有实现线程池及多线程事件循环，如果需要线程池及多线程事件循环等需要自己实现。
 二、源码分析 先给出mio的源码目录结构，只列出了关键的部分，如下所示：
-mio代码目录结构 mio |&mdash;-&gt;test |&mdash;-&gt;src |&mdash;&mdash;&ndash;&gt;deprecated	//事件循环代码 |&mdash;&mdash;&mdash;&mdash;&ndash;&gt;event_loop.rs	//EventLoop的实现，内部封装了Poll	【1】 |&mdash;&mdash;&mdash;&mdash;&ndash;&gt;handler.rs	//供上层实现的接口 |&mdash;&mdash;&ndash;&gt;net |&mdash;&mdash;&mdash;&mdash;&gt;mod.rs |&mdash;&mdash;&mdash;&mdash;&gt;tcp.">
-<meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="Rust::mio" />
-<meta property="og:description" content="Flavors: #   from url: https://blog.csdn.net/s_lisheng/article/details/80593426  【Rust】轻量级I/O库mio
+mio代码目录结构 mio |&mdash;-&gt;test |&mdash;-&gt;src |&mdash;&mdash;&ndash;&gt;deprecated	//事件循环代码 |&mdash;&mdash;&mdash;&mdash;&ndash;&gt;event_loop.rs	//EventLoop的实现，内部封装了Poll	【1】 |&mdash;&mdash;&mdash;&mdash;&ndash;&gt;handler.rs	//供上层实现的接口 |&mdash;&mdash;&ndash;&gt;net |&mdash;&mdash;&mdash;&mdash;&gt;mod.rs |&mdash;&mdash;&mdash;&mdash;&gt;tcp.rs |&mdash;&mdash;&mdash;&mdash;&gt;udp.rs |&mdash;&mdash;&ndash;&gt;sys	//不同系统下的实现 |&mdash;&mdash;&mdash;&mdash;&gt;mod."/>
+
+    <meta property="og:title" content="Rust::mio" />
+<meta property="og:description" content="Flavors:  from url: https://blog.csdn.net/s_lisheng/article/details/80593426  【Rust】轻量级I/O库mio
 让我思考一下 2018-06-06 12:53:45 4054 收藏 3 分类专栏： Rust 文章标签： Rust mio 版权 mio是rust实现的一个轻量级的I/O库。其实现基本上就是对不同操作系统底层相关API的封装，抽象出统一的接口供上层使用。Linux下为epoll，Windows下为IOCP，OS X下为kqueue。
 一、关于mio 1、重要特性 非阻塞TCP，UDP I/O事件通知epoll,kqeue,IOCP实现 运行时零分配 平台可扩展 2、基础用法 其使用方法与Linux中epoll差不多，mio底层封装了epoll，使用步骤思路：
 创建Poll 注册事件 事件循环等待与处理事件 mio提供可跨平台的sytem selector访问，不同平台如下表，都可调用相同的API。不同平台使用的API开销不尽相同。由于mio是基于readiness(就绪状态)的API，与Linux epoll相似，可以看到很多API在Linux上都可以一对一映射。相比之下，Windows IOCP是基于完成（completion-based）而非基于就绪的API，所以两者间会有较多桥接。 同时mio提供自身版本的TcpListener、TcpStream、UdpSocket，这些API封装了底层平台相关API，并设为非阻塞且实现Evented trait。
 OS	Selector Linux	epoll OS X, iOS	kqueue Windows	IOCP FreeBSD	kqueue Android	epoll mio实现的是一个单线程事件循环，并没有实现线程池及多线程事件循环，如果需要线程池及多线程事件循环等需要自己实现。
 二、源码分析 先给出mio的源码目录结构，只列出了关键的部分，如下所示：
-mio代码目录结构 mio |&mdash;-&gt;test |&mdash;-&gt;src |&mdash;&mdash;&ndash;&gt;deprecated	//事件循环代码 |&mdash;&mdash;&mdash;&mdash;&ndash;&gt;event_loop.rs	//EventLoop的实现，内部封装了Poll	【1】 |&mdash;&mdash;&mdash;&mdash;&ndash;&gt;handler.rs	//供上层实现的接口 |&mdash;&mdash;&ndash;&gt;net |&mdash;&mdash;&mdash;&mdash;&gt;mod.rs |&mdash;&mdash;&mdash;&mdash;&gt;tcp." />
+mio代码目录结构 mio |&mdash;-&gt;test |&mdash;-&gt;src |&mdash;&mdash;&ndash;&gt;deprecated	//事件循环代码 |&mdash;&mdash;&mdash;&mdash;&ndash;&gt;event_loop.rs	//EventLoop的实现，内部封装了Poll	【1】 |&mdash;&mdash;&mdash;&mdash;&ndash;&gt;handler.rs	//供上层实现的接口 |&mdash;&mdash;&ndash;&gt;net |&mdash;&mdash;&mdash;&mdash;&gt;mod.rs |&mdash;&mdash;&mdash;&mdash;&gt;tcp.rs |&mdash;&mdash;&mdash;&mdash;&gt;udp.rs |&mdash;&mdash;&ndash;&gt;sys	//不同系统下的实现 |&mdash;&mdash;&mdash;&mdash;&gt;mod." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="http://example.org/posts/rust/2021-02-23-rust-mio-epoll/" /><meta property="article:section" content="posts" />
 
 
 
-<title>Rust::mio | junfff blog </title>
-<link rel="manifest" href="/manifest.json">
-<link rel="icon" href="/favicon.png" type="image/x-icon">
-<link rel="stylesheet" href="/book.min.82c5dbd23447cee0b4c2aa3ed08ce0961faa40e1fa370eee4f8c9f02e0d46b5f.css" integrity="sha256-gsXb0jRHzuC0wqo&#43;0Izglh&#43;qQOH6Nw7uT4yfAuDUa18=" crossorigin="anonymous">
-  <script defer src="/flexsearch.min.js"></script>
-  <script defer src="/en.search.min.f016c1f7cd1cd468f90836d5b3db574eac0183406b8f25ab568e6873e6581204.js" integrity="sha256-8BbB980c1Gj5CDbVs9tXTqwBg0BrjyWrVo5oc&#43;ZYEgQ=" crossorigin="anonymous"></script>
-<!--
-Made with Book Theme
-https://github.com/alex-shpak/hugo-book
--->
-  
-</head>
-<body dir="ltr">
-  <input type="checkbox" class="hidden toggle" id="menu-control" />
-  <input type="checkbox" class="hidden toggle" id="toc-control" />
-  <main class="container flex">
-    <aside class="book-menu">
-      <div class="book-menu-content">
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="http://example.org/"><img class="app-header-avatar" src="/avatar.jpg" alt="John Doe" /></a>
+      <h1>junfff blog </h1>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/tags/">Tags</a>
+      </nav>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vehicula turpis sit amet elit pretium.</p>
+      <div class="app-header-social">
         
-  <nav>
-<h2 class="book-brand">
-  <a class="flex align-center" href="/"><span>junfff blog </span>
-  </a>
-</h2>
-
-
-<div class="book-search">
-  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
-  <div class="book-search-spinner hidden"></div>
-  <ul id="book-search-results"></ul>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</nav>
-
-
-
-
-  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
-
-
- 
+          <a href="https://github.com/vaga" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>My Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://github.com/vaga" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>My Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
       </div>
-    </aside>
-
-    <div class="book-page">
-      <header class="book-header">
-        
-  <div class="flex align-center justify-between">
-  <label for="menu-control">
-    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
-  </label>
-
-  <strong>Rust::mio</strong>
-
-  <label for="toc-control">
-    
-    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
-    
-  </label>
-</div>
-
-
-  
-  <aside class="hidden clearfix">
-    
-  
-<nav id="TableOfContents"></nav>
-
-
-
-  </aside>
-  
- 
-      </header>
-
+    </header>
+    <main class="app-container">
       
-      
-<article class="markdown">
-  <h1>
-    <a href="/posts/rust/2021-02-23-rust-mio-epoll/">Rust::mio</a>
-  </h1>
-  
-
-
-  
-  <div>
-    
-      <a href="/categories/rust/">Rust</a>
-  </div>
-  
-
-  
-  <div>
-    
-      <a href="/tags/rust/">Rust</a>
-  </div>
-  
-
-
-
-<h1 id="flavors">
-  Flavors:
-  <a class="anchor" href="#flavors">#</a>
-</h1>
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Rust::mio</h1>
+      <div class="post-meta">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Jan 1, 0001
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          16 min read
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="http://example.org/tags/rust/">Rust</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <h1 id="flavors">Flavors:</h1>
 <ul>
 <li>from url: <a href="https://blog.csdn.net/s_lisheng/article/details/80593426">https://blog.csdn.net/s_lisheng/article/details/80593426</a></li>
 </ul>
@@ -978,66 +916,13 @@ fn tick(&amp;mut self, event_loop: &amp;mut EventLoop&lt;Self&gt;) {
 My Basic Understanding of mio and Asynchronous IO
 MIO for Rust
 mio-github</p>
-</article>
- 
-      
 
-      <footer class="book-footer">
-        
-  <div class="flex flex-wrap justify-between">
-
-
-
-
-
-</div>
-
-
-
-  <script>(function(){function e(n){const e=window.getSelection(),t=document.createRange();t.selectNodeContents(n),e.removeAllRanges(),e.addRange(t)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
-
-
- 
-        
-      </footer>
-
-      
-  
-  <div class="book-comments">
-
-</div>
-  
- 
-
-      <label for="menu-control" class="hidden book-menu-overlay"></label>
     </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
 
-    
-    <aside class="book-toc">
-      <div class="book-toc-content">
-        
-  
-<nav id="TableOfContents"></nav>
-
-
- 
-      </div>
-    </aside>
-    
-  </main>
-
-  
-</body>
+    </main>
+  </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
