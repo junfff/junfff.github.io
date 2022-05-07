@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" 
+  xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+  xmlns:dc="http://purl.org/dc/elements/1.1/" 
+  xmlns:atom="http://www.w3.org/2005/Atom" 
+  xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" 
+  xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>Tags on Hugo Zzo Theme</title>
+    <link>https://junfff.github.io/en/en/tags/</link>
+    <description>Recent content in Tags on Hugo Zzo Theme</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <managingEditor>james922@163.com (James)</managingEditor>
+    <webMaster>james922@163.com (James)</webMaster>
+    <copyright>©2022, All Rights Reserved</copyright>
+    
+        <atom:link href="https://junfff.github.io/en/en/tags/index.xml" rel="self" type="application/rss+xml" />
+    
+
+      
+      <item>
+        <title>ArchLinux</title>
+        <link>https://junfff.github.io/en/en/tags/archlinux/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <author>james922@163.com (James)</author>
+        
+        <guid>https://junfff.github.io/en/en/tags/archlinux/</guid>
+        <description></description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+        
+        
+      </item>
+      
+      <item>
+        <title>bee</title>
+        <link>https://junfff.github.io/en/en/tags/bee/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <author>james922@163.com (James)</author>
+        
+        <guid>https://junfff.github.io/en/en/tags/bee/</guid>
+        <description></description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+        
+        
+      </item>
+      
+      <item>
+        <title>index</title>
+        <link>https://junfff.github.io/en/en/tags/index/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <author>james922@163.com (James)</author>
+        
+        <guid>https://junfff.github.io/en/en/tags/index/</guid>
+        <description></description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+        
+        
+      </item>
+      
+      <item>
+        <title>Interview</title>
+        <link>https://junfff.github.io/en/en/tags/interview/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <author>james922@163.com (James)</author>
+        
+        <guid>https://junfff.github.io/en/en/tags/interview/</guid>
+        <description></description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+        
+        
+      </item>
+      
+      <item>
+        <title>Rust</title>
+        <link>https://junfff.github.io/en/en/tags/rust/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <author>james922@163.com (James)</author>
+        
+        <guid>https://junfff.github.io/en/en/tags/rust/</guid>
+        <description></description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+        
+        
+      </item>
+      
+      <item>
+        <title>Unity</title>
+        <link>https://junfff.github.io/en/en/tags/unity/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <author>james922@163.com (James)</author>
+        
+        <guid>https://junfff.github.io/en/en/tags/unity/</guid>
+        <description></description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+        
+        
+      </item>
+      
+
+    
+  </channel>
+</rss>

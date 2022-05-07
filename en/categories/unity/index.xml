@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" 
+  xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+  xmlns:dc="http://purl.org/dc/elements/1.1/" 
+  xmlns:atom="http://www.w3.org/2005/Atom" 
+  xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" 
+  xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>Unity on Hugo Zzo Theme</title>
+    <link>https://junfff.github.io/en/en/categories/unity/</link>
+    <description>Recent content in Unity on Hugo Zzo Theme</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <managingEditor>james922@163.com (James)</managingEditor>
+    <webMaster>james922@163.com (James)</webMaster>
+    <copyright>©2022, All Rights Reserved</copyright>
+    
+        <atom:link href="https://junfff.github.io/en/en/categories/unity/index.xml" rel="self" type="application/rss+xml" />
+    
+
+      
+      <item>
+        <title>Unity::GC的实现</title>
+        <link>https://junfff.github.io/en/en/posts/test/interview/2022-05-04-unity-gc/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <author>james922@163.com (James)</author>
+        
+        <guid>https://junfff.github.io/en/en/posts/test/interview/2022-05-04-unity-gc/</guid>
+        <description>GC的实现 实现GC的策略有很多种，其中最常见一种就是 Tracing garbage collection，或者叫 Mark-Sweep，这种算法会通过一个 root Object，</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>Unity</category>
+            
+          
+        
+        
+          
+            
+              <category>Unity</category>
+            
+          
+        
+        
+      </item>
+      
+
+    
+  </channel>
+</rss>
