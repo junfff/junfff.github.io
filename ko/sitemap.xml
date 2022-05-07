@@ -2,6 +2,9 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://junfff.github.io/en/ko/ko/archive/</loc>
+    <lastmod>2019-10-19T11:44:14+09:00</lastmod>
+  </url><url>
     <loc>https://junfff.github.io/en/ko/</loc>
     <lastmod>2019-10-19T11:44:14+09:00</lastmod>
     <xhtml:link
@@ -15,70 +18,27 @@
                 href="https://junfff.github.io/en/ko/"
                 />
   </url><url>
-    <loc>https://junfff.github.io/en/ko/archive/</loc>
+    <loc>https://junfff.github.io/en/ko/ko/</loc>
     <lastmod>2019-10-19T11:44:14+09:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://junfff.github.io/en/en/archive/"
+                href="https://junfff.github.io/en/en/ko/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="ko"
-                href="https://junfff.github.io/en/ko/archive/"
+                href="https://junfff.github.io/en/ko/ko/"
                 />
   </url><url>
-    <loc>https://junfff.github.io/en/ko/about/</loc>
+    <loc>https://junfff.github.io/en/ko/ko/about/</loc>
     <lastmod>2019-10-09T11:44:14+09:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://junfff.github.io/en/en/about/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="ko"
-                href="https://junfff.github.io/en/ko/about/"
-                />
   </url><url>
-    <loc>https://junfff.github.io/en/ko/gallery/</loc>
+    <loc>https://junfff.github.io/en/ko/ko/gallery/photo/</loc>
     <lastmod>2018-10-12T10:20:16+09:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://junfff.github.io/en/en/gallery/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="ko"
-                href="https://junfff.github.io/en/ko/gallery/"
-                />
   </url><url>
-    <loc>https://junfff.github.io/en/ko/gallery/photo/</loc>
-    <lastmod>2018-10-12T10:20:16+09:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://junfff.github.io/en/en/gallery/photo/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="ko"
-                href="https://junfff.github.io/en/ko/gallery/photo/"
-                />
-  </url><url>
-    <loc>https://junfff.github.io/en/ko/gallery/cartoon/</loc>
+    <loc>https://junfff.github.io/en/ko/ko/gallery/cartoon/</loc>
     <lastmod>2018-10-11T10:20:16+09:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://junfff.github.io/en/en/gallery/cartoon/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="ko"
-                href="https://junfff.github.io/en/ko/gallery/cartoon/"
-                />
   </url><url>
     <loc>https://junfff.github.io/en/ko/categories/</loc>
     <xhtml:link
@@ -104,17 +64,7 @@
                 href="https://junfff.github.io/en/ko/tags/index/"
                 />
   </url><url>
-    <loc>https://junfff.github.io/en/ko/posts/</loc>
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://junfff.github.io/en/en/posts/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="ko"
-                href="https://junfff.github.io/en/ko/posts/"
-                />
+    <loc>https://junfff.github.io/en/ko/ko/posts/</loc>
   </url><url>
     <loc>https://junfff.github.io/en/ko/series/</loc>
     <xhtml:link
