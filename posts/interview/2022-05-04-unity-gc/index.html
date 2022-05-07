@@ -2142,6 +2142,25 @@
     <section class="related">
     
     
+    <h1 class="related__title">
+      <hr class="hr-dots"/>
+      <div>
+        See Also
+      </div>
+      <hr class="hr-dots"/>
+    </h1>
+    <ul class="related-ul">
+        
+        <li>
+          <a href="/posts/interview/2022-05-08-%E6%B3%9B%E5%9E%8B%E6%8E%A5%E5%8F%A3%E7%9A%84%E6%8A%97%E5%8F%98%E5%92%8C%E5%8D%8F%E5%8F%98/" class="related__link">C#泛型接口的抗变和协变</a>
+        </li>
+        
+        <li>
+          <a href="/posts/interview/test/" class="related__link">泛型接口的抗变和协变</a>
+        </li>
+        
+    </ul>
+    
   </section>
     <div class="grow"></div>
 <nav class="pagination-single">
@@ -2503,42 +2522,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 <aside class="single__side main-side">
   
-
-
-<section class="sidebar hide">
-  <script>document.querySelector('.sidebar').classList.remove('hide')</script>
-  <div class="toc__flexbox" data-position="fixed">
-    <h6 class="toc__title" data-ani="true">What&#39;s on this Page</h6>
-    
-      <label class="switch" data-ani="true">
-        <input id="toggle-toc" aria-label="Toggle TOC" type="checkbox" checked>
-        <span class="slider round"></span>
-      </label>
-    
-  </div>
-  <div class="toc " data-dir="ltr" data-folding="true" data-ani="true">
-    <nav id="TableOfContents">
-  <ul>
-    <li><a href="#实现gc的策略有很多种其中最常见一种就是-tracing-garbage-collection或者叫-mark-sweep这种算法会通过一个-root-object遍历这个该对象引用的变量并且标记递归这个过程这样就确定了所有reachable的对象剩下的对象即视为garbage">实现GC的策略有很多种，其中最常见一种就是 Tracing garbage collection，或者叫 Mark-Sweep，这种算法会通过一个 root Object，遍历这个该对象引用的变量，并且标记，递归这个过程，这样就确定了所有reachable的对象，剩下的对象即视为garbage。</a></li>
-    <li><a href="#heading"></a></li>
-    <li><a href="#另一种常见的策略还有引用计数reference-counting它是通过为每个对象维护一个引用计数这代表当前对该对象的引用数目当引用为0即代表该对象为-garage引用技术有如下缺点">另一种常见的策略还有引用计数（Reference counting），它是通过为每个对象维护一个引用计数，这代表当前对该对象的引用数目，当引用为0，即代表该对象为 Garage。引用技术有如下缺点</a></li>
-    <li><a href="#heading-1"></a></li>
-    <li><a href="#循环引用问题">循环引用问题</a></li>
-    <li><a href="#保存计数带来的空间开销">保存计数带来的空间开销</a></li>
-    <li><a href="#修改引用数目带来的速度开销以及原子性要求">修改引用数目带来的速度开销以及原子性要求</a></li>
-    <li><a href="#非实时一个引用的变化可能递归得导致一系列引用修改内存释放">非实时（一个引用的变化可能递归得导致一系列引用修改，内存释放)</a></li>
-    <li><a href="#有很多算法可以一定程度解决上述问题顺便一提c使用的智能指针即是基于引用计数实现的com对象也使用了引用计数来管理">有很多算法可以一定程度解决上述问题，顺便一提，C++使用的智能指针即是基于引用计数实现的，COM对象也使用了引用计数来管理。</a></li>
-  </ul>
-
-  <ul>
-    <li><a href="#unity的脚本后端是基于mono的实现当然现在多了个il2cpp不过也是类似的gc实现而mono使用的gc是所谓的boehmdemersweiser-garbage-collector是mark-sweep-的实现它会在需要进行gc时占用主线程进行遍历-标记-垃圾回收的过程然后在归还主线程控制权这会导致帧数的突然下降产生卡顿不过因为该实现是非压缩式的所以卡顿现象相对较轻但是对内存利用率进一步下降了会有内存碎片的问题囧所以我们需要慎重地处理对象的创建内存请求还有释放使用gc管理内存是没有主动释放内存的接口的但是我们可以通过消除对某个对象的引用来做到这一点此外unity的代码分为两部分托管与非托管gc影响的只有托管部分的代码使用的堆内存而且这个托管堆占用的地址空间不会返还给操作系统">Unity的脚本后端是基于Mono的实现（当然现在多了个IL2CPP，不过也是类似的GC实现)，而Mono使用的GC是所谓的Boehm–Demers–Weiser garbage collector。是Mark-Sweep 的实现，它会在需要进行GC时占用主线程，进行遍历-标记-垃圾回收的过程，然后在归还主线程控制权。这会导致帧数的突然下降，产生卡顿（不过因为该实现是非压缩式的，所以卡顿现象相对较轻，但是对内存利用率进一步下降了，会有内存碎片的问题。。囧）。所以我们需要慎重地处理对象的创建（内存请求），还有释放（使用GC管理内存是没有主动释放内存的接口的，但是我们可以通过消除对某个对象的引用来做到这一点）。此外，Unity的代码分为两部分：托管与非托管，GC影响的只有托管部分的代码使用的堆内存。而且这个托管堆占用的地址空间不会返还给操作系统。。</a></li>
-  </ul>
-</nav>
-  </div>
-</section>
-
-
-
 </aside>
 
 <script>

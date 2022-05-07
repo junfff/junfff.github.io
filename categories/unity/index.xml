@@ -20,6 +20,36 @@
 
       
       <item>
+        <title>C#泛型接口的抗变和协变</title>
+        <link>https://junfff.github.io/posts/interview/2022-05-08-%E6%B3%9B%E5%9E%8B%E6%8E%A5%E5%8F%A3%E7%9A%84%E6%8A%97%E5%8F%98%E5%92%8C%E5%8D%8F%E5%8F%98/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <author>james922@163.com (James)</author>
+        
+        <guid>https://junfff.github.io/posts/interview/2022-05-08-%E6%B3%9B%E5%9E%8B%E6%8E%A5%E5%8F%A3%E7%9A%84%E6%8A%97%E5%8F%98%E5%92%8C%E5%8D%8F%E5%8F%98/</guid>
+        <description>泛型接口的抗变(也叫逆变 Contravariance)和协变(Covariance)有什么区别? 先说定义, 协变和逆变能够实现数组类型、委托类</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>Unity</category>
+            
+          
+        
+        
+          
+            
+              <category>Unity</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
         <title>Unity::GC的实现</title>
         <link>https://junfff.github.io/posts/interview/2022-05-04-unity-gc/</link>
         <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -27,6 +57,36 @@
         
         <guid>https://junfff.github.io/posts/interview/2022-05-04-unity-gc/</guid>
         <description>GC的实现 实现GC的策略有很多种，其中最常见一种就是 Tracing garbage collection，或者叫 Mark-Sweep，这种算法会通过一个 root Object，</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>Unity</category>
+            
+          
+        
+        
+          
+            
+              <category>Unity</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>泛型接口的抗变和协变</title>
+        <link>https://junfff.github.io/posts/interview/test/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <author>james922@163.com (James)</author>
+        
+        <guid>https://junfff.github.io/posts/interview/test/</guid>
+        <description>文件名称：2022-05-08-泛型接口的抗变和协变.md</description>
         
         <dc:creator>James</dc:creator>
         
