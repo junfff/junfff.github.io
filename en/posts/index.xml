@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" 
+  xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+  xmlns:dc="http://purl.org/dc/elements/1.1/" 
+  xmlns:atom="http://www.w3.org/2005/Atom" 
+  xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" 
+  xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>Posts on Hugo Zzo Theme</title>
+    <link>http://example.org/en/posts/</link>
+    <description>Recent content in Posts on Hugo Zzo Theme</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <managingEditor>zzossig@gmail.com (zzossig)</managingEditor>
+    <webMaster>zzossig@gmail.com (zzossig)</webMaster>
+    <copyright>©2022, All Rights Reserved</copyright>
+    
+        <atom:link href="http://example.org/en/posts/index.xml" rel="self" type="application/rss+xml" />
+    
+
+      
+      <item>
+        <title>ArchLinux Tes9999999</title>
+        <link>http://example.org/en/posts/test/archlinux/2022-02-20-tst/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <author>zzossig@gmail.com (zzossig)</author>
+        
+        <guid>http://example.org/en/posts/test/archlinux/2022-02-20-tst/</guid>
+        <description>Subject TestTest 12312312332121123123312321  </description>
+        
+        <dc:creator>zzossig</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>ArchLinux</category>
+            
+          
+        
+        
+          
+            
+              <category>ArchLinux</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>ArchLinux Test</title>
+        <link>http://example.org/en/posts/test/archlinux/archlinuxtest/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <author>zzossig@gmail.com (zzossig)</author>
+        
+        <guid>http://example.org/en/posts/test/archlinux/archlinuxtest/</guid>
+        <description>Subject 1312312312312321 TestTest</description>
+        
+        <dc:creator>zzossig</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>ArchLinux</category>
+            
+          
+        
+        
+          
+            
+              <category>ArchLinux</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>ArchLinux Test123</title>
+        <link>http://example.org/en/posts/test/archlinux/2022-02-19-archlinuxtest/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <author>zzossig@gmail.com (zzossig)</author>
+        
+        <guid>http://example.org/en/posts/test/archlinux/2022-02-19-archlinuxtest/</guid>
+        <description>Subject 1312312312312321 TestTest 12312312332121123123312321</description>
+        
+        <dc:creator>zzossig</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>ArchLinux</category>
+            
+          
+        
+        
+          
+            
+              <category>ArchLinux</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>ArchLinux密钥环</title>
+        <link>http://example.org/en/posts/test/archlinux/gnupg-2.1%E4%B8%8Epacman%E5%AF%86%E9%92%A5%E7%8E%AF/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <author>zzossig@gmail.com (zzossig)</author>
+        
+        <guid>http://example.org/en/posts/test/archlinux/gnupg-2.1%E4%B8%8Epacman%E5%AF%86%E9%92%A5%E7%8E%AF/</guid>
+        <description>由于升级到了 gnupg-2.1，pacman 上游更新了密钥环的格式，这使得本地的主密钥无法签署其它密钥。这不会出问题，除非你想自定义 pacman 密钥环</description>
+        
+        <dc:creator>zzossig</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>ArchLinux</category>
+            
+          
+        
+        
+          
+            
+              <category>ArchLinux</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>HelloWorld</title>
+        <link>http://example.org/en/posts/test/2020-12-08-helloworld/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <author>zzossig@gmail.com (zzossig)</author>
+        
+        <guid>http://example.org/en/posts/test/2020-12-08-helloworld/</guid>
+        <description>Welcome Hello world, this is my first Jekyll blog post.
+I hope you like it!</description>
+        
+        <dc:creator>zzossig</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>bee</category>
+            
+          
+        
+        
+          
+            
+              <category>Unity3d</category>
+            
+          
+            
+              <category>build</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>Interview::C&#43;&#43;虚函数-构造函数</title>
+        <link>http://example.org/en/posts/test/interview/2021-06-29-c&#43;&#43;%E8%99%9A%E5%87%BD%E6%95%B0-%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <author>zzossig@gmail.com (zzossig)</author>
+        
+        <guid>http://example.org/en/posts/test/interview/2021-06-29-c&#43;&#43;%E8%99%9A%E5%87%BD%E6%95%B0-%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0/</guid>
+        <description>Subject C++ 构造函数可以是虚函数吗？ 析构函数可以是虚函数吗？ 1.构造函数不能为虚函数 当我们将构造函数定义为虚函数时,会直接报错: 首先回忆下以前学的v</description>
+        
+        <dc:creator>zzossig</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>Interview</category>
+            
+          
+        
+        
+          
+            
+              <category>Interview</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>Interview::five-ball-select-two</title>
+        <link>http://example.org/en/posts/test/interview/2021-06-26-five-ball-select-two/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <author>zzossig@gmail.com (zzossig)</author>
+        
+        <guid>http://example.org/en/posts/test/interview/2021-06-26-five-ball-select-two/</guid>
+        <description>Subject 从2个红球，2个黄球，1个白球中随机取出两个球，则两球颜色不同的概率是___．. 从5个球中任意取两个共有C52=10种，两球颜色相同的有2</description>
+        
+        <dc:creator>zzossig</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>Interview</category>
+            
+          
+        
+        
+          
+            
+              <category>Interview</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>Interview::for-for-for</title>
+        <link>http://example.org/en/posts/test/interview/2021-06-26-for-for-for/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <author>zzossig@gmail.com (zzossig)</author>
+        
+        <guid>http://example.org/en/posts/test/interview/2021-06-26-for-for-for/</guid>
+        <description>Subject int a = 3; int b = 4; int c = 5; int x = 0; for (int i = 0; i &amp;lt; a; i++) { for (int j = 0; j &amp;lt; b; j++) { for (int k = 0; k &amp;lt; c; k++) { x++; } } } 任意断点 x 位置,根据 x 值 推断 i j k,求</description>
+        
+        <dc:creator>zzossig</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>Interview</category>
+            
+          
+        
+        
+          
+            
+              <category>Interview</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>Interview::unity</title>
+        <link>http://example.org/en/posts/test/interview/2021-06-29-unity/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <author>zzossig@gmail.com (zzossig)</author>
+        
+        <guid>http://example.org/en/posts/test/interview/2021-06-29-unity/</guid>
+        <description>Subject assetBundle.Unload true 和false 区别 - 当传入的参数为true，则不仅仅内存中的AssetBundle对象包含的资源会被销毁。根据这些资源实例化而来的游戏内</description>
+        
+        <dc:creator>zzossig</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>Interview</category>
+            
+          
+        
+        
+          
+            
+              <category>Interview</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>Rust::Channels</title>
+        <link>http://example.org/en/posts/test/rust/2020-12-27-rust-channels/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <author>zzossig@gmail.com (zzossig)</author>
+        
+        <guid>http://example.org/en/posts/test/rust/2020-12-27-rust-channels/</guid>
+        <description>Flavors:  Synchronous channels: Channel where send() can block. Limited capacity.  Mutex + Condvar + VecDeque Atomic VecDeque (atomic queue) + thread::pack + thread::Thread::notify   Asynchronous channels: Channel where send() cannot block. Unbounded.  Mutex + Condvar + VecDeque Mutex + Condvar + LinkedList AtomicLinkedList or Atomic Queue Atomic linked list, linked list of T Atomic block linked list, linked of atomic VecDeque   Rendezvous channels: Synchronous with capacity = 0.</description>
+        
+        <dc:creator>zzossig</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>Rust</category>
+            
+          
+        
+        
+          
+            
+              <category>Rust</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>Rust::mio</title>
+        <link>http://example.org/en/posts/test/rust/2021-02-23-rust-mio-epoll/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <author>zzossig@gmail.com (zzossig)</author>
+        
+        <guid>http://example.org/en/posts/test/rust/2021-02-23-rust-mio-epoll/</guid>
+        <description>Flavors: from url: https://blog.csdn.net/s_lisheng/article/details/80593426 【Rust】轻量级I/O库mio 让我思考一下 2018-06-06 12:53:45 4054 收藏 3 分类专栏： Rust 文章标签： Rust mio 版权 mio是rust实现的一个轻量级的I/O库。其</description>
+        
+        <dc:creator>zzossig</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>Rust</category>
+            
+          
+        
+        
+          
+            
+              <category>Rust</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>Unity::GC的实现</title>
+        <link>http://example.org/en/posts/test/interview/2022-05-04-unity-gc/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <author>zzossig@gmail.com (zzossig)</author>
+        
+        <guid>http://example.org/en/posts/test/interview/2022-05-04-unity-gc/</guid>
+        <description>GC的实现 实现GC的策略有很多种，其中最常见一种就是 Tracing garbage collection，或者叫 Mark-Sweep，这种算法会通过一个 root Object，</description>
+        
+        <dc:creator>zzossig</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>Unity</category>
+            
+          
+        
+        
+          
+            
+              <category>Unity</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>你好，世界</title>
+        <link>http://example.org/en/posts/test/2020-12-08-helloworld2/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <author>zzossig@gmail.com (zzossig)</author>
+        
+        <guid>http://example.org/en/posts/test/2020-12-08-helloworld2/</guid>
+        <description>{{ page.title }} 我的第一篇文章 {{ page.date | date_to_string }}</description>
+        
+        <dc:creator>zzossig</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>bee</category>
+            
+          
+        
+        
+          
+            
+              <category>Unity3d</category>
+            
+          
+        
+        
+      </item>
+      
+
+    
+  </channel>
+</rss>
