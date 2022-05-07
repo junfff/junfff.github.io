@@ -10,7 +10,7 @@
     <link>https://junfff.github.io/en/ko/</link>
     <description>Recent content on junfff&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>ko</language>
+    <language>en</language>
     <managingEditor>james922@163.com (James)</managingEditor>
     <webMaster>james922@163.com (James)</webMaster>
     <copyright>©2022, All Rights Reserved</copyright>
@@ -18,28 +18,103 @@
     
         <atom:link href="https://junfff.github.io/en/ko/index.xml" rel="self" type="application/rss+xml" />
     
-      
-      
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
 
+      
+      <item>
+        <title>Archive</title>
+        <link>https://junfff.github.io/en/ko/archive/</link>
+        <pubDate>Sat, 19 Oct 2019 11:44:14 +0900</pubDate>
+        <author>james922@163.com (James)</author>
+        <atom:modified>Sat, 19 Oct 2019 11:44:14 +0900</atom:modified>
+        <guid>https://junfff.github.io/en/ko/archive/</guid>
+        <description>archive page</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+        
+        
+      </item>
+      
+      <item>
+        <title>About</title>
+        <link>https://junfff.github.io/en/ko/about/</link>
+        <pubDate>Wed, 09 Oct 2019 11:44:14 +0900</pubDate>
+        <author>james922@163.com (James)</author>
+        <atom:modified>Wed, 09 Oct 2019 11:44:14 +0900</atom:modified>
+        <guid>https://junfff.github.io/en/ko/about/</guid>
+        <description></description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+        
+        
+      </item>
+      
+      <item>
+        <title>Photo</title>
+        <link>https://junfff.github.io/en/ko/gallery/photo/</link>
+        <pubDate>Fri, 12 Oct 2018 10:20:16 +0900</pubDate>
+        <author>james922@163.com (James)</author>
+        <atom:modified>Fri, 12 Oct 2018 10:20:16 +0900</atom:modified>
+        <guid>https://junfff.github.io/en/ko/gallery/photo/</guid>
+        <description></description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+        
+        
+      </item>
+      
+      <item>
+        <title>Cartoon</title>
+        <link>https://junfff.github.io/en/ko/gallery/cartoon/</link>
+        <pubDate>Thu, 11 Oct 2018 10:20:16 +0900</pubDate>
+        <author>james922@163.com (James)</author>
+        <atom:modified>Thu, 11 Oct 2018 10:20:16 +0900</atom:modified>
+        <guid>https://junfff.github.io/en/ko/gallery/cartoon/</guid>
+        <description></description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+        
+        
+      </item>
+      
+      <item>
+        <title>Posts</title>
+        <link>https://junfff.github.io/en/ko/posts/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <author>james922@163.com (James)</author>
+        
+        <guid>https://junfff.github.io/en/ko/posts/</guid>
+        <description></description>
+        
+        <dc:creator>Hugo Authors</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>index</category>
+            
+          
+        
+        
+        
+      </item>
       
 
     
