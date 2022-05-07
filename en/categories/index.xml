@@ -7,7 +7,7 @@
   xmlns:media="http://search.yahoo.com/mrss/">
   <channel>
     <title>Categories on Hugo Zzo Theme</title>
-    <link>https://junfff.github.io/en/en/categories/</link>
+    <link>https://junfff.github.io/en/categories/</link>
     <description>Recent content in Categories on Hugo Zzo Theme</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
@@ -15,17 +15,17 @@
     <webMaster>james922@163.com (James)</webMaster>
     <copyright>©2022, All Rights Reserved</copyright>
     
-        <atom:link href="https://junfff.github.io/en/en/categories/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="https://junfff.github.io/en/categories/index.xml" rel="self" type="application/rss+xml" />
     
 
       
       <item>
         <title>ArchLinux</title>
-        <link>https://junfff.github.io/en/en/categories/archlinux/</link>
+        <link>https://junfff.github.io/en/categories/archlinux/</link>
         <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
         <author>james922@163.com (James)</author>
         
-        <guid>https://junfff.github.io/en/en/categories/archlinux/</guid>
+        <guid>https://junfff.github.io/en/categories/archlinux/</guid>
         <description></description>
         
         <dc:creator>James</dc:creator>
@@ -39,11 +39,11 @@
       
       <item>
         <title>build</title>
-        <link>https://junfff.github.io/en/en/categories/build/</link>
+        <link>https://junfff.github.io/en/categories/build/</link>
         <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
         <author>james922@163.com (James)</author>
         
-        <guid>https://junfff.github.io/en/en/categories/build/</guid>
+        <guid>https://junfff.github.io/en/categories/build/</guid>
         <description></description>
         
         <dc:creator>James</dc:creator>
@@ -57,11 +57,11 @@
       
       <item>
         <title>Interview</title>
-        <link>https://junfff.github.io/en/en/categories/interview/</link>
+        <link>https://junfff.github.io/en/categories/interview/</link>
         <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
         <author>james922@163.com (James)</author>
         
-        <guid>https://junfff.github.io/en/en/categories/interview/</guid>
+        <guid>https://junfff.github.io/en/categories/interview/</guid>
         <description></description>
         
         <dc:creator>James</dc:creator>
@@ -75,11 +75,11 @@
       
       <item>
         <title>Rust</title>
-        <link>https://junfff.github.io/en/en/categories/rust/</link>
+        <link>https://junfff.github.io/en/categories/rust/</link>
         <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
         <author>james922@163.com (James)</author>
         
-        <guid>https://junfff.github.io/en/en/categories/rust/</guid>
+        <guid>https://junfff.github.io/en/categories/rust/</guid>
         <description></description>
         
         <dc:creator>James</dc:creator>
@@ -93,11 +93,11 @@
       
       <item>
         <title>Unity</title>
-        <link>https://junfff.github.io/en/en/categories/unity/</link>
+        <link>https://junfff.github.io/en/categories/unity/</link>
         <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
         <author>james922@163.com (James)</author>
         
-        <guid>https://junfff.github.io/en/en/categories/unity/</guid>
+        <guid>https://junfff.github.io/en/categories/unity/</guid>
         <description></description>
         
         <dc:creator>James</dc:creator>
@@ -111,11 +111,11 @@
       
       <item>
         <title>Unity3d</title>
-        <link>https://junfff.github.io/en/en/categories/unity3d/</link>
+        <link>https://junfff.github.io/en/categories/unity3d/</link>
         <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
         <author>james922@163.com (James)</author>
         
-        <guid>https://junfff.github.io/en/en/categories/unity3d/</guid>
+        <guid>https://junfff.github.io/en/categories/unity3d/</guid>
         <description></description>
         
         <dc:creator>James</dc:creator>

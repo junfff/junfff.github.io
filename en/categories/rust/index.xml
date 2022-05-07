@@ -7,7 +7,7 @@
   xmlns:media="http://search.yahoo.com/mrss/">
   <channel>
     <title>Rust on Hugo Zzo Theme</title>
-    <link>https://junfff.github.io/en/en/categories/rust/</link>
+    <link>https://junfff.github.io/en/categories/rust/</link>
     <description>Recent content in Rust on Hugo Zzo Theme</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
@@ -15,17 +15,17 @@
     <webMaster>james922@163.com (James)</webMaster>
     <copyright>©2022, All Rights Reserved</copyright>
     
-        <atom:link href="https://junfff.github.io/en/en/categories/rust/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="https://junfff.github.io/en/categories/rust/index.xml" rel="self" type="application/rss+xml" />
     
 
       
       <item>
         <title>Rust::Channels</title>
-        <link>https://junfff.github.io/en/en/posts/test/rust/2020-12-27-rust-channels/</link>
+        <link>https://junfff.github.io/en/posts/test/rust/2020-12-27-rust-channels/</link>
         <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
         <author>james922@163.com (James)</author>
         
-        <guid>https://junfff.github.io/en/en/posts/test/rust/2020-12-27-rust-channels/</guid>
+        <guid>https://junfff.github.io/en/posts/test/rust/2020-12-27-rust-channels/</guid>
         <description>Flavors:  Synchronous channels: Channel where send() can block. Limited capacity.  Mutex + Condvar + VecDeque Atomic VecDeque (atomic queue) + thread::pack + thread::Thread::notify   Asynchronous channels: Channel where send() cannot block. Unbounded.  Mutex + Condvar + VecDeque Mutex + Condvar + LinkedList AtomicLinkedList or Atomic Queue Atomic linked list, linked list of T Atomic block linked list, linked of atomic VecDeque   Rendezvous channels: Synchronous with capacity = 0.</description>
         
         <dc:creator>James</dc:creator>
@@ -51,11 +51,11 @@
       
       <item>
         <title>Rust::mio</title>
-        <link>https://junfff.github.io/en/en/posts/test/rust/2021-02-23-rust-mio-epoll/</link>
+        <link>https://junfff.github.io/en/posts/test/rust/2021-02-23-rust-mio-epoll/</link>
         <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
         <author>james922@163.com (James)</author>
         
-        <guid>https://junfff.github.io/en/en/posts/test/rust/2021-02-23-rust-mio-epoll/</guid>
+        <guid>https://junfff.github.io/en/posts/test/rust/2021-02-23-rust-mio-epoll/</guid>
         <description>Flavors: from url: https://blog.csdn.net/s_lisheng/article/details/80593426 【Rust】轻量级I/O库mio 让我思考一下 2018-06-06 12:53:45 4054 收藏 3 分类专栏： Rust 文章标签： Rust mio 版权 mio是rust实现的一个轻量级的I/O库。其</description>
         
         <dc:creator>James</dc:creator>
