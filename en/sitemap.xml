@@ -230,9 +230,9 @@
   </url><url>
     <loc>http://example.org/en/categories/unity/</loc>
   </url><url>
-    <loc>http://example.org/en/categories/unity3d/</loc>
-  </url><url>
     <loc>http://example.org/en/posts/test/interview/2022-05-04-unity-gc/</loc>
+  </url><url>
+    <loc>http://example.org/en/categories/unity3d/</loc>
   </url><url>
     <loc>http://example.org/en/posts/test/2020-12-08-helloworld2/</loc>
   </url>
