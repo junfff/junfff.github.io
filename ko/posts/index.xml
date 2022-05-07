@@ -7,7 +7,7 @@
   xmlns:media="http://search.yahoo.com/mrss/">
   <channel>
     <title>Posts on junfff&#39;s blog</title>
-    <link>https://junfff.github.io/ko/posts/</link>
+    <link>https://junfff.github.io/en/ko/posts/</link>
     <description>Recent content in Posts on junfff&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko</language>
@@ -15,7 +15,7 @@
     <webMaster>james922@163.com (James)</webMaster>
     <copyright>©2022, All Rights Reserved</copyright>
     
-        <atom:link href="https://junfff.github.io/ko/posts/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="https://junfff.github.io/en/ko/posts/index.xml" rel="self" type="application/rss+xml" />
     
 
       

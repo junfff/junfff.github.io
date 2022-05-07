@@ -7,7 +7,7 @@
   xmlns:media="http://search.yahoo.com/mrss/">
   <channel>
     <title>article on junfff&#39;s blog</title>
-    <link>https://junfff.github.io/en/publication/article/</link>
+    <link>https://junfff.github.io/en/en/publication/article/</link>
     <description>Recent content in article on junfff&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
@@ -16,17 +16,17 @@
     <copyright>©2022, All Rights Reserved</copyright>
     <lastBuildDate>Thu, 05 Mar 2020 14:08:48 +0000</lastBuildDate>
     
-        <atom:link href="https://junfff.github.io/en/publication/article/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="https://junfff.github.io/en/en/publication/article/index.xml" rel="self" type="application/rss+xml" />
     
 
       
       <item>
         <title>Good Title</title>
-        <link>https://junfff.github.io/en/publication/article/article_any_folder_name_1/</link>
+        <link>https://junfff.github.io/en/en/publication/article/article_any_folder_name_1/</link>
         <pubDate>Fri, 01 Jun 2018 00:00:00 +0000</pubDate>
         <author>james922@163.com (James)</author>
         <atom:modified>Fri, 01 Jun 2018 00:00:00 +0000</atom:modified>
-        <guid>https://junfff.github.io/en/publication/article/article_any_folder_name_1/</guid>
+        <guid>https://junfff.github.io/en/en/publication/article/article_any_folder_name_1/</guid>
         <description></description>
         
         <dc:creator>James</dc:creator>
