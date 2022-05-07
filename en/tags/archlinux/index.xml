@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" 
+  xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+  xmlns:dc="http://purl.org/dc/elements/1.1/" 
+  xmlns:atom="http://www.w3.org/2005/Atom" 
+  xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" 
+  xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>ArchLinux on junfff&#39;s blog</title>
+    <link>https://junfff.github.io/en/tags/archlinux/</link>
+    <description>Recent content in ArchLinux on junfff&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <managingEditor>james922@163.com (James)</managingEditor>
+    <webMaster>james922@163.com (James)</webMaster>
+    <copyright>©2022, All Rights Reserved</copyright>
+    
+        <atom:link href="https://junfff.github.io/en/tags/archlinux/index.xml" rel="self" type="application/rss+xml" />
+    
+
+      
+      <item>
+        <title>ArchLinux Tes9999999</title>
+        <link>https://junfff.github.io/en/posts/test/archlinux/2022-02-20-tst/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <author>james922@163.com (James)</author>
+        
+        <guid>https://junfff.github.io/en/posts/test/archlinux/2022-02-20-tst/</guid>
+        <description>Subject TestTest 12312312332121123123312321  </description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>ArchLinux</category>
+            
+          
+        
+        
+          
+            
+              <category>ArchLinux</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>ArchLinux Test</title>
+        <link>https://junfff.github.io/en/posts/test/archlinux/archlinuxtest/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <author>james922@163.com (James)</author>
+        
+        <guid>https://junfff.github.io/en/posts/test/archlinux/archlinuxtest/</guid>
+        <description>Subject 1312312312312321 TestTest</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>ArchLinux</category>
+            
+          
+        
+        
+          
+            
+              <category>ArchLinux</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>ArchLinux Test123</title>
+        <link>https://junfff.github.io/en/posts/test/archlinux/2022-02-19-archlinuxtest/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <author>james922@163.com (James)</author>
+        
+        <guid>https://junfff.github.io/en/posts/test/archlinux/2022-02-19-archlinuxtest/</guid>
+        <description>Subject 1312312312312321 TestTest 12312312332121123123312321</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>ArchLinux</category>
+            
+          
+        
+        
+          
+            
+              <category>ArchLinux</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>ArchLinux密钥环</title>
+        <link>https://junfff.github.io/en/posts/test/archlinux/gnupg-2.1%E4%B8%8Epacman%E5%AF%86%E9%92%A5%E7%8E%AF/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <author>james922@163.com (James)</author>
+        
+        <guid>https://junfff.github.io/en/posts/test/archlinux/gnupg-2.1%E4%B8%8Epacman%E5%AF%86%E9%92%A5%E7%8E%AF/</guid>
+        <description>由于升级到了 gnupg-2.1，pacman 上游更新了密钥环的格式，这使得本地的主密钥无法签署其它密钥。这不会出问题，除非你想自定义 pacman 密钥环</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>ArchLinux</category>
+            
+          
+        
+        
+          
+            
+              <category>ArchLinux</category>
+            
+          
+        
+        
+      </item>
+      
+
+    
+  </channel>
+</rss>
