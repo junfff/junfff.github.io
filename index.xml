@@ -72,36 +72,6 @@
       </item>
       
       <item>
-        <title>泛型接口的抗变和协变</title>
-        <link>https://junfff.github.io/posts/interview/test/</link>
-        <pubDate>Sun, 08 May 2022 01:08:51 +0800</pubDate>
-        <author>james922@163.com (James)</author>
-        <atom:modified>Sun, 08 May 2022 01:08:51 +0800</atom:modified>
-        <guid>https://junfff.github.io/posts/interview/test/</guid>
-        <description>文件名称：2022-05-08-泛型接口的抗变和协变.md</description>
-        
-        <dc:creator>James</dc:creator>
-        
-        
-        
-        
-          
-            
-              <category>Unity</category>
-            
-          
-        
-        
-          
-            
-              <category>Unity</category>
-            
-          
-        
-        
-      </item>
-      
-      <item>
         <title>Unity::GC的实现</title>
         <link>https://junfff.github.io/posts/interview/2022-05-04-unity-gc/</link>
         <pubDate>Wed, 04 May 2022 23:44:28 +0800</pubDate>
