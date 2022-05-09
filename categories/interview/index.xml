@@ -53,9 +53,9 @@
       <item>
         <title>Interview::C&#43;&#43;虚函数-构造函数</title>
         <link>https://junfff.github.io/posts/interview/2021-06-29-c&#43;&#43;%E8%99%9A%E5%87%BD%E6%95%B0-%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0/</link>
-        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <pubDate>Tue, 29 Jun 2021 21:26:22 +0800</pubDate>
         <author>james922@163.com (James)</author>
-        
+        <atom:modified>Tue, 29 Jun 2021 21:26:22 +0800</atom:modified>
         <guid>https://junfff.github.io/posts/interview/2021-06-29-c&#43;&#43;%E8%99%9A%E5%87%BD%E6%95%B0-%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0/</guid>
         <description>Subject C++ 构造函数可以是虚函数吗？ 析构函数可以是虚函数吗？ 1.构造函数不能为虚函数 当我们将构造函数定义为虚函数时,会直接报错: 首先回忆下以前学的v</description>
         
@@ -83,9 +83,9 @@
       <item>
         <title>Interview::five-ball-select-two</title>
         <link>https://junfff.github.io/posts/interview/2021-06-26-five-ball-select-two/</link>
-        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <pubDate>Sat, 26 Jun 2021 09:01:22 +0800</pubDate>
         <author>james922@163.com (James)</author>
-        
+        <atom:modified>Sat, 26 Jun 2021 09:01:22 +0800</atom:modified>
         <guid>https://junfff.github.io/posts/interview/2021-06-26-five-ball-select-two/</guid>
         <description>Subject 从2个红球，2个黄球，1个白球中随机取出两个球，则两球颜色不同的概率是___．. 从5个球中任意取两个共有C52=10种，两球颜色相同的有2</description>
         
@@ -113,9 +113,9 @@
       <item>
         <title>Interview::for-for-for</title>
         <link>https://junfff.github.io/posts/interview/2021-06-26-for-for-for/</link>
-        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <pubDate>Sat, 26 Jun 2021 09:01:22 +0800</pubDate>
         <author>james922@163.com (James)</author>
-        
+        <atom:modified>Sat, 26 Jun 2021 09:01:22 +0800</atom:modified>
         <guid>https://junfff.github.io/posts/interview/2021-06-26-for-for-for/</guid>
         <description>Subject int a = 3; int b = 4; int c = 5; int x = 0; for (int i = 0; i &amp;lt; a; i++) { for (int j = 0; j &amp;lt; b; j++) { for (int k = 0; k &amp;lt; c; k++) { x++; } } } 任意断点 x 位置,根据 x 值 推断 i j k,求</description>
         

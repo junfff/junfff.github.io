@@ -14,6 +14,7 @@
     <managingEditor>james922@163.com (James)</managingEditor>
     <webMaster>james922@163.com (James)</webMaster>
     <copyright>©2022, All Rights Reserved</copyright>
+    <lastBuildDate>Tue, 22 Feb 2022 09:01:22 +0800</lastBuildDate>
     
         <atom:link href="https://junfff.github.io/tags/archlinux/index.xml" rel="self" type="application/rss+xml" />
     
@@ -22,9 +23,9 @@
       <item>
         <title>ArchLinux Tes9999999</title>
         <link>https://junfff.github.io/posts/archlinux/2022-02-20-tst/</link>
-        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <pubDate>Tue, 22 Feb 2022 09:01:22 +0800</pubDate>
         <author>james922@163.com (James)</author>
-        
+        <atom:modified>Tue, 22 Feb 2022 09:01:22 +0800</atom:modified>
         <guid>https://junfff.github.io/posts/archlinux/2022-02-20-tst/</guid>
         <description>Subject TestTest 12312312332121123123312321  </description>
         
@@ -50,11 +51,41 @@
       </item>
       
       <item>
+        <title>ArchLinux密钥环</title>
+        <link>https://junfff.github.io/posts/archlinux/gnupg-2.1%E4%B8%8Epacman%E5%AF%86%E9%92%A5%E7%8E%AF/</link>
+        <pubDate>Sat, 19 Feb 2022 09:01:22 +0800</pubDate>
+        <author>james922@163.com (James)</author>
+        <atom:modified>Sat, 19 Feb 2022 09:01:22 +0800</atom:modified>
+        <guid>https://junfff.github.io/posts/archlinux/gnupg-2.1%E4%B8%8Epacman%E5%AF%86%E9%92%A5%E7%8E%AF/</guid>
+        <description>由于升级到了 gnupg-2.1，pacman 上游更新了密钥环的格式，这使得本地的主密钥无法签署其它密钥。这不会出问题，除非你想自定义 pacman 密钥环</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>ArchLinux</category>
+            
+          
+        
+        
+          
+            
+              <category>ArchLinux</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
         <title>ArchLinux Test</title>
         <link>https://junfff.github.io/posts/archlinux/archlinuxtest/</link>
-        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <pubDate>Sat, 26 Jun 2021 09:01:22 +0800</pubDate>
         <author>james922@163.com (James)</author>
-        
+        <atom:modified>Sat, 26 Jun 2021 09:01:22 +0800</atom:modified>
         <guid>https://junfff.github.io/posts/archlinux/archlinuxtest/</guid>
         <description>Subject 1312312312312321 TestTest</description>
         
@@ -82,41 +113,11 @@
       <item>
         <title>ArchLinux Test123</title>
         <link>https://junfff.github.io/posts/archlinux/2022-02-19-archlinuxtest/</link>
-        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <pubDate>Sat, 26 Jun 2021 09:01:22 +0800</pubDate>
         <author>james922@163.com (James)</author>
-        
+        <atom:modified>Sat, 26 Jun 2021 09:01:22 +0800</atom:modified>
         <guid>https://junfff.github.io/posts/archlinux/2022-02-19-archlinuxtest/</guid>
         <description>Subject 1312312312312321 TestTest 12312312332121123123312321</description>
-        
-        <dc:creator>James</dc:creator>
-        
-        
-        
-        
-          
-            
-              <category>ArchLinux</category>
-            
-          
-        
-        
-          
-            
-              <category>ArchLinux</category>
-            
-          
-        
-        
-      </item>
-      
-      <item>
-        <title>ArchLinux密钥环</title>
-        <link>https://junfff.github.io/posts/archlinux/gnupg-2.1%E4%B8%8Epacman%E5%AF%86%E9%92%A5%E7%8E%AF/</link>
-        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-        <author>james922@163.com (James)</author>
-        
-        <guid>https://junfff.github.io/posts/archlinux/gnupg-2.1%E4%B8%8Epacman%E5%AF%86%E9%92%A5%E7%8E%AF/</guid>
-        <description>由于升级到了 gnupg-2.1，pacman 上游更新了密钥环的格式，这使得本地的主密钥无法签署其它密钥。这不会出问题，除非你想自定义 pacman 密钥环</description>
         
         <dc:creator>James</dc:creator>
         
