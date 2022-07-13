@@ -20,7 +20,7 @@
 
 <script defer src="/js/helper/getParents.min.086022fb02d7a1517e33c2670bffb976b3e80bcacd9caeee0c6a586064f20e42.js"></script>
 
-<script defer src="/js/helper/fadeinout.min.1551b6dbdacc77e412a26a29d3b84d2dcdc8f05c3b617433a475dc53c8872bdb.js"></script>
+<script defer src="/js/helper/fadeinout.min.3ce954c8aea3b69cc5e6f734d8273ba4cd48d3a7987dbdca145849bc4b8fc296.js"></script>
 
 <script defer src="/js/helper/closest.min.js"></script>
   
@@ -1349,7 +1349,7 @@
 <meta property="og:type" content="article">
 <meta property="og:description" content="junfff&#39;s blog.">
 
-<meta name="generator" content="Hugo 0.98.0" />
+<meta name="generator" content="Hugo 0.101.0" />
 <meta name="msapplication-TileColor" content="#fff">
 
 <meta name="theme-color" content="#fff">
@@ -1817,6 +1817,11 @@
 <h2 id="有很多算法可以一定程度解决上述问题顺便一提c使用的智能指针即是基于引用计数实现的com对象也使用了引用计数来管理">有很多算法可以一定程度解决上述问题，顺便一提，C++使用的智能指针即是基于引用计数实现的，COM对象也使用了引用计数来管理。</h2>
 <h1 id="unity-中的gc">Unity 中的GC</h1>
 <h2 id="unity的脚本后端是基于mono的实现当然现在多了个il2cpp不过也是类似的gc实现而mono使用的gc是所谓的boehmdemersweiser-garbage-collector是mark-sweep-的实现它会在需要进行gc时占用主线程进行遍历-标记-垃圾回收的过程然后在归还主线程控制权这会导致帧数的突然下降产生卡顿不过因为该实现是非压缩式的所以卡顿现象相对较轻但是对内存利用率进一步下降了会有内存碎片的问题囧所以我们需要慎重地处理对象的创建内存请求还有释放使用gc管理内存是没有主动释放内存的接口的但是我们可以通过消除对某个对象的引用来做到这一点此外unity的代码分为两部分托管与非托管gc影响的只有托管部分的代码使用的堆内存而且这个托管堆占用的地址空间不会返还给操作系统">Unity的脚本后端是基于Mono的实现（当然现在多了个IL2CPP，不过也是类似的GC实现)，而Mono使用的GC是所谓的Boehm–Demers–Weiser garbage collector。是Mark-Sweep 的实现，它会在需要进行GC时占用主线程，进行遍历-标记-垃圾回收的过程，然后在归还主线程控制权。这会导致帧数的突然下降，产生卡顿（不过因为该实现是非压缩式的，所以卡顿现象相对较轻，但是对内存利用率进一步下降了，会有内存碎片的问题。。囧）。所以我们需要慎重地处理对象的创建（内存请求），还有释放（使用GC管理内存是没有主动释放内存的接口的，但是我们可以通过消除对某个对象的引用来做到这一点）。此外，Unity的代码分为两部分：托管与非托管，GC影响的只有托管部分的代码使用的堆内存。而且这个托管堆占用的地址空间不会返还给操作系统。。</h2>
+<h1 id="c-gc-机制">C# GC 机制</h1>
+<h1 id="lua-gc-机制">lua GC 机制</h1>
+<p>Lua中的GC机制，就是垃圾回收（Garbage Collect），是lua中比较重要的一部分。Lua采用垃圾回收机制对所有的lua对象(GCObject)进行管理。Lua虚拟机会定期运行GC，释放掉已经不再被被引用到的lua对象。<br />
+标记：每次执行GC时，先以若干根节点开始，逐个把直接或间接和它们相关的节点都做上标记； 清除：当标记完成后，遍历整个对象链表，把被标记为需要删除的节点一一删除即可。<br />
+总的来说，gc被分为下面五个阶段：标记、整理、清扫字符串、清扫、收尾，状态值的大小代表了它们的执行顺序，越小越先执行。</p>
 
     </article>
     
@@ -2215,7 +2220,7 @@
 </div>
 
 
-<script defer src="/js/swipe.min.25f8e2889d0e03e2f9015306518a5ae00178acd2ec1b8e5ef20cc9f888d908ca.js"></script>
+<script defer src="/js/swipe.min.9d61b979db5cc2a1ff3a5d410e881547a61b9d28bc23e811c49061d47df07ef3.js"></script>
 
 <script defer src="/js/micromodal.min.de01b44b2f383056bbcaf6ee921fd385d79108ec1129afd0eb2f3f5a07e11f45.js"></script>
 

@@ -9,7 +9,7 @@
     <lastmod>2020-01-19T21:13:42+09:00</lastmod>
   </url><url>
     <loc>https://junfff.github.io/</loc>
-    <lastmod>2022-05-08T01:08:51+08:00</lastmod>
+    <lastmod>2022-06-10T17:21:02+08:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="ko"
@@ -21,11 +21,8 @@
                 href="https://junfff.github.io/"
                 />
   </url><url>
-    <loc>https://junfff.github.io/posts/interview/2022-05-08-%E6%B3%9B%E5%9E%8B%E6%8E%A5%E5%8F%A3%E7%9A%84%E6%8A%97%E5%8F%98%E5%92%8C%E5%8D%8F%E5%8F%98/</loc>
-    <lastmod>2022-05-08T01:08:51+08:00</lastmod>
-  </url><url>
     <loc>https://junfff.github.io/categories/</loc>
-    <lastmod>2022-05-08T01:08:51+08:00</lastmod>
+    <lastmod>2022-06-10T17:21:02+08:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="ko"
@@ -37,8 +34,11 @@
                 href="https://junfff.github.io/categories/"
                 />
   </url><url>
+    <loc>https://junfff.github.io/categories/lua/</loc>
+    <lastmod>2022-06-10T17:21:02+08:00</lastmod>
+  </url><url>
     <loc>https://junfff.github.io/posts/</loc>
-    <lastmod>2022-05-08T01:08:51+08:00</lastmod>
+    <lastmod>2022-06-10T17:21:02+08:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="ko"
@@ -51,7 +51,7 @@
                 />
   </url><url>
     <loc>https://junfff.github.io/tags/</loc>
-    <lastmod>2022-05-08T01:08:51+08:00</lastmod>
+    <lastmod>2022-06-10T17:21:02+08:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="ko"
@@ -64,9 +64,21 @@
                 />
   </url><url>
     <loc>https://junfff.github.io/tags/unity/</loc>
-    <lastmod>2022-05-08T01:08:51+08:00</lastmod>
+    <lastmod>2022-06-10T17:21:02+08:00</lastmod>
+  </url><url>
+    <loc>https://junfff.github.io/posts/lua/2022-06-10-luastring/</loc>
+    <lastmod>2022-06-10T17:21:02+08:00</lastmod>
   </url><url>
     <loc>https://junfff.github.io/categories/unity/</loc>
+    <lastmod>2022-05-22T11:19:16+08:00</lastmod>
+  </url><url>
+    <loc>https://junfff.github.io/posts/test/2022-05-22-testhugo/</loc>
+    <lastmod>2022-05-22T11:19:16+08:00</lastmod>
+  </url><url>
+    <loc>https://junfff.github.io/posts/interview/2022-05-10-unity%E5%B8%A7%E5%90%8C%E6%AD%A5-%E9%A2%84%E6%B5%8B%E5%9B%9E%E6%BB%9A/</loc>
+    <lastmod>2022-05-10T22:24:41+08:00</lastmod>
+  </url><url>
+    <loc>https://junfff.github.io/posts/interview/2022-05-08-%E6%B3%9B%E5%9E%8B%E6%8E%A5%E5%8F%A3%E7%9A%84%E6%8A%97%E5%8F%98%E5%92%8C%E5%8D%8F%E5%8F%98/</loc>
     <lastmod>2022-05-08T01:08:51+08:00</lastmod>
   </url><url>
     <loc>https://junfff.github.io/posts/interview/2022-05-04-unity-gc/</loc>

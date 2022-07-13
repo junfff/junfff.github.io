@@ -57,7 +57,7 @@
         <author>james922@163.com (James)</author>
         <atom:modified>Sun, 27 Dec 2020 23:46:22 +0800</atom:modified>
         <guid>https://junfff.github.io/posts/rust/2020-12-27-rust-channels/</guid>
-        <description>Flavors:  Synchronous channels: Channel where send() can block. Limited capacity.  Mutex + Condvar + VecDeque Atomic VecDeque (atomic queue) + thread::pack + thread::Thread::notify   Asynchronous channels: Channel where send() cannot block. Unbounded.  Mutex + Condvar + VecDeque Mutex + Condvar + LinkedList AtomicLinkedList or Atomic Queue Atomic linked list, linked list of T Atomic block linked list, linked of atomic VecDeque   Rendezvous channels: Synchronous with capacity = 0.</description>
+        <description>Flavors: Synchronous channels: Channel where send() can block. Limited capacity. Mutex + Condvar + VecDeque Atomic VecDeque (atomic queue) + thread::pack + thread::Thread::notify Asynchronous channels: Channel where send() cannot block. Unbounded. Mutex + Condvar + VecDeque Mutex + Condvar + LinkedList AtomicLinkedList or Atomic Queue Atomic linked list, linked list of T Atomic block linked list, linked of atomic VecDeque Rendezvous channels: Synchronous with capacity = 0. Used for thread synchronization.</description>
         
         <dc:creator>James</dc:creator>
         
