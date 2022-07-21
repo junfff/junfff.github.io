@@ -14,11 +14,44 @@
     <managingEditor>james922@163.com (James)</managingEditor>
     <webMaster>james922@163.com (James)</webMaster>
     <copyright>©2022, All Rights Reserved</copyright>
-    <lastBuildDate>Fri, 10 Jun 2022 17:21:02 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 21 Jul 2022 08:54:54 +0800</lastBuildDate>
     
         <atom:link href="https://junfff.github.io/tags/unity/index.xml" rel="self" type="application/rss+xml" />
     
 
+      
+      <item>
+        <title>Unity::test</title>
+        <link>https://junfff.github.io/posts/unrealengine/2022-07-21-debugging-and-autocompletion-for-unreal-engine-4-and-5-projects-in-neovim/</link>
+        <pubDate>Thu, 21 Jul 2022 08:54:54 +0800</pubDate>
+        <author>james922@163.com (James)</author>
+        <atom:modified>Thu, 21 Jul 2022 08:54:54 +0800</atom:modified>
+        <guid>https://junfff.github.io/posts/unrealengine/2022-07-21-debugging-and-autocompletion-for-unreal-engine-4-and-5-projects-in-neovim/</guid>
+        <description>Autocompletion For autocompletion there are two options:
+coc (Vim, Neovim) LSP (Neovim only) In my experience, coc is easier to set up. If you want to get started as quickly as possible, this is your best bet.
+Coc Install coc.vim, e.g. with vim-plug inside .vimrc: Plug &#39;neoclide/coc.nvim&#39; Run :CocInstall coc-clangd You will likely have to familiarize yourself with coc&amp;rsquo;s shortcuts first or customize it as you see fit.
+LSP Setting up LSP takes a bit of time but for those that already have it up and running, there is probably not much to do.</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>Unity</category>
+            
+          
+        
+        
+          
+            
+              <category>Unity</category>
+            
+          
+        
+        
+      </item>
       
       <item>
         <title>Unity::LuaString</title>
