@@ -42,7 +42,7 @@
 
       
       <item>
-        <title>Unity::test</title>
+        <title>Debugging and autocompletion for Unreal Engine 4 and 5 projects in (Neo)Vim</title>
         <link>https://junfff.github.io/posts/unrealengine/2022-07-21-debugging-and-autocompletion-for-unreal-engine-4-and-5-projects-in-neovim/</link>
         <pubDate>Thu, 21 Jul 2022 08:54:54 +0800</pubDate>
         <author>james922@163.com (James)</author>
@@ -60,14 +60,14 @@ LSP Setting up LSP takes a bit of time but for those that already have it up and
         
           
             
-              <category>Unity</category>
+              <category>UnrealEngine</category>
             
           
         
         
           
             
-              <category>Unity</category>
+              <category>UnrealEngine</category>
             
           
         
