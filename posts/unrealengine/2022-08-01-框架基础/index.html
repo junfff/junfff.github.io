@@ -1785,7 +1785,7 @@
 <div class="single__infos">
   <time class="single__info" title="Written At">📅&nbsp;Aug 1, 2022 </time>
   
-  &nbsp;&middot;&nbsp; <span class="single__info" title="Reading Time"> ☕&nbsp;2&nbsp;min read </span>
+  &nbsp;&middot;&nbsp; <span class="single__info" title="Reading Time"> ☕&nbsp;3&nbsp;min read </span>
   
   <span class="single__info">
     
@@ -1839,6 +1839,31 @@ UWorld* World（关卡运行期间存在，一个游戏可能会有多个关卡�
 ULocalPlayer* LocalPlayer（本地玩家存在的时候存在，实际上通常和GameInstance生命周期差不多，但是可能有多个本地玩家，而且游戏进行过程中可以随时添加减少本地玩家，所以生命周期视情况、Outer对象依附于哪个LocalPlayer而定）;
 </code></pre>
 <h2 id="dynamicsubsystem-能够随时加载和卸载而dynamicsubsystem就能提供这种功能">DynamicSubsystem: 能够随时加载和卸载。而DynamicSubsystem就能提供这种功能</h2>
+<h2 id="fstring--and--string">FString  and  string</h2>
+<pre tabindex="0"><code>FString UE4Str = &#34;UE4 C++&#34;; 
+
+**//FString to std::string**
+std::string cstr(TCHAR_TO_UTF8(*UE4Str));
+
+**//std::string to FString**
+ClientMessage(FString(cstr.c_str()));
+</code></pre><pre tabindex="0"><code>
+/* &lt;CreateObjectDemo&gt; * 创建Component对象，要使用CreateDefaultSubobject模板函数 */
+MyComponent = CreateDefaultSubobject&lt;UMyActorComponent&gt;(TEXT(&#34;MyComponent&#34;));
+
+/* &lt;CreateObjectDemo&gt; * 创建AActor派生类对象不要用NewObject或new，而要用UWorld::SpawnActor() */ 
+UWorld* World = GetWorld(); FVector pos(150, 0, 20); 
+AMyActor* MyActor = World-&gt;SpawnActor&lt;AMyActor&gt;(pos, FRotator::ZeroRotator);
+
+
+/* &lt;CreateObjectDemo&gt; * 创建AActor派生类对象不要用NewObject或new，而要用UWorld::SpawnActor() */ 
+UWorld* World = GetWorld(); FVector pos(150, 0, 20); 
+AMyActor* MyActor = World-&gt;SpawnActor&lt;AMyActor&gt;(pos, FRotator::ZeroRotator);
+</code></pre><h2 id="注意事项">注意事项</h2>
+<pre><code>1.CreateDefaultSubobject必须写在Actor的无参构造函数 中，否则crash；
+2.CreateDefaultSubobject中的TEXT或者FName参数在同一个Actor中不能重复，否则crash；
+3.UE4不推荐try catch，并且默认是不支持的，UE4推荐Assertions。
+</code></pre>
 
     </article>
     
