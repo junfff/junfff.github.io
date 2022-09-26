@@ -1785,7 +1785,7 @@
 <div class="single__infos">
   <time class="single__info" title="Written At">📅&nbsp;Jun 29, 2021 </time>
   
-  &nbsp;&middot;&nbsp; <span class="single__info" title="Reading Time"> ☕&nbsp;13&nbsp;min read </span>
+  &nbsp;&middot;&nbsp; <span class="single__info" title="Reading Time"> ☕&nbsp;14&nbsp;min read </span>
   
   <span class="single__info">
     
@@ -1976,6 +1976,13 @@ GC是垃圾收集器。程序员不用担心内存管理，因为垃圾收集器
 <h2 id="抗压能力组织协调能力学习能力解决问题能力主动反馈执行力">抗压能力、组织协调能力、学习能力、解决问题能力、主动反馈、执行力</h2>
 <h1 id="专业能力">专业能力：</h1>
 <h2 id="完整的上线项目经历架构业务设计能力工程管理规范文档代码审核">完整的上线项目经历、架构/业务设计能力、工程管理（规范、文档、代码审核）</h2>
+<h1 id="mask和rectmask2d原理">Mask和RectMask2D原理</h1>
+<pre><code>Mask的原理就是利用了StencilBuffer(模板缓冲)，它里面记录了一个ID，被裁切元素也有StencilBuffer(模板缓冲)的ID，并且和Mask里的比较，相同才会被渲染。因为模板缓冲可以提供模板的区域，也就是前面设置的圆形图片，所以最终会将元素裁切到这个圆心图片中。 如图所示，在Mask外面放一个普通的图片，默认情况下Stencil Ref的值是0，所以它不会被裁切，永远会显示出来。
+</code></pre>
+<h2 id="rectmask2d">RectMask2D</h2>
+<pre><code>Mask2D会在OnEnable()方法中，将当前组件注册ClipperRegistry.Register(this);这样在上面ClipperRegistry.instance.Cull();方法时就可以遍历所有Mask2D组件并且调用它们的PerformClipping()方法了。PerformClipping()方法，需要找到所有需要裁切的UI元素，因为Image和Text都继承了IClippable接口，最终将调用Cull()进行裁切。
+RectMask2D会将RectTransform的区域作为_ClipRect传入Shader中，并且激活UNITY_UI_CLIP_RECT的Keywords。Stencil Ref 的值是0 表示它并没有使用模板缓冲比较，如果只是矩形裁切，RectMask2D并且它不需要一个无效的渲染用于模板比较，所以RectMask2D在特定情况下的效率会比Mask要高。
+</code></pre>
 
     </article>
     
