@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Interview unity – Hugo Zzo Theme</title>
+    <title>Interview unity – Hello Hugo</title>
     
 
 
@@ -1343,13 +1343,13 @@
 <meta name="author" content="James">
 
 
-<meta property="og:site_name" content="Hugo Zzo Theme">
+<meta property="og:site_name" content="Hello Hugo">
 <meta property="og:title" content="Interview unity">
 <meta property="og:url" content="https://junfff.github.io/posts/interview/2021-06-29-unity/">
 <meta property="og:type" content="article">
 <meta property="og:description" content="Interview::unity">
 
-<meta name="generator" content="Hugo 0.109.0">
+<meta name="generator" content="Hugo 0.101.0" />
 <meta name="msapplication-TileColor" content="#fff">
 
 <meta name="theme-color" content="#fff">
@@ -1396,7 +1396,7 @@
     },
     "publisher": {
       "@type": "Organization",
-      "name": "Hugo Zzo Theme",
+      "name": "Hello Hugo",
       "url": "https://junfff.github.io/"
     }
   }
@@ -1752,7 +1752,7 @@
   
   <li >
     
-      <a href="https://junfff.github.io/" class="capitalize">Hugo Zzo Theme</a>
+      <a href="https://junfff.github.io/" class="capitalize">Hello Hugo</a>
     
   </li>
   
@@ -1785,7 +1785,7 @@
 <div class="single__infos">
   <time class="single__info" title="Written At">📅&nbsp;Jun 29, 2021 </time>
   
-  &nbsp;&middot;&nbsp; <span class="single__info" title="Reading Time"> ☕&nbsp;11&nbsp;min read </span>
+  &nbsp;&middot;&nbsp; <span class="single__info" title="Reading Time"> ☕&nbsp;14&nbsp;min read </span>
   
   <span class="single__info">
     
@@ -1810,8 +1810,8 @@
 <p>当传入的参数为false，则仅仅销毁内存中的AssetBundle对象包含的资源。</p>
 <h1 id="unity-gc-机制">Unity GC 机制</h1>
 <h1 id="战场优化">战场优化</h1>
-<p>模型预加载 动态图集 光效粒子 屏幕内外 自定义UIMesh GPU Instancing, 容器扩容优化，遍历容器，线程安全容器</p>
-<h1 id="寻路--a--b">寻路  A*  B*</h1>
+<p>模型预创建预加载 动态图集 光效粒子 屏幕内外 自定义UIMesh GPU Instancing, 容器扩容优化，遍历容器，线程安全容器, 字符串拼接（图片字）,</p>
+<h1 id="寻路--a--b--dbfs">寻路  A*  B*  DBFS</h1>
 <h1 id="物理碰撞静态碰撞动态碰撞rvo">物理碰撞,静态碰撞。动态碰撞RVO</h1>
 <h1 id="动态图集的优化原理是什么">动态图集的优化原理是什么</h1>
 <p>所谓动态图集就是没有办法静态生成的，需要在运行时动态生成的图集，那么我们为什么需要动态图集？</p>
@@ -1878,7 +1878,46 @@ AssetBundle相关<br />
 <h1 id="什么叫动态合批跟静态合批有什么区别">什么叫动态合批？跟静态合批有什么区别？</h1>
 <p>如果动态物体共用着相同的材质，那么Unity会自动对这些物体进行批处理。动态批处理操作是自动完成的，并不需要你进行额外的操作。<br />
 区别：动态批处理一切都是自动的，不需要做任何操作，而且物体是可以移动的，但是限制很多。<br />
-静态批处理：自由度很高，限制很少，缺点可能会占用更多的内存，而且经过静态批处理后的所有物体都不可以再移动了</p>
+静态批处理：自由度很高，限制很少，缺点可能会占用更多的内存，而且经过静态批处理后的所有物体都不可以再移动了<br />
+动态合批的限制条件呢？</p>
+<h1 id="unity中的合批">Unity中的合批</h1>
+<h2 id="静态合批-static-batching">静态合批 Static Batching</h2>
+<pre><code>Unity中把物体标记为Static，然后开启静态合批
+限制
+    需要保持static，不能改变transform
+    使用相同材质的物体才能合批
+    一个批次上限为~15k个顶点 
+</code></pre>
+<h1 id="动态合批-dynamic-batching">动态合批 Dynamic Batching</h1>
+<p>Unity自带动态合批，需要在Unity中开启动态合批选项<br />
+会导致cpu消耗，如果不是gpu有瓶颈，最好关闭动态合批<br />
+前提<br />
+使用顶点位置、法线、UV0、UV1和切线为一个着色器提供180个顶点<br />
+使用顶点位置、法线和单一UV的着色器的300个顶点</p>
+<h3 id="材质球相同">材质球相同；</h3>
+<h3 id="mesh顶点数量不能超过300以及顶点属性不能超过900">Mesh顶点数量不能超过300以及顶点属性不能超过900；</h3>
+<h3 id="缩放不能为负值xyz向量的乘积不能为负等">缩放不能为负值（x、y、z向量的乘积不能为负）等。</h3>
+<h1 id="静态合批的利弊">静态合批的利弊</h1>
+<h2 id="静态合批采用了以空间换时间的策略来提升渲染效率">静态合批采用了以空间换时间的策略来提升渲染效率。</h2>
+<p>其优势在于：网格通常在预处理阶段（打包）时合并，运行时顶点、索引信息也不会发生变化，所以无需CPU消耗算力维护；若采用相同的材质，则以一次渲染命令，便可以同时渲染出多个本来相对独立的物体，减少了DrawCall的次数。<br />
+在渲染前，可以先进行视锥体剔除，减少了顶点着色器对不可见顶点的处理次数，提高了GPU的效率。</p>
+<p>其弊端在于：合批后的网格会常驻内存，在有些场景下可能并不适用。比如森林中的每一棵树的网格都相同，如果对它采用静态合批策略，合批后的网格基本等同于：单颗树网格 x 树的数量，这对内存的消耗可能就十分巨大了。</p>
+<p>总而言之，静态合批在解决场景中材质基本相同、网格不同、且自始至终都保持静止的物体上时，很适用。</p>
+<h2 id="动态合批与静态合批的区别">动态合批与静态合批的区别</h2>
+<p>1、动态合批不会创建常驻内存的“合并后网格”，也就是说它不会在运行时造成内存的显著增长，也不会影响打包时的包体大小；</p>
+<p>2、动态合批在绘制前会先将顶点转换到世界坐标系下，然后再填充进顶点、索引缓冲区；静态合批后子网格不接受任何变换操作，仅手动合批后的Root节点可被操作，因此静态合批的顶点、索引缓冲区中的信息不会被修改（Root的变换信息则会通过Constant Buffer传入）；</p>
+<p>3、因为2的原因，动态合批的主要开销在于遍历顶点进行空间变换时的对CPU性能的开销；静态合批没有这个操作，所以也没有这个开销；</p>
+<p>4、动态合批使用根据渲染器类型分配的公共缓冲区，而静态合批使用自己专用的缓冲区。</p>
+<h1 id="什么是动静分离">什么是动静分离</h1>
+<h2 id="操作讲可以可以活动的元素放在一个canvasa下不可活动的元素放在canvasb下">操作：讲可以可以活动的元素放在一个CanvasA下，不可活动的元素放在CanvasB下。</h2>
+<h2 id="原因canvas下某一个元素变化时canvas下的所有元素都会被网格重建rebatch大量的静态元素是不需要网格重建的">原因：Canvas下某一个元素变化时，Canvas下的所有元素都会被网格重建(Rebatch)，大量的静态元素是不需要网格重建的。</h2>
+<h2 id="得失">得失：</h2>
+<h3 id="优减少了大量静态元素反复网格重建的消耗">优：减少了大量静态元素反复网格重建的消耗</h3>
+<h3 id="劣打断了合批">劣：打断了合批</h3>
+<h1 id="什么是网格重建">什么是网格重建</h1>
+<h2 id="工作">工作：</h2>
+<h2 id="rebatch-------------重算canvas下所有元素变换">ReBatch:             重算Canvas下所有元素变换</h2>
+<h2 id="rebuild----------------rebatch中标记的元素更新自己">Rebuild:                ReBatch中标记的元素更新自己</h2>
 <h1 id="6大oo设计原则">6大OO设计原则？</h1>
 <p>1.开闭原则<br />
 2.单一职责原则<br />
@@ -1937,6 +1976,13 @@ GC是垃圾收集器。程序员不用担心内存管理，因为垃圾收集器
 <h2 id="抗压能力组织协调能力学习能力解决问题能力主动反馈执行力">抗压能力、组织协调能力、学习能力、解决问题能力、主动反馈、执行力</h2>
 <h1 id="专业能力">专业能力：</h1>
 <h2 id="完整的上线项目经历架构业务设计能力工程管理规范文档代码审核">完整的上线项目经历、架构/业务设计能力、工程管理（规范、文档、代码审核）</h2>
+<h1 id="mask和rectmask2d原理">Mask和RectMask2D原理</h1>
+<pre><code>Mask的原理就是利用了StencilBuffer(模板缓冲)，它里面记录了一个ID，被裁切元素也有StencilBuffer(模板缓冲)的ID，并且和Mask里的比较，相同才会被渲染。因为模板缓冲可以提供模板的区域，也就是前面设置的圆形图片，所以最终会将元素裁切到这个圆心图片中。 如图所示，在Mask外面放一个普通的图片，默认情况下Stencil Ref的值是0，所以它不会被裁切，永远会显示出来。
+</code></pre>
+<h2 id="rectmask2d">RectMask2D</h2>
+<pre><code>Mask2D会在OnEnable()方法中，将当前组件注册ClipperRegistry.Register(this);这样在上面ClipperRegistry.instance.Cull();方法时就可以遍历所有Mask2D组件并且调用它们的PerformClipping()方法了。PerformClipping()方法，需要找到所有需要裁切的UI元素，因为Image和Text都继承了IClippable接口，最终将调用Cull()进行裁切。
+RectMask2D会将RectTransform的区域作为_ClipRect传入Shader中，并且激活UNITY_UI_CLIP_RECT的Keywords。Stencil Ref 的值是0 表示它并没有使用模板缓冲比较，如果只是矩形裁切，RectMask2D并且它不需要一个无效的渲染用于模板比较，所以RectMask2D在特定情况下的效率会比Mask要高。
+</code></pre>
 
     </article>
     
@@ -2290,14 +2336,21 @@ GC是垃圾收集器。程序员不用担心内存管理，因为垃圾收集器
 <nav class="pagination-single">
   
     
-      <a href="https://junfff.github.io/posts/archlinux/2022-02-20-tst/" class="pagination-single__left">
+      <a href="https://junfff.github.io/posts/interview/2021-06-29-c&#43;&#43;%E8%99%9A%E5%87%BD%E6%95%B0-%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0/" class="pagination-single__left">
         <div class="pagination-single__icon">
           <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0V0z"/><path fill="currentColor" d="M19 11H7.83l4.88-4.88c.39-.39.39-1.03 0-1.42-.39-.39-1.02-.39-1.41 0l-6.59 6.59c-.39.39-.39 1.02 0 1.41l6.59 6.59c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L7.83 13H19c.55 0 1-.45 1-1s-.45-1-1-1z"/></svg>
         </div>
-        <div class="pagination-single__left-title">ArchLinux Tes9999999</div>      
+        <div class="pagination-single__left-title">Interview::C&#43;&#43;虚函数-构造函数</div>      
       </a>
     
     <div class="grow"></div>
+    
+      <a href="https://junfff.github.io/posts/archlinux/gnupg-2.1%E4%B8%8Epacman%E5%AF%86%E9%92%A5%E7%8E%AF/" class="pagination-single__right">      
+        <div class="pagination-single__right-title">ArchLinux密钥环</div>
+        <div class="pagination-single__icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0V0z"/><path fill="currentColor" d="M5 13h11.17l-4.88 4.88c-.39.39-.39 1.03 0 1.42.39.39 1.02.39 1.41 0l6.59-6.59c.39-.39.39-1.02 0-1.41l-6.58-6.6c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41L16.17 11H5c-.55 0-1 .45-1 1s.45 1 1 1z"/></svg>
+        </div>
+      </a>
     
   
 </nav>
@@ -2351,7 +2404,7 @@ GC是垃圾收集器。程序员不用担心内存管理，因为垃圾收集器
 </div>
 
 
-<script defer src="/js/swipe.min.feb438efb7ca009ecd7fc2ac3ad2fced4840990b2798d81f87137f2dc6281f05.js"></script>
+<script defer src="/js/swipe.min.9d61b979db5cc2a1ff3a5d410e881547a61b9d28bc23e811c49061d47df07ef3.js"></script>
 
 <script defer src="/js/micromodal.min.de01b44b2f383056bbcaf6ee921fd385d79108ec1129afd0eb2f3f5a07e11f45.js"></script>
 
@@ -3362,7 +3415,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 
             <p class="caption">
                 
-                    ©2023, All Rights Reserved
+                    ©2022, All Rights Reserved
                 
             </p>
         

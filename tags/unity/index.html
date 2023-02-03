@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Unity – Hugo Zzo Theme</title>
+    <title>Unity – Hello Hugo</title>
     
 
 
@@ -1336,20 +1336,20 @@
 <meta name="description" content="junfff&#39;s blog." />
 
 
-<meta name="created" content="0001-01-01T00:00:00&#43;0000">
-<meta name="modified" content="0001-01-01T00:00:00&#43;0000">
-<meta property="article:published_time" content="0001-01-01T00:00:00&#43;0000">
+<meta name="created" content="2022-06-10T17:21:02&#43;0800">
+<meta name="modified" content="2022-06-10T17:21:02&#43;0800">
+<meta property="article:published_time" content="2022-06-10T17:21:02&#43;0800">
 
 <meta name="author" content="James">
 
 
-<meta property="og:site_name" content="Hugo Zzo Theme">
+<meta property="og:site_name" content="Hello Hugo">
 <meta property="og:title" content="Unity">
 <meta property="og:url" content="https://junfff.github.io/tags/unity/">
 <meta property="og:type" content="website">
 <meta property="og:description" content="junfff&#39;s blog.">
 
-<meta name="generator" content="Hugo 0.109.0">
+<meta name="generator" content="Hugo 0.101.0" />
 <meta name="msapplication-TileColor" content="#fff">
 
 <meta name="theme-color" content="#fff">
@@ -1393,7 +1393,7 @@
     },
     "publisher": {
       "@type": "Organization",
-      "name": "Hugo Zzo Theme",
+      "name": "Hello Hugo",
       "url": "https://junfff.github.io/"
     }
   }
@@ -1749,7 +1749,7 @@
   
   <li >
     
-      <a href="https://junfff.github.io/" class="capitalize">Hugo Zzo Theme</a>
+      <a href="https://junfff.github.io/" class="capitalize">Hello Hugo</a>
     
   </li>
   
@@ -1788,9 +1788,108 @@
 
     <div class="summary-classic__content">
       <header>
+        <h5 class="title h5"><a href='https://junfff.github.io/posts/lua/2022-06-10-luastring/'>Unity::LuaString</a> </h5>
+        <h6 class="subtitle caption">
+          <time title="Written At" dir="ltr">📅&nbsp;Jun 10, 2022 </time>
+          
+          <span title="Reading Time" dir="ltr"> &middot; ☕&nbsp;2&nbsp;min read </span>
+          
+        </h6>
+      </header>
+      <div>
+        <div class="summary-classic__text p2">
+          
+            -- -- lua -- 判断utf8字符byte长度 -- 0xxxxxxx - 1 byte -- 110yxxxx - 192, 2 byte -- 1110yyyy - 225, 3 byte -- 11110zzz - 240, 4 byte local function chsize(char) if not char then print(&#34;not char&#34;) return 0 elseif char &gt; 240 then return 4 elseif char &gt; 225 then return 3 elseif char &gt; 192
+          
+        </div>
+      </div>
+    </div>
+
+    
+    
+  </div>
+  <hr />
+</article>
+
+
+      
+        
+  <article class="summary-classic" data-ani="true">
+  <div class="summary-classic__flex-box" >
+
+    
+
+    <div class="summary-classic__content">
+      <header>
+        <h5 class="title h5"><a href='https://junfff.github.io/posts/test/2022-05-22-testhugo/'>Unity::testHugo</a> </h5>
+        <h6 class="subtitle caption">
+          <time title="Written At" dir="ltr">📅&nbsp;May 22, 2022 </time>
+          
+          <span title="Reading Time" dir="ltr"> &middot; ☕&nbsp;1&nbsp;min read </span>
+          
+        </h6>
+      </header>
+      <div>
+        <div class="summary-classic__text p2">
+          
+            image: beach.jpg image: images/feature2/gallery.png Sample images from Pixabay $image := resources.Get &ldquo;images/feature2/gallery.png&rdquo; - {{ with .Resources.ByType &ldquo;image&rdquo; }} {{ range . }} {{ .RelPermalink }} {{ end }} {{ end }} Sample Image: Image with title, caption, alt, ...
+          
+        </div>
+      </div>
+    </div>
+
+    
+    
+  </div>
+  <hr />
+</article>
+
+
+      
+        
+  <article class="summary-classic" data-ani="true">
+  <div class="summary-classic__flex-box" >
+
+    
+
+    <div class="summary-classic__content">
+      <header>
+        <h5 class="title h5"><a href='https://junfff.github.io/posts/interview/2022-05-10-unity%E5%B8%A7%E5%90%8C%E6%AD%A5-%E9%A2%84%E6%B5%8B%E5%9B%9E%E6%BB%9A/'>Unity::帧同步 预测回滚</a> </h5>
+        <h6 class="subtitle caption">
+          <time title="Written At" dir="ltr">📅&nbsp;May 10, 2022 </time>
+          
+          <span title="Reading Time" dir="ltr"> &middot; ☕&nbsp;4&nbsp;min read </span>
+          
+        </h6>
+      </header>
+      <div>
+        <div class="summary-classic__text p2">
+          
+            备份数据 每个Entity 的所有 component都实现 IBackup ,里面的数据都写入 stream里面 #回滚数据 从二进制数据流里面还原LogicEnti
+          
+        </div>
+      </div>
+    </div>
+
+    
+    
+  </div>
+  <hr />
+</article>
+
+
+      
+        
+  <article class="summary-classic" data-ani="true">
+  <div class="summary-classic__flex-box" >
+
+    
+
+    <div class="summary-classic__content">
+      <header>
         <h5 class="title h5"><a href='https://junfff.github.io/posts/interview/2022-05-08-%E6%B3%9B%E5%9E%8B%E6%8E%A5%E5%8F%A3%E7%9A%84%E6%8A%97%E5%8F%98%E5%92%8C%E5%8D%8F%E5%8F%98/'>C#泛型接口的抗变和协变</a> </h5>
         <h6 class="subtitle caption">
-          <time title="Written At" dir="ltr">📅&nbsp;Jan 1, 0001 </time>
+          <time title="Written At" dir="ltr">📅&nbsp;May 8, 2022 </time>
           
           <span title="Reading Time" dir="ltr"> &middot; ☕&nbsp;2&nbsp;min read </span>
           
@@ -1823,7 +1922,7 @@
       <header>
         <h5 class="title h5"><a href='https://junfff.github.io/posts/interview/2022-05-04-unity-gc/'>Unity::GC的实现</a> </h5>
         <h6 class="subtitle caption">
-          <time title="Written At" dir="ltr">📅&nbsp;Jan 1, 0001 </time>
+          <time title="Written At" dir="ltr">📅&nbsp;May 4, 2022 </time>
           
           <span title="Reading Time" dir="ltr"> &middot; ☕&nbsp;2&nbsp;min read </span>
           
@@ -1833,72 +1932,6 @@
         <div class="summary-classic__text p2">
           
             GC的实现 实现GC的策略有很多种，其中最常见一种就是 Tracing garbage collection，或者叫 Mark-Sweep，这种算法会通过一个 root Object，
-          
-        </div>
-      </div>
-    </div>
-
-    
-    
-  </div>
-  <hr />
-</article>
-
-
-      
-        
-  <article class="summary-classic" data-ani="true">
-  <div class="summary-classic__flex-box" >
-
-    
-
-    <div class="summary-classic__content">
-      <header>
-        <h5 class="title h5"><a href='https://junfff.github.io/posts/interview/2023-02-03-%E4%BC%98%E5%8C%96/'>Unity::优化</a> </h5>
-        <h6 class="subtitle caption">
-          <time title="Written At" dir="ltr">📅&nbsp;Jan 1, 0001 </time>
-          
-          <span title="Reading Time" dir="ltr"> &middot; ☕&nbsp;1&nbsp;min read </span>
-          
-        </h6>
-      </header>
-      <div>
-        <div class="summary-classic__text p2">
-          
-            文件名称：优化.md CPU 耗时计算，渲染次数，算法, 计算hashcode GPU 静态合批，动态合批， DC图集 GC 字符串，容器，实例化 不定参， 美术资源 模型
-          
-        </div>
-      </div>
-    </div>
-
-    
-    
-  </div>
-  <hr />
-</article>
-
-
-      
-        
-  <article class="summary-classic" data-ani="true">
-  <div class="summary-classic__flex-box" >
-
-    
-
-    <div class="summary-classic__content">
-      <header>
-        <h5 class="title h5"><a href='https://junfff.github.io/posts/interview/test/'>泛型接口的抗变和协变</a> </h5>
-        <h6 class="subtitle caption">
-          <time title="Written At" dir="ltr">📅&nbsp;Jan 1, 0001 </time>
-          
-          <span title="Reading Time" dir="ltr"> &middot; ☕&nbsp;1&nbsp;min read </span>
-          
-        </h6>
-      </header>
-      <div>
-        <div class="summary-classic__text p2">
-          
-            文件名称：2022-05-08-泛型接口的抗变和协变.md
           
         </div>
       </div>
@@ -2155,7 +2188,7 @@
                 
             <p class="caption">
                 
-                    ©2023, All Rights Reserved
+                    ©2022, All Rights Reserved
                 
             </p>
         

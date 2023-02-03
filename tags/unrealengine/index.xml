@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" 
+  xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+  xmlns:dc="http://purl.org/dc/elements/1.1/" 
+  xmlns:atom="http://www.w3.org/2005/Atom" 
+  xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" 
+  xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>UnrealEngine on Hello Hugo</title>
+    <link>https://junfff.github.io/tags/unrealengine/</link>
+    <description>Recent content in UnrealEngine on Hello Hugo</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <managingEditor>james922@163.com (James)</managingEditor>
+    <webMaster>james922@163.com (James)</webMaster>
+    <copyright>©2022, All Rights Reserved</copyright>
+    <lastBuildDate>Mon, 01 Aug 2022 17:06:49 +0800</lastBuildDate>
+    
+        <atom:link href="https://junfff.github.io/tags/unrealengine/index.xml" rel="self" type="application/rss+xml" />
+    
+
+      
+      <item>
+        <title>2022-08-01-框架基础</title>
+        <link>https://junfff.github.io/posts/unrealengine/2022-08-01-%E6%A1%86%E6%9E%B6%E5%9F%BA%E7%A1%80/</link>
+        <pubDate>Mon, 01 Aug 2022 17:06:49 +0800</pubDate>
+        <author>james922@163.com (James)</author>
+        <atom:modified>Mon, 01 Aug 2022 17:06:49 +0800</atom:modified>
+        <guid>https://junfff.github.io/posts/unrealengine/2022-08-01-%E6%A1%86%E6%9E%B6%E5%9F%BA%E7%A1%80/</guid>
+        <description>GameMode： 定义游戏规则。分数。 facets,游戏类型 GameState： 负责启用客户端监控游戏状态, 全局的游戏状态。 管理游戏数据 Player State:</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>UnrealEngine</category>
+            
+          
+        
+        
+          
+            
+              <category>UnrealEngine</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>Debugging and autocompletion for Unreal Engine 4 and 5 projects in (Neo)Vim</title>
+        <link>https://junfff.github.io/posts/unrealengine/2022-07-21-debugging-and-autocompletion-for-unreal-engine-4-and-5-projects-in-neovim/</link>
+        <pubDate>Thu, 21 Jul 2022 08:54:54 +0800</pubDate>
+        <author>james922@163.com (James)</author>
+        <atom:modified>Thu, 21 Jul 2022 08:54:54 +0800</atom:modified>
+        <guid>https://junfff.github.io/posts/unrealengine/2022-07-21-debugging-and-autocompletion-for-unreal-engine-4-and-5-projects-in-neovim/</guid>
+        <description>Autocompletion For autocompletion there are two options:
+coc (Vim, Neovim) LSP (Neovim only) In my experience, coc is easier to set up. If you want to get started as quickly as possible, this is your best bet.
+Coc Install coc.vim, e.g. with vim-plug inside .vimrc: Plug &#39;neoclide/coc.nvim&#39; Run :CocInstall coc-clangd You will likely have to familiarize yourself with coc&amp;rsquo;s shortcuts first or customize it as you see fit.
+LSP Setting up LSP takes a bit of time but for those that already have it up and running, there is probably not much to do.</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>UnrealEngine</category>
+            
+          
+        
+        
+          
+            
+              <category>UnrealEngine</category>
+            
+          
+        
+        
+      </item>
+      
+
+    
+  </channel>
+</rss>

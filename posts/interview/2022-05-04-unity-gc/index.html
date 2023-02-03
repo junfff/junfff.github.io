@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Unity::GC的实现 – Hugo Zzo Theme</title>
+    <title>Unity::GC的实现 – Hello Hugo</title>
     
 
 
@@ -1336,20 +1336,20 @@
 
 <meta name="keywords" content="Unity">
 
-<meta name="created" content="0001-01-01T00:00:00&#43;0000">
-<meta name="modified" content="0001-01-01T00:00:00&#43;0000">
-<meta property="article:published_time" content="0001-01-01T00:00:00&#43;0000">
+<meta name="created" content="2022-05-04T23:44:28&#43;0800">
+<meta name="modified" content="2022-05-04T23:44:28&#43;0800">
+<meta property="article:published_time" content="2022-05-04T23:44:28&#43;0800">
 
 <meta name="author" content="James">
 
 
-<meta property="og:site_name" content="Hugo Zzo Theme">
+<meta property="og:site_name" content="Hello Hugo">
 <meta property="og:title" content="Unity::GC的实现">
 <meta property="og:url" content="https://junfff.github.io/posts/interview/2022-05-04-unity-gc/">
 <meta property="og:type" content="article">
 <meta property="og:description" content="junfff&#39;s blog.">
 
-<meta name="generator" content="Hugo 0.109.0">
+<meta name="generator" content="Hugo 0.101.0" />
 <meta name="msapplication-TileColor" content="#fff">
 
 <meta name="theme-color" content="#fff">
@@ -1385,8 +1385,8 @@
     "@context": "https://schema.org",
     "@type": "WebPage",
     "headline": "Unity::GC的实现",
-    "datePublished": "0001-01-01T00:00:00Z",
-    "dateModified": "0001-01-01T00:00:00Z",
+    "datePublished": "2022-05-04T23:44:28+08:00",
+    "dateModified": "2022-05-04T23:44:28+08:00",
     "url" : "https://junfff.github.io/posts/interview/2022-05-04-unity-gc/",
     "description": "GC的实现 实现GC的策略有很多种，其中最常见一种就是 Tracing garbage collection，或者叫 Mark-Sweep，这种算法会通过一个 root Object，",
     "keywords": ["Unity"],
@@ -1396,7 +1396,7 @@
     },
     "publisher": {
       "@type": "Organization",
-      "name": "Hugo Zzo Theme",
+      "name": "Hello Hugo",
       "url": "https://junfff.github.io/"
     }
   }
@@ -1752,7 +1752,7 @@
   
   <li >
     
-      <a href="https://junfff.github.io/" class="capitalize">Hugo Zzo Theme</a>
+      <a href="https://junfff.github.io/" class="capitalize">Hello Hugo</a>
     
   </li>
   
@@ -1783,7 +1783,7 @@
     <div class="single__meta">
       
 <div class="single__infos">
-  <time class="single__info" title="Written At">📅&nbsp;Jan 1, 0001 </time>
+  <time class="single__info" title="Written At">📅&nbsp;May 4, 2022 </time>
   
   &nbsp;&middot;&nbsp; <span class="single__info" title="Reading Time"> ☕&nbsp;2&nbsp;min read </span>
   
@@ -1817,6 +1817,11 @@
 <h2 id="有很多算法可以一定程度解决上述问题顺便一提c使用的智能指针即是基于引用计数实现的com对象也使用了引用计数来管理">有很多算法可以一定程度解决上述问题，顺便一提，C++使用的智能指针即是基于引用计数实现的，COM对象也使用了引用计数来管理。</h2>
 <h1 id="unity-中的gc">Unity 中的GC</h1>
 <h2 id="unity的脚本后端是基于mono的实现当然现在多了个il2cpp不过也是类似的gc实现而mono使用的gc是所谓的boehmdemersweiser-garbage-collector是mark-sweep-的实现它会在需要进行gc时占用主线程进行遍历-标记-垃圾回收的过程然后在归还主线程控制权这会导致帧数的突然下降产生卡顿不过因为该实现是非压缩式的所以卡顿现象相对较轻但是对内存利用率进一步下降了会有内存碎片的问题囧所以我们需要慎重地处理对象的创建内存请求还有释放使用gc管理内存是没有主动释放内存的接口的但是我们可以通过消除对某个对象的引用来做到这一点此外unity的代码分为两部分托管与非托管gc影响的只有托管部分的代码使用的堆内存而且这个托管堆占用的地址空间不会返还给操作系统">Unity的脚本后端是基于Mono的实现（当然现在多了个IL2CPP，不过也是类似的GC实现)，而Mono使用的GC是所谓的Boehm–Demers–Weiser garbage collector。是Mark-Sweep 的实现，它会在需要进行GC时占用主线程，进行遍历-标记-垃圾回收的过程，然后在归还主线程控制权。这会导致帧数的突然下降，产生卡顿（不过因为该实现是非压缩式的，所以卡顿现象相对较轻，但是对内存利用率进一步下降了，会有内存碎片的问题。。囧）。所以我们需要慎重地处理对象的创建（内存请求），还有释放（使用GC管理内存是没有主动释放内存的接口的，但是我们可以通过消除对某个对象的引用来做到这一点）。此外，Unity的代码分为两部分：托管与非托管，GC影响的只有托管部分的代码使用的堆内存。而且这个托管堆占用的地址空间不会返还给操作系统。。</h2>
+<h1 id="c-gc-机制">C# GC 机制</h1>
+<h1 id="lua-gc-机制">lua GC 机制</h1>
+<p>Lua中的GC机制，就是垃圾回收（Garbage Collect），是lua中比较重要的一部分。Lua采用垃圾回收机制对所有的lua对象(GCObject)进行管理。Lua虚拟机会定期运行GC，释放掉已经不再被被引用到的lua对象。<br />
+标记：每次执行GC时，先以若干根节点开始，逐个把直接或间接和它们相关的节点都做上标记； 清除：当标记完成后，遍历整个对象链表，把被标记为需要删除的节点一一删除即可。<br />
+总的来说，gc被分为下面五个阶段：标记、整理、清扫字符串、清扫、收尾，状态值的大小代表了它们的执行顺序，越小越先执行。</p>
 
     </article>
     
@@ -2142,45 +2147,22 @@
     <section class="related">
     
     
-    <h1 class="related__title">
-      <hr class="hr-dots"/>
-      <div>
-        See Also
-      </div>
-      <hr class="hr-dots"/>
-    </h1>
-    <ul class="related-ul">
-        
-        <li>
-          <a href="/posts/interview/2022-05-08-%E6%B3%9B%E5%9E%8B%E6%8E%A5%E5%8F%A3%E7%9A%84%E6%8A%97%E5%8F%98%E5%92%8C%E5%8D%8F%E5%8F%98/" class="related__link">C#泛型接口的抗变和协变</a>
-        </li>
-        
-        <li>
-          <a href="/posts/interview/2023-02-03-%E4%BC%98%E5%8C%96/" class="related__link">Unity::优化</a>
-        </li>
-        
-        <li>
-          <a href="/posts/interview/test/" class="related__link">泛型接口的抗变和协变</a>
-        </li>
-        
-    </ul>
-    
   </section>
     <div class="grow"></div>
 <nav class="pagination-single">
   
     
-      <a href="https://junfff.github.io/posts/interview/2023-02-03-%E4%BC%98%E5%8C%96/" class="pagination-single__left">
+      <a href="https://junfff.github.io/posts/archlinux/2022-02-20-tst/" class="pagination-single__left">
         <div class="pagination-single__icon">
           <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0V0z"/><path fill="currentColor" d="M19 11H7.83l4.88-4.88c.39-.39.39-1.03 0-1.42-.39-.39-1.02-.39-1.41 0l-6.59 6.59c-.39.39-.39 1.02 0 1.41l6.59 6.59c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L7.83 13H19c.55 0 1-.45 1-1s-.45-1-1-1z"/></svg>
         </div>
-        <div class="pagination-single__left-title">Unity::优化</div>      
+        <div class="pagination-single__left-title">ArchLinux Tes9999999</div>      
       </a>
     
     <div class="grow"></div>
     
-      <a href="https://junfff.github.io/posts/rust/2021-02-23-rust-mio-epoll/" class="pagination-single__right">      
-        <div class="pagination-single__right-title">Rust::mio</div>
+      <a href="https://junfff.github.io/posts/interview/2022-05-08-%E6%B3%9B%E5%9E%8B%E6%8E%A5%E5%8F%A3%E7%9A%84%E6%8A%97%E5%8F%98%E5%92%8C%E5%8D%8F%E5%8F%98/" class="pagination-single__right">      
+        <div class="pagination-single__right-title">C#泛型接口的抗变和协变</div>
         <div class="pagination-single__icon">
           <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0V0z"/><path fill="currentColor" d="M5 13h11.17l-4.88 4.88c-.39.39-.39 1.03 0 1.42.39.39 1.02.39 1.41 0l6.59-6.59c.39-.39.39-1.02 0-1.41l-6.58-6.6c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41L16.17 11H5c-.55 0-1 .45-1 1s.45 1 1 1z"/></svg>
         </div>
@@ -2238,7 +2220,7 @@
 </div>
 
 
-<script defer src="/js/swipe.min.feb438efb7ca009ecd7fc2ac3ad2fced4840990b2798d81f87137f2dc6281f05.js"></script>
+<script defer src="/js/swipe.min.9d61b979db5cc2a1ff3a5d410e881547a61b9d28bc23e811c49061d47df07ef3.js"></script>
 
 <script defer src="/js/micromodal.min.de01b44b2f383056bbcaf6ee921fd385d79108ec1129afd0eb2f3f5a07e11f45.js"></script>
 
@@ -3249,7 +3231,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 
             <p class="caption">
                 
-                    ©2023, All Rights Reserved
+                    ©2022, All Rights Reserved
                 
             </p>
         
