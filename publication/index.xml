@@ -6,14 +6,14 @@
   xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" 
   xmlns:media="http://search.yahoo.com/mrss/">
   <channel>
-    <title>Publications on Hello Hugo</title>
+    <title>Publications on Hugo Zzo Theme</title>
     <link>https://junfff.github.io/publication/</link>
-    <description>Recent content in Publications on Hello Hugo</description>
+    <description>Recent content in Publications on Hugo Zzo Theme</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <managingEditor>james922@163.com (James)</managingEditor>
     <webMaster>james922@163.com (James)</webMaster>
-    <copyright>©2022, All Rights Reserved</copyright>
+    <copyright>©2023, All Rights Reserved</copyright>
     <lastBuildDate>Thu, 05 Mar 2020 14:08:48 +0000</lastBuildDate>
     
         <atom:link href="https://junfff.github.io/publication/index.xml" rel="self" type="application/rss+xml" />
