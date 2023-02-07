@@ -13,7 +13,7 @@
     <language>en</language>
     <managingEditor>james922@163.com (James)</managingEditor>
     <webMaster>james922@163.com (James)</webMaster>
-    <copyright>©2022, All Rights Reserved</copyright>
+    <copyright>©2023, All Rights Reserved</copyright>
     <lastBuildDate>Fri, 10 Jun 2022 17:21:02 +0800</lastBuildDate>
     
         <atom:link href="https://junfff.github.io/tags/unity/index.xml" rel="self" type="application/rss+xml" />
@@ -148,6 +148,36 @@
         <atom:modified>Wed, 04 May 2022 23:44:28 +0800</atom:modified>
         <guid>https://junfff.github.io/posts/interview/2022-05-04-unity-gc/</guid>
         <description>GC的实现 实现GC的策略有很多种，其中最常见一种就是 Tracing garbage collection，或者叫 Mark-Sweep，这种算法会通过一个 root Object，</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>Unity</category>
+            
+          
+        
+        
+          
+            
+              <category>Unity</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>Unity::优化</title>
+        <link>https://junfff.github.io/posts/interview/2023-02-03-%E4%BC%98%E5%8C%96/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <author>james922@163.com (James)</author>
+        
+        <guid>https://junfff.github.io/posts/interview/2023-02-03-%E4%BC%98%E5%8C%96/</guid>
+        <description>文件名称：优化.md CPU 耗时计算，渲染次数，算法, 计算hashcode GPU 静态合批，动态合批， DC图集 GC 创建新对象的时候，申请内存，执行gc操作</description>
         
         <dc:creator>James</dc:creator>
         
