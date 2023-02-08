@@ -14,11 +14,41 @@
     <managingEditor>james922@163.com (James)</managingEditor>
     <webMaster>james922@163.com (James)</webMaster>
     <copyright>©2023, All Rights Reserved</copyright>
-    <lastBuildDate>Sun, 22 May 2022 11:19:16 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 08 Feb 2023 12:34:29 +0800</lastBuildDate>
     
         <atom:link href="https://junfff.github.io/categories/unity/index.xml" rel="self" type="application/rss+xml" />
     
 
+      
+      <item>
+        <title>Unity::SkillLogicEditor</title>
+        <link>https://junfff.github.io/posts/unity/2023-02-08-skilllogiceditor/</link>
+        <pubDate>Wed, 08 Feb 2023 12:34:29 +0800</pubDate>
+        <author>james922@163.com (James)</author>
+        <atom:modified>Wed, 08 Feb 2023 12:34:29 +0800</atom:modified>
+        <guid>https://junfff.github.io/posts/unity/2023-02-08-skilllogiceditor/</guid>
+        <description>技能编辑器&amp;amp;逻辑编辑器</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>Unity</category>
+            
+          
+        
+        
+          
+            
+              <category>Unity</category>
+            
+          
+        
+        
+      </item>
       
       <item>
         <title>Unity::testHugo</title>
