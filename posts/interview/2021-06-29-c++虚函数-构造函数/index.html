@@ -1903,8 +1903,29 @@ ClassBase *p = new  ClassDerived;</p>
 <p>~ClassBase()</p>
 </li>
 </ul>
+<p>c++ malloc和new的区别</p>
 </li>
 </ul>
+<ol>
+<li>
+<p>malloc()用于动态分配内存，而new用于分配并初始化一个对象。</p>
+</li>
+<li>
+<p>malloc()函数返回一个指向所分配内存的指针，而new操作符返回一个指向新建对象的引用。</p>
+</li>
+<li>
+<p>malloc()函数只是分配内存，但不会调用构造函数，而new操作符会调用构造函数。</p>
+</li>
+<li>
+<p>malloc()函数会返回一个void指针，而new会返回一个正确类型的指针。</p>
+</li>
+<li>
+<p>malloc()函数可以用来分配任意类型的数据，但new操作符只能用来分配对象。</p>
+</li>
+<li>
+<p>malloc()函数不会自动释放分配的内存，而new操作符会自动调用析构函数来释放内存。</p>
+</li>
+</ol>
 
     </article>
     
