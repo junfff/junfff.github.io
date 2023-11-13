@@ -1,0 +1,781 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" 
+  xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+  xmlns:dc="http://purl.org/dc/elements/1.1/" 
+  xmlns:atom="http://www.w3.org/2005/Atom" 
+  xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" 
+  xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>Hello Hugo</title>
+    <link>https://junfff.github.io/</link>
+    <description>Recent content on Hello Hugo</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <managingEditor>james922@163.com (James)</managingEditor>
+    <webMaster>james922@163.com (James)</webMaster>
+    <copyright>©2023, All Rights Reserved</copyright>
+    <lastBuildDate>Mon, 13 Nov 2023 09:23:14 +0800</lastBuildDate>
+    
+        <atom:link href="https://junfff.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+      
+      
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+
+      
+      <item>
+        <title>Unity::2023-11-13-Pathfinding with A* algorithm in Unity small game project</title>
+        <link>https://junfff.github.io/posts/unity/2023-11-13-pathfinding-with-a-algorithm-in-unity-small-game-project/</link>
+        <pubDate>Mon, 13 Nov 2023 09:23:14 +0800</pubDate>
+        <author>james922@163.com (James)</author>
+        <atom:modified>Mon, 13 Nov 2023 09:23:14 +0800</atom:modified>
+        <guid>https://junfff.github.io/posts/unity/2023-11-13-pathfinding-with-a-algorithm-in-unity-small-game-project/</guid>
+        <description>https://pavcreations.com/pathfinding-with-a-star-algorithm-in-unity-small-game-project/ Introduction
+In this tutorial we are going to look into the pathfinding of the shortest route between two points in a tilemap-based world on a basis of a grid. It is a continuation of the previous article where I’ve presented the concepts behind A* search algorithm. Last time, I’ve implemented a grid that now will be used by enemies to move around levels. That is to say, the enemies will independently wander around a game world without bumping into obstacles.</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>Unity</category>
+            
+          
+        
+        
+          
+            
+              <category>Unity</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>Unreal Engine 5 with Vim or Emacs on Linux</title>
+        <link>https://junfff.github.io/posts/unrealengine/2023-04-01-unreal-engine-5-with-vim-or-emacs-on-linux/</link>
+        <pubDate>Sat, 01 Apr 2023 13:50:07 +0800</pubDate>
+        <author>james922@163.com (James)</author>
+        <atom:modified>Sat, 01 Apr 2023 13:50:07 +0800</atom:modified>
+        <guid>https://junfff.github.io/posts/unrealengine/2023-04-01-unreal-engine-5-with-vim-or-emacs-on-linux/</guid>
+        <description>Unreal Engine 5 with Vim or Emacs on Linux
+November 17, 2022
+Preface
+The aim of this document is to give a comprehensive guide on how to set up for game development using Unreal Engine 5 with Vim or Emacs (or any other text editor/IDE that is not officially supported).
+This guide makes some assumptions:
+You know how to configure your text editor of choice You already know the basics of Unreal Engine 5 You know how to install software on your Linux distribution of choice You are using a text editor/IDE that is capable of using LSP and DAP You have basic knowledge of and are comfortable using the Shell and a little bit of Shell-scripting Personally I use Neovim and Arch Linux, but all information in this guide should also be applicable to every other text editor/IDE with the required feature set and every other Linux distribution (and maybe even Mac or Windows, though I do not use any of those OSes).</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>UnrealEngine</category>
+            
+          
+        
+        
+          
+            
+              <category>UnrealEngine</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>Unity::UIFramework</title>
+        <link>https://junfff.github.io/posts/unity/2023-03-15-uiframework/</link>
+        <pubDate>Wed, 15 Mar 2023 16:36:28 +0800</pubDate>
+        <author>james922@163.com (James)</author>
+        <atom:modified>Wed, 15 Mar 2023 16:36:28 +0800</atom:modified>
+        <guid>https://junfff.github.io/posts/unity/2023-03-15-uiframework/</guid>
+        <description>Unity::UIFramework </description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>Unity</category>
+            
+          
+        
+        
+          
+            
+              <category>Unity</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>Unity::SkillLogicEditor</title>
+        <link>https://junfff.github.io/posts/unity/2023-02-08-skilllogiceditor/</link>
+        <pubDate>Wed, 08 Feb 2023 12:34:29 +0800</pubDate>
+        <author>james922@163.com (James)</author>
+        <atom:modified>Wed, 08 Feb 2023 12:34:29 +0800</atom:modified>
+        <guid>https://junfff.github.io/posts/unity/2023-02-08-skilllogiceditor/</guid>
+        <description>技能编辑器&amp;amp;逻辑编辑器</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>Unity</category>
+            
+          
+        
+        
+          
+            
+              <category>Unity</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>2022-08-01-框架基础</title>
+        <link>https://junfff.github.io/posts/unrealengine/2022-08-01-%E6%A1%86%E6%9E%B6%E5%9F%BA%E7%A1%80/</link>
+        <pubDate>Mon, 01 Aug 2022 17:06:49 +0800</pubDate>
+        <author>james922@163.com (James)</author>
+        <atom:modified>Mon, 01 Aug 2022 17:06:49 +0800</atom:modified>
+        <guid>https://junfff.github.io/posts/unrealengine/2022-08-01-%E6%A1%86%E6%9E%B6%E5%9F%BA%E7%A1%80/</guid>
+        <description>GameMode： 定义游戏规则。分数。 facets,游戏类型 GameState： 负责启用客户端监控游戏状态, 全局的游戏状态。 管理游戏数据 Player State:</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>UnrealEngine</category>
+            
+          
+        
+        
+          
+            
+              <category>UnrealEngine</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>Debugging and autocompletion for Unreal Engine 4 and 5 projects in (Neo)Vim</title>
+        <link>https://junfff.github.io/posts/unrealengine/2022-07-21-debugging-and-autocompletion-for-unreal-engine-4-and-5-projects-in-neovim/</link>
+        <pubDate>Thu, 21 Jul 2022 08:54:54 +0800</pubDate>
+        <author>james922@163.com (James)</author>
+        <atom:modified>Thu, 21 Jul 2022 08:54:54 +0800</atom:modified>
+        <guid>https://junfff.github.io/posts/unrealengine/2022-07-21-debugging-and-autocompletion-for-unreal-engine-4-and-5-projects-in-neovim/</guid>
+        <description>Autocompletion For autocompletion there are two options:
+coc (Vim, Neovim) LSP (Neovim only) In my experience, coc is easier to set up. If you want to get started as quickly as possible, this is your best bet.
+Coc Install coc.vim, e.g. with vim-plug inside .vimrc: Plug &#39;neoclide/coc.nvim&#39; Run :CocInstall coc-clangd You will likely have to familiarize yourself with coc&amp;rsquo;s shortcuts first or customize it as you see fit.
+LSP Setting up LSP takes a bit of time but for those that already have it up and running, there is probably not much to do.</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>UnrealEngine</category>
+            
+          
+        
+        
+          
+            
+              <category>UnrealEngine</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>Unity::LuaString</title>
+        <link>https://junfff.github.io/posts/lua/2022-06-10-luastring/</link>
+        <pubDate>Fri, 10 Jun 2022 17:21:02 +0800</pubDate>
+        <author>james922@163.com (James)</author>
+        <atom:modified>Fri, 10 Jun 2022 17:21:02 +0800</atom:modified>
+        <guid>https://junfff.github.io/posts/lua/2022-06-10-luastring/</guid>
+        <description>-- -- lua -- 判断utf8字符byte长度 -- 0xxxxxxx - 1 byte -- 110yxxxx - 192, 2 byte -- 1110yyyy - 225, 3 byte -- 11110zzz - 240, 4 byte local function chsize(char) if not char then print(&amp;#34;not char&amp;#34;) return 0 elseif char &amp;gt; 240 then return 4 elseif char &amp;gt; 225 then return 3 elseif char &amp;gt; 192</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>Unity</category>
+            
+          
+        
+        
+          
+            
+              <category>Lua</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>Unity::testHugo</title>
+        <link>https://junfff.github.io/posts/test/2022-05-22-testhugo/</link>
+        <pubDate>Sun, 22 May 2022 11:19:16 +0800</pubDate>
+        <author>james922@163.com (James)</author>
+        <atom:modified>Sun, 22 May 2022 11:19:16 +0800</atom:modified>
+        <guid>https://junfff.github.io/posts/test/2022-05-22-testhugo/</guid>
+        <description>image: beach.jpg image: images/feature2/gallery.png Sample images from Pixabay $image := resources.Get &amp;ldquo;images/feature2/gallery.png&amp;rdquo; - {{ with .Resources.ByType &amp;ldquo;image&amp;rdquo; }} {{ range . }} {{ .RelPermalink }} {{ end }} {{ end }} Sample Image: Image with title, caption, alt, ...</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>Unity</category>
+            
+          
+        
+        
+          
+            
+              <category>Unity</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>Unity::帧同步 预测回滚</title>
+        <link>https://junfff.github.io/posts/interview/2022-05-10-unity%E5%B8%A7%E5%90%8C%E6%AD%A5-%E9%A2%84%E6%B5%8B%E5%9B%9E%E6%BB%9A/</link>
+        <pubDate>Tue, 10 May 2022 22:24:41 +0800</pubDate>
+        <author>james922@163.com (James)</author>
+        <atom:modified>Tue, 10 May 2022 22:24:41 +0800</atom:modified>
+        <guid>https://junfff.github.io/posts/interview/2022-05-10-unity%E5%B8%A7%E5%90%8C%E6%AD%A5-%E9%A2%84%E6%B5%8B%E5%9B%9E%E6%BB%9A/</guid>
+        <description>备份数据 每个Entity 的所有 component都实现 IBackup ,里面的数据都写入 stream里面 #回滚数据 从二进制数据流里面还原LogicEnti</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>Unity</category>
+            
+          
+        
+        
+          
+            
+              <category>Unity</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>C#泛型接口的抗变和协变</title>
+        <link>https://junfff.github.io/posts/interview/2022-05-08-%E6%B3%9B%E5%9E%8B%E6%8E%A5%E5%8F%A3%E7%9A%84%E6%8A%97%E5%8F%98%E5%92%8C%E5%8D%8F%E5%8F%98/</link>
+        <pubDate>Sun, 08 May 2022 01:08:51 +0800</pubDate>
+        <author>james922@163.com (James)</author>
+        <atom:modified>Sun, 08 May 2022 01:08:51 +0800</atom:modified>
+        <guid>https://junfff.github.io/posts/interview/2022-05-08-%E6%B3%9B%E5%9E%8B%E6%8E%A5%E5%8F%A3%E7%9A%84%E6%8A%97%E5%8F%98%E5%92%8C%E5%8D%8F%E5%8F%98/</guid>
+        <description>泛型接口的抗变(也叫逆变 Contravariance)和协变(Covariance)有什么区别? 先说定义, 协变和逆变能够实现数组类型、委托类</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>Unity</category>
+            
+          
+        
+        
+          
+            
+              <category>Unity</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>Unity::GC的实现</title>
+        <link>https://junfff.github.io/posts/interview/2022-05-04-unity-gc/</link>
+        <pubDate>Wed, 04 May 2022 23:44:28 +0800</pubDate>
+        <author>james922@163.com (James)</author>
+        <atom:modified>Wed, 04 May 2022 23:44:28 +0800</atom:modified>
+        <guid>https://junfff.github.io/posts/interview/2022-05-04-unity-gc/</guid>
+        <description>GC的实现 实现GC的策略有很多种，其中最常见一种就是 Tracing garbage collection，或者叫 Mark-Sweep，这种算法会通过一个 root Object，</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>Unity</category>
+            
+          
+        
+        
+          
+            
+              <category>Unity</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>ArchLinux Tes9999999</title>
+        <link>https://junfff.github.io/posts/archlinux/2022-02-20-tst/</link>
+        <pubDate>Tue, 22 Feb 2022 09:01:22 +0800</pubDate>
+        <author>james922@163.com (James)</author>
+        <atom:modified>Tue, 22 Feb 2022 09:01:22 +0800</atom:modified>
+        <guid>https://junfff.github.io/posts/archlinux/2022-02-20-tst/</guid>
+        <description>Subject TestTest 12312312332121123123312321 </description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>ArchLinux</category>
+            
+          
+        
+        
+          
+            
+              <category>ArchLinux</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>ArchLinux密钥环</title>
+        <link>https://junfff.github.io/posts/archlinux/gnupg-2.1%E4%B8%8Epacman%E5%AF%86%E9%92%A5%E7%8E%AF/</link>
+        <pubDate>Sat, 19 Feb 2022 09:01:22 +0800</pubDate>
+        <author>james922@163.com (James)</author>
+        <atom:modified>Sat, 19 Feb 2022 09:01:22 +0800</atom:modified>
+        <guid>https://junfff.github.io/posts/archlinux/gnupg-2.1%E4%B8%8Epacman%E5%AF%86%E9%92%A5%E7%8E%AF/</guid>
+        <description>由于升级到了 gnupg-2.1，pacman 上游更新了密钥环的格式，这使得本地的主密钥无法签署其它密钥。这不会出问题，除非你想自定义 pacman 密钥环</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>ArchLinux</category>
+            
+          
+        
+        
+          
+            
+              <category>ArchLinux</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>Interview unity</title>
+        <link>https://junfff.github.io/posts/interview/2021-06-29-unity/</link>
+        <pubDate>Tue, 29 Jun 2021 21:46:22 +0800</pubDate>
+        <author>james922@163.com (James)</author>
+        <atom:modified>Tue, 29 Jun 2021 21:46:22 +0800</atom:modified>
+        <guid>https://junfff.github.io/posts/interview/2021-06-29-unity/</guid>
+        <description>assetBundle.Unload true 和false 区别 当传入的参数为true，则不仅仅内存中的AssetBundle对象包含的资源会被销毁。根据这些资源实例化而来的游戏内的对</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>Interview</category>
+            
+          
+        
+        
+          
+            
+              <category>Interview</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>Interview::C&#43;&#43;虚函数-构造函数</title>
+        <link>https://junfff.github.io/posts/interview/2021-06-29-c&#43;&#43;%E8%99%9A%E5%87%BD%E6%95%B0-%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0/</link>
+        <pubDate>Tue, 29 Jun 2021 21:26:22 +0800</pubDate>
+        <author>james922@163.com (James)</author>
+        <atom:modified>Tue, 29 Jun 2021 21:26:22 +0800</atom:modified>
+        <guid>https://junfff.github.io/posts/interview/2021-06-29-c&#43;&#43;%E8%99%9A%E5%87%BD%E6%95%B0-%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0/</guid>
+        <description>Subject C++ 构造函数可以是虚函数吗？ 析构函数可以是虚函数吗？ 1.构造函数不能为虚函数 当我们将构造函数定义为虚函数时,会直接报错: 首先回忆下以前学的v</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>Interview</category>
+            
+          
+        
+        
+          
+            
+              <category>Interview</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>ArchLinux Test</title>
+        <link>https://junfff.github.io/posts/archlinux/archlinuxtest/</link>
+        <pubDate>Sat, 26 Jun 2021 09:01:22 +0800</pubDate>
+        <author>james922@163.com (James)</author>
+        <atom:modified>Sat, 26 Jun 2021 09:01:22 +0800</atom:modified>
+        <guid>https://junfff.github.io/posts/archlinux/archlinuxtest/</guid>
+        <description>Subject 1312312312312321 TestTest</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>ArchLinux</category>
+            
+          
+        
+        
+          
+            
+              <category>ArchLinux</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>ArchLinux Test123</title>
+        <link>https://junfff.github.io/posts/archlinux/2022-02-19-archlinuxtest/</link>
+        <pubDate>Sat, 26 Jun 2021 09:01:22 +0800</pubDate>
+        <author>james922@163.com (James)</author>
+        <atom:modified>Sat, 26 Jun 2021 09:01:22 +0800</atom:modified>
+        <guid>https://junfff.github.io/posts/archlinux/2022-02-19-archlinuxtest/</guid>
+        <description>Subject 1312312312312321 TestTest 12312312332121123123312321</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>ArchLinux</category>
+            
+          
+        
+        
+          
+            
+              <category>ArchLinux</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>Interview::five-ball-select-two</title>
+        <link>https://junfff.github.io/posts/interview/2021-06-26-five-ball-select-two/</link>
+        <pubDate>Sat, 26 Jun 2021 09:01:22 +0800</pubDate>
+        <author>james922@163.com (James)</author>
+        <atom:modified>Sat, 26 Jun 2021 09:01:22 +0800</atom:modified>
+        <guid>https://junfff.github.io/posts/interview/2021-06-26-five-ball-select-two/</guid>
+        <description>Subject 从2个红球，2个黄球，1个白球中随机取出两个球，则两球颜色不同的概率是___．. 从5个球中任意取两个共有C52=10种，两球颜色相同的有2</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>Interview</category>
+            
+          
+        
+        
+          
+            
+              <category>Interview</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>Interview::for-for-for</title>
+        <link>https://junfff.github.io/posts/interview/2021-06-26-for-for-for/</link>
+        <pubDate>Sat, 26 Jun 2021 09:01:22 +0800</pubDate>
+        <author>james922@163.com (James)</author>
+        <atom:modified>Sat, 26 Jun 2021 09:01:22 +0800</atom:modified>
+        <guid>https://junfff.github.io/posts/interview/2021-06-26-for-for-for/</guid>
+        <description>Subject int a = 3; int b = 4; int c = 5; int x = 0; for (int i = 0; i &amp;lt; a; i++) { for (int j = 0; j &amp;lt; b; j++) { for (int k = 0; k &amp;lt; c; k++) { x++; } } } 任意断点 x 位置,根据 x 值 推断 i j k,求</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>Interview</category>
+            
+          
+        
+        
+          
+            
+              <category>Interview</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>Rust::mio</title>
+        <link>https://junfff.github.io/posts/rust/2021-02-23-rust-mio-epoll/</link>
+        <pubDate>Tue, 23 Feb 2021 10:41:22 +0800</pubDate>
+        <author>james922@163.com (James)</author>
+        <atom:modified>Tue, 23 Feb 2021 10:41:22 +0800</atom:modified>
+        <guid>https://junfff.github.io/posts/rust/2021-02-23-rust-mio-epoll/</guid>
+        <description>Flavors: from url: https://blog.csdn.net/s_lisheng/article/details/80593426 【Rust】轻量级I/O库mio 让我思考一下 2018-06-06 12:53:45 4054 收藏 3 分类专栏： Rust 文章标签： Rust mio 版权 mio是rust实现的一个轻量级的I/O库。其</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>Rust</category>
+            
+          
+        
+        
+          
+            
+              <category>Rust</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>Rust::Channels</title>
+        <link>https://junfff.github.io/posts/rust/2020-12-27-rust-channels/</link>
+        <pubDate>Sun, 27 Dec 2020 23:46:22 +0800</pubDate>
+        <author>james922@163.com (James)</author>
+        <atom:modified>Sun, 27 Dec 2020 23:46:22 +0800</atom:modified>
+        <guid>https://junfff.github.io/posts/rust/2020-12-27-rust-channels/</guid>
+        <description>Flavors: Synchronous channels: Channel where send() can block. Limited capacity. Mutex + Condvar + VecDeque Atomic VecDeque (atomic queue) + thread::pack + thread::Thread::notify Asynchronous channels: Channel where send() cannot block. Unbounded. Mutex + Condvar + VecDeque Mutex + Condvar + LinkedList AtomicLinkedList or Atomic Queue Atomic linked list, linked list of T Atomic block linked list, linked of atomic VecDeque Rendezvous channels: Synchronous with capacity = 0. Used for thread synchronization.</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>Rust</category>
+            
+          
+        
+        
+          
+            
+              <category>Rust</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>HelloWorld</title>
+        <link>https://junfff.github.io/posts/2020-12-08-helloworld/</link>
+        <pubDate>Wed, 09 Dec 2020 00:13:22 +0800</pubDate>
+        <author>james922@163.com (James)</author>
+        <atom:modified>Wed, 09 Dec 2020 00:13:22 +0800</atom:modified>
+        <guid>https://junfff.github.io/posts/2020-12-08-helloworld/</guid>
+        <description>Welcome Hello world, this is my first Jekyll blog post.
+I hope you like it!</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>bee</category>
+            
+          
+        
+        
+          
+            
+              <category>Unity3d</category>
+            
+          
+            
+              <category>build</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>你好，世界</title>
+        <link>https://junfff.github.io/posts/2020-12-08-helloworld2/</link>
+        <pubDate>Wed, 09 Dec 2020 00:13:22 +0800</pubDate>
+        <author>james922@163.com (James)</author>
+        <atom:modified>Wed, 09 Dec 2020 00:13:22 +0800</atom:modified>
+        <guid>https://junfff.github.io/posts/2020-12-08-helloworld2/</guid>
+        <description>{{ page.title }} 我的第一篇文章 {{ page.date | date_to_string }}</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>bee</category>
+            
+          
+        
+        
+          
+            
+              <category>Unity3d</category>
+            
+          
+        
+        
+      </item>
+      
+      <item>
+        <title>Unity::优化</title>
+        <link>https://junfff.github.io/posts/interview/2023-02-03-%E4%BC%98%E5%8C%96/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <author>james922@163.com (James)</author>
+        
+        <guid>https://junfff.github.io/posts/interview/2023-02-03-%E4%BC%98%E5%8C%96/</guid>
+        <description>文件名称：优化.md CPU 耗时计算，渲染次数，算法, 计算hashcode GPU 静态合批，动态合批， DC图集 GC 创建新对象的时候，申请内存，执行gc操作</description>
+        
+        <dc:creator>James</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>Unity</category>
+            
+          
+        
+        
+          
+            
+              <category>Unity</category>
+            
+          
+        
+        
+      </item>
+      
+
+    
+  </channel>
+</rss>
